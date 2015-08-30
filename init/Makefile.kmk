@@ -1,0 +1,10 @@
+SUB_DEPTH = ..
+include $(KBUILD_PATH)/subheader.kmk
+include $(PATH_ROOT)/Config.kmk
+
+PROGRAMS += init
+
+init_TEMPLATE = CXX
+init_SOURCES = init.cxx
+
+include $(FILE_KBUILD_SUB_FOOTER)

@@ -1,0 +1,15 @@
+AccessModifierOffset: -2
+AlignTrailingComments: true
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: true
+AllowShortFunctionsOnASingleLine: true
+BreakBeforeBraces: Allman
+ColumnLimit: 80
+IndentWidth: 4
+Language: Cpp
+PointerAlignment: Middle
+Standard: Cpp03
+TabWidth: 4
+SpacesInAngles: true
+SpaceBeforeParens: Always
+SpaceBeforeAssignmentOperators: true

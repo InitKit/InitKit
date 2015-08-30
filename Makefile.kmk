@@ -1,0 +1,6 @@
+SUB_DEPTH = .
+include $(KBUILD_PATH)/subheader.kmk
+
+include $(PATH_CURRENT)/init/Makefile.kmk
+
+include $(FILE_KBUILD_SUB_FOOTER)
