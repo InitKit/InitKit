@@ -5,6 +5,12 @@
 
 typedef struct entry_s
 {
+    enum
+    {
+        SVC,
+        SVCI,
+        PROP,
+    } type;
     union
     {
         struct svc_s * svc;
