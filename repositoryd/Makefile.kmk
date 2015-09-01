@@ -2,9 +2,9 @@ SUB_DEPTH = ..
 include $(KBUILD_PATH)/subheader.kmk
 include $(PATH_ROOT)/Config.kmk
 
-PROGRAMS += init
+PROGRAMS += s16.repositoryd
 
-init_TEMPLATE = CXX
-init_SOURCES = init.c
+s16.repositoryd_TEMPLATE = CXX
+s16.repositoryd_SOURCES = repositoryd.c
 
 include $(FILE_KBUILD_SUB_FOOTER)
