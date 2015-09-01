@@ -36,3 +36,47 @@ int insert_svc (char const * name)
 
     return 0;
 }
+
+void del_property_internal (rd_property_t * delProperty)
+{
+    if (delProperty->value.type == STRING)
+        free (delProperty->value.property_value_u_u.s);
+}
+
+void del_properties_list_internal (rd_property_t * box)
+{
+    rd_property_t * i_tmp, *i_iter;
+    HASH_ITER (hh, box, i_iter, i_tmp)
+    {
+        del_property_internal (i_iter);
+        HASH_DEL (box, i_iter);
+    }
+}
+
+void del_instance_internal (rd_svc_instance_t * delInstance)
+{
+    del_properties_list_internal (delInstance->properties);
+}
+
+void del_svc_internal (rd_svc_t * delSvc)
+{
+    rd_svc_instance_t * i_tmp, *i_iter;
+    HASH_ITER (hh, delSvc->instances, i_iter, i_tmp)
+    {
+        del_instance_internal (i_iter);
+    }
+    del_properties_list_internal (delSvc->properties);
+    HASH_CLEAR (hh, delSvc->instances);
+    free (delSvc->name);
+}
+
+int delete_svc (svc_id_t id)
+{
+    rd_svc_t * delSvc = rd_svc_find_id (RD.services, &id);
+
+    if (!delSvc)
+        return 1;
+
+    del_svc_internal (delSvc);
+    HASH_DEL (RD.services, delSvc);
+}

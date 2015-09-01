@@ -20,5 +20,6 @@ gen_find_id_wrapper_proto (rd_svc);
 gen_find_name_wrapper_proto (rd_svc);
 
 int insert_svc (char const * name);
+int delete_svc (svc_id_t id);
 
 #endif

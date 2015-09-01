@@ -18,6 +18,7 @@ typedef struct rd_svc_instance_s
 {
     unsigned int id;
     char * name;
+    struct rd_property_s * properties;
 
     unsigned int svc_id;
     UT_hash_handle hh;
@@ -27,12 +28,7 @@ typedef struct rd_property_s
 {
     unsigned int id; /* uthash key */
     char * name;     /* key, but not uthash key */
-    property_type_t type;
-    union
-    {
-        int i;
-        char * s;
-    }; /* value */
+    property_value_t value;
 
     property_parent_type_t parent_type;
     unsigned int parent_id;

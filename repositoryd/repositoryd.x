@@ -59,5 +59,6 @@ program S16_REPOSITORYD_PROG
     version ADD_VERS 
     {
         int insert_service(string) = 1;
+        int delete_service(svc_id_t) = 2;
     } = 1;
 } = 0x16147123;
