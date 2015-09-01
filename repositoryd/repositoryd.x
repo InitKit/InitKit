@@ -1,6 +1,8 @@
+typedef unsigned long svc_id_t;
+
 struct svc_s
 {
-    unsigned long id;
+    svc_id_t id;
     char * name;
     struct property_s properties<>;
     struct svc_instance_s instances<>;
@@ -11,7 +13,7 @@ struct svc_instance_s
     unsigned int id;
     char * name;
 
-    unsigned int svc_id;
+    svc_id_t svc_id;
 };
 
 enum property_type_e
