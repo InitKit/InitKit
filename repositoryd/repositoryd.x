@@ -63,5 +63,6 @@ program S16_REPOSITORYD_PROG
     {
         int insert_service(string) = 1;
         int delete_service(svc_id_t) = 2;
+        rpc_svc_t retrieve_service(svc_id_t) = 3;
     } = 1;
 } = 0x16147123;
