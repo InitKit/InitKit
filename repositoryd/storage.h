@@ -5,8 +5,8 @@
 
 typedef struct svc_s
 {
+    unsigned long id;
     char * name;
-    unsigned int id; /* used by subordinate structures */
     struct property_s * properties;
     struct svc_instance_s * instances;
 

@@ -1,7 +1,9 @@
 #include <stdio.h>
 
-#include "storage.h"
+#include "internal.h"
 #include "s16.h"
+
+repositoryd_t RD;
 
 int main (int argc, char * argv[])
 {
