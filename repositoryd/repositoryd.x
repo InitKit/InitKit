@@ -1,14 +1,14 @@
 typedef unsigned long svc_id_t;
 
-struct svc_s
+struct rpc_svc_s
 {
     svc_id_t id;
     char * name;
-    struct property_s properties<>;
-    struct svc_instance_s instances<>;
+    struct rpc_property_s properties<>;
+    struct rpc_svc_instance_s instances<>;
 };
 
-struct svc_instance_s
+struct rpc_svc_instance_s
 {
     unsigned int id;
     char * name;
@@ -43,7 +43,7 @@ enum property_parent_type_e
 
 typedef enum property_parent_type_e property_parent_type_t;
 
-struct property_s
+struct rpc_property_s
 {
     unsigned int id; /* uthash key */
     string name<>;     /* key, but not uthash key */
@@ -52,7 +52,7 @@ struct property_s
     unsigned int parent_id;
 };
 
-typedef struct svc_s svc_t;
+typedef struct rpc_svc_s rpc_svc_t;
 
 program S16_REPOSITORYD_PROG 
 {
