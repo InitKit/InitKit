@@ -12,6 +12,9 @@
 gen_find_id_wrapper_proto (svc);
 gen_find_name_wrapper_proto (svc);
 
+CLIENT * s16db_context_create ();
+void s16db_context_destroy (CLIENT * clnt);
+
 void destroy_property (property_t * delProperty);
 void destroy_properties_list (property_t * box);
 void destroy_instance (svc_instance_t * delInstance);

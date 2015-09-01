@@ -59,7 +59,7 @@ typedef struct rpc_svc_s rpc_svc_t;
 
 program S16_REPOSITORYD_PROG 
 {
-    version ADD_VERS 
+    version S16_REPOSITORYD_V1
     {
         int insert_service(string) = 1;
         int delete_service(svc_id_t) = 2;
