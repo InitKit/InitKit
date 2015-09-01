@@ -6,6 +6,24 @@ PROGRAMS += s16.repositoryd
 
 s16.repositoryd_TEMPLATE = CXX
 s16.repositoryd_LIBS = $(libuthash_1_TARGET)
-s16.repositoryd_SOURCES = repositoryd.c object.c
+s16.repositoryd_SOURCES = repositoryd.c object.c rd_xdr.c rd_svc.c
+s16.repositoryd_CLEAN += $(PATH_ROOT)/repositoryd/rd_xdr.c \
+    $(PATH_ROOT)/repositoryd/rd_svc.c \
+    $(PATH_ROOT)/hdr/repositoryd_rpc.h
+
+$(PATH_SUB_CURRENT)/rd_xdr.c: $(PATH_ROOT)/hdr/repositoryd_rpc.h
+	@printf " RPCGEN(XDR) \t$(@)\n"
+	rpcgen -C -N -c $(PATH_ROOT)/repositoryd/repositoryd.x -o $@.pre && \
+	sed  's/.h"/_rpc.h"/' $(@).pre > $(@) && rm $(@).pre
+
+$(PATH_SUB_CURRENT)/rd_svc.c:
+	@printf " RPCGEN(SVC) \t$(@)"
+	@rpcgen -C -N -m $(PATH_ROOT)/repositoryd/repositoryd.x -o $@.pre && \
+	sed  's/.h"/_rpc.h"/' $(@).pre > $(@) && rm $(@).pre
+
+$(PATH_ROOT)/hdr/repositoryd_rpc.h: repositoryd/repositoryd.x
+	@printf " RPCGEN(H) \t$(@)\n"
+	@rpcgen -C -N -h $< > $@
+
 
 include $(FILE_KBUILD_SUB_FOOTER)
