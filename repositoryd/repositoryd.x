@@ -25,7 +25,7 @@ enum property_type_e
 
 typedef enum property_type_e property_type_t;
 
-union property_value_u switch (property_type_t type)
+union pval switch (property_type_t type)
 {
 case NUMBER:
     int i;
@@ -33,7 +33,7 @@ case STRING:
     string s<>;
 };
 
-typedef union property_value_u property_value_t;
+typedef union pval pval_t;
 
 enum property_parent_type_e
 {
@@ -48,7 +48,7 @@ struct rpc_property_s
 {
     unsigned int id; /* uthash key */
     string name<>;     /* key, but not uthash key */
-    property_value_t value;
+    pval_t value;
 
     unsigned int parent_id;
 };

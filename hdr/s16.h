@@ -28,7 +28,7 @@ typedef struct property_s
 {
     unsigned int id; /* uthash key */
     char * name;     /* key, but not uthash key */
-    property_value_t value;
+    pval_t value;
 
     property_parent_type_t parent_type;
     unsigned int parent_id;

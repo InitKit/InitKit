@@ -8,11 +8,9 @@ rpc_property_t property_to_rpc_property (property_t * prop)
     newRpc_property.name = strdup (prop->name);
     newRpc_property.value.type = prop->value.type;
     if (prop->value.type == STRING)
-        newRpc_property.value.property_value_u_u.s =
-            strdup (prop->value.property_value_u_u.s);
+        newRpc_property.value.pval_u.s = strdup (prop->value.pval_u.s);
     else
-        newRpc_property.value.property_value_u_u.i =
-            prop->value.property_value_u_u.i;
+        newRpc_property.value.pval_u.i = prop->value.pval_u.i;
 
     return newRpc_property;
 }
@@ -77,10 +75,9 @@ property_t * rpc_property_to_property (rpc_property_t * rprop)
     newProp->id = rprop->id;
     newProp->name = strdup (rprop->name);
     if (rprop->value.type == STRING)
-        newProp->value.property_value_u_u.s =
-            strdup (rprop->value.property_value_u_u.s);
+        newProp->value.pval_u.s = strdup (rprop->value.pval_u.s);
     else
-        newProp->value.property_value_u_u.i = rprop->value.property_value_u_u.i;
+        newProp->value.pval_u.i = rprop->value.pval_u.i;
 
     return newProp;
 }

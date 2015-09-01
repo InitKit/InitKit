@@ -25,7 +25,7 @@ gen_find_name_wrapper (svc);
 void destroy_property (property_t * delProperty)
 {
     if (delProperty->value.type == STRING)
-        free (delProperty->value.property_value_u_u.s);
+        free (delProperty->value.pval_u.s);
     free (delProperty);
 }
 
