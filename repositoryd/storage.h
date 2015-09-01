@@ -2,49 +2,41 @@
 #define _STORAGE_H_
 
 #include "uthash.h"
+#include "repositoryd_rpc.h"
 
-typedef struct svc_s
+typedef struct rd_svc_s
 {
     unsigned long id;
     char * name;
-    struct property_s * properties;
-    struct svc_instance_s * instances;
+    struct rd_property_s * properties;
+    struct rd_svc_instance_s * instances;
 
     UT_hash_handle hh;
-} svc_t;
+} rd_svc_t;
 
-typedef struct svc_instance_s
+typedef struct rd_svc_instance_s
 {
     unsigned int id;
     char * name;
 
     unsigned int svc_id;
     UT_hash_handle hh;
-} svc_instance_t;
+} rd_svc_instance_t;
 
-typedef struct property_s
+typedef struct rd_property_s
 {
     unsigned int id; /* uthash key */
     char * name;     /* key, but not uthash key */
-    enum
-    {
-        NUMBER,
-        STRING
-    } type;
+    property_type_t type;
     union
     {
         int i;
         char * s;
     }; /* value */
 
-    enum
-    {
-        SVC,
-        SVCI,
-        PROP,
-    } parent_type;
+    property_parent_type_t parent_type;
     unsigned int parent_id;
     UT_hash_handle hh;
-} property_t;
+} rd_property_t;
 
 #endif
