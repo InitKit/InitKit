@@ -5,6 +5,7 @@
 
 typedef struct entry_s
 {
+    unsigned int id;
     enum
     {
         SVC,
@@ -22,20 +23,17 @@ typedef struct entry_s
 
 typedef struct svc_s
 {
-    unsigned int id;
     char * name;
 } svc_t;
 
 typedef struct svc_instance_s
 {
-    unsigned int id;
     unsigned int svc_id;
     char * name;
 } svc_instance_t;
 
 typedef struct property_s
 {
-    unsigned int id;
     unsigned int parent_id;
     enum
     {
