@@ -37,37 +37,41 @@ int insert_svc (char const * name)
     return 0;
 }
 
-void del_property_internal (rd_property_t * delProperty)
+void destroy_property (rd_property_t * delProperty)
 {
     if (delProperty->value.type == STRING)
         free (delProperty->value.property_value_u_u.s);
+    free (delProperty);
 }
 
-void del_properties_list_internal (rd_property_t * box)
+void destroy_properties_list (rd_property_t * box)
 {
     rd_property_t * i_tmp, *i_iter;
     HASH_ITER (hh, box, i_iter, i_tmp)
     {
-        del_property_internal (i_iter);
+        destroy_property (i_iter);
         HASH_DEL (box, i_iter);
     }
 }
 
-void del_instance_internal (rd_svc_instance_t * delInstance)
+void destroy_instance (rd_svc_instance_t * delInstance)
 {
-    del_properties_list_internal (delInstance->properties);
+    destroy_properties_list (delInstance->properties);
+    free (delInstance->name);
+    free (delInstance);
 }
 
-void del_svc_internal (rd_svc_t * delSvc)
+void destroy_svc (rd_svc_t * delSvc)
 {
     rd_svc_instance_t * i_tmp, *i_iter;
     HASH_ITER (hh, delSvc->instances, i_iter, i_tmp)
     {
-        del_instance_internal (i_iter);
+        destroy_instance (i_iter);
     }
-    del_properties_list_internal (delSvc->properties);
+    destroy_properties_list (delSvc->properties);
     HASH_CLEAR (hh, delSvc->instances);
     free (delSvc->name);
+    free (delSvc);
 }
 
 int delete_svc (svc_id_t id)
@@ -77,6 +81,6 @@ int delete_svc (svc_id_t id)
     if (!delSvc)
         return 1;
 
-    del_svc_internal (delSvc);
+    destroy_svc (delSvc);
     HASH_DEL (RD.services, delSvc);
 }
