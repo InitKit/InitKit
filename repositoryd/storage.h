@@ -15,8 +15,8 @@ typedef struct svc_s
 
 typedef struct svc_instance_s
 {
-    char * name;
     unsigned int id;
+    char * name;
 
     unsigned int svc_id;
     UT_hash_handle hh;
@@ -24,7 +24,8 @@ typedef struct svc_instance_s
 
 typedef struct property_s
 {
-    unsigned int id;
+    unsigned int id; /* uthash key */
+    char * name;     /* key, but not uthash key */
     enum
     {
         NUMBER,
@@ -34,7 +35,7 @@ typedef struct property_s
     {
         int i;
         char * s;
-    };
+    }; /* value */
 
     enum
     {
