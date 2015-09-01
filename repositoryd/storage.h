@@ -3,38 +3,28 @@
 
 #include "uthash.h"
 
-typedef struct entry_s
-{
-    unsigned int id;
-    enum
-    {
-        SVC,
-        SVCI,
-        PROP,
-    } type;
-    union
-    {
-        struct svc_s * svc;
-        struct svc_instance_s * svci;
-        struct property_s * prop;
-    };
-    UT_hash_handle hh;
-} entry_t;
-
 typedef struct svc_s
 {
     char * name;
+    unsigned int id; /* used by subordinate structures */
+    struct property_s * properties;
+    struct svc_instance_s * instances;
+
+    UT_hash_handle hh;
 } svc_t;
 
 typedef struct svc_instance_s
 {
-    unsigned int svc_id;
     char * name;
+    unsigned int id;
+
+    unsigned int svc_id;
+    UT_hash_handle hh;
 } svc_instance_t;
 
 typedef struct property_s
 {
-    unsigned int parent_id;
+    unsigned int id;
     enum
     {
         NUMBER,
@@ -44,7 +34,16 @@ typedef struct property_s
     {
         int i;
         char * s;
-    } val;
+    };
+
+    enum
+    {
+        SVC,
+        SVCI,
+        PROP,
+    } parent_type;
+    unsigned int parent_id;
+    UT_hash_handle hh;
 } property_t;
 
 #endif
