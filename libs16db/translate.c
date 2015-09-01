@@ -1,5 +1,9 @@
 #include "s16db.h"
 
+#define RETURN_IF_NULL(val)                                                    \
+    if (val == NULL)                                                           \
+        return NULL;
+
 rpc_property_t property_to_rpc_property (property_t * prop)
 {
     rpc_property_t newRpc_property;
@@ -71,7 +75,9 @@ rpc_svc_t * svc_to_rpc_svc (svc_t * svc)
 
 property_t * rpc_property_to_property (rpc_property_t * rprop)
 {
+    RETURN_IF_NULL (rprop);
     property_t * newProp = malloc (sizeof (property_t));
+
     newProp->id = rprop->id;
     newProp->name = strdup (rprop->name);
     if (rprop->value.type == STRING)
@@ -85,6 +91,7 @@ property_t * rpc_property_to_property (rpc_property_t * rprop)
 property_t * rpc_property_array_to_property_list (rpc_property_t * rplist[],
                                                   unsigned int length)
 {
+    RETURN_IF_NULL (rplist);
     register unsigned rp_index;
     property_t * box = 0;
 
@@ -96,7 +103,9 @@ property_t * rpc_property_array_to_property_list (rpc_property_t * rplist[],
 
 svc_instance_t * rpc_svc_instance_to_svc_instance (rpc_svc_instance_t * rinst)
 {
+    RETURN_IF_NULL (rinst);
     svc_instance_t * newInst = malloc (sizeof (svc_instance_t));
+
     newInst->id = rinst->id;
     newInst->name = strdup (rinst->name);
     newInst->svc_id = rinst->svc_id;
@@ -108,6 +117,7 @@ svc_instance_t * rpc_svc_instance_to_svc_instance (rpc_svc_instance_t * rinst)
 
 svc_t * rpc_svc_to_svc (rpc_svc_t * rsvc)
 {
+    RETURN_IF_NULL (rsvc);
     register unsigned i_index;
     svc_t * newSvc = malloc (sizeof (svc_instance_t));
 
