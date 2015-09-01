@@ -9,9 +9,9 @@
         return i;                                                              \
     }
 
-gen_find_int_wrapper (svc)
+gen_find_int_wrapper (svc);
 
-    int insert_svc (char const * name)
+int insert_svc (char const * name)
 {
     svc_t * newSvc = malloc (sizeof (svc_t)), *i;
     unsigned long rnum;
