@@ -1,0 +1,10 @@
+SUB_DEPTH = ../..
+include $(KBUILD_PATH)/subheader.kmk
+include $(PATH_ROOT)/Config.kmk
+
+LIBRARIES += libuthash
+
+libuthash_TEMPLATE = CXX
+libuthash_SOURCES = libut.c utmm.c utvector.c
+
+include $(FILE_KBUILD_SUB_FOOTER)

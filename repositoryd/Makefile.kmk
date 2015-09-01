@@ -5,6 +5,7 @@ include $(PATH_ROOT)/Config.kmk
 PROGRAMS += s16.repositoryd
 
 s16.repositoryd_TEMPLATE = CXX
+s16.repositoryd_LIBS = $(libuthash_1_TARGET)
 s16.repositoryd_SOURCES = repositoryd.c
 
 include $(FILE_KBUILD_SUB_FOOTER)
