@@ -3,7 +3,7 @@ typedef unsigned long svc_id_t;
 struct rpc_svc_s
 {
     svc_id_t id;
-    char * name;
+    string name<>;
     struct rpc_property_s properties<>;
     struct rpc_svc_instance_s instances<>;
 };
@@ -11,7 +11,7 @@ struct rpc_svc_s
 struct rpc_svc_instance_s
 {
     unsigned int id;
-    char * name;
+    string name<>;
     struct rpc_property_s properties<>;
 
     svc_id_t svc_id;
@@ -63,7 +63,10 @@ program S16_REPOSITORYD_PROG
 {
     version S16_REPOSITORYD_V1
     {
-        int svc_insert(string) = 1;
+        /* inserts a service
+         * string => service name
+         * returns service number or 0 for fail */
+        svc_id_t svc_insert(string) = 1;
         int svc_delete(svc_id_t) = 2;
         rpc_svc_t svc_retrieve(svc_id_t) = 3;
         rpc_svc_array_t svc_retrieve_all() = 4;

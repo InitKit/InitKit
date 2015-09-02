@@ -1,0 +1,10 @@
+SUB_DEPTH = ../..
+include $(KBUILD_PATH)/subheader.kmk
+include $(PATH_ROOT)/Config.kmk
+
+LIBRARIES += libini
+
+libini_TEMPLATE = CXX
+libini_SOURCES = ini.c
+
+include $(FILE_KBUILD_SUB_FOOTER)

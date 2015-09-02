@@ -3,7 +3,7 @@
 #include "translate.h"
 
 #define RETURN_OR_FAIL(call)                                                   \
-    int * result = call;                                                       \
+    long * result = (long *)call;                                              \
     if (result == NULL)                                                        \
     {                                                                          \
         clnt_perror (clnt, "local");                                           \

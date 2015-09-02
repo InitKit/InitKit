@@ -5,9 +5,9 @@
 #include "translate.h"
 #include "internal.h"
 
-int * svc_insert_1_svc (char * str, struct svc_req * req)
+svc_id_t * svc_insert_1_svc (char * str, struct svc_req * req)
 {
-    static int result;
+    static svc_id_t result;
     result = insert_svc (str);
     return &result;
 }

@@ -1,4 +1,5 @@
 SUB_DEPTH = .
+BUILD_TYPE ?= debug
 include $(KBUILD_PATH)/subheader.kmk
 
 include $(PATH_CURRENT)/external/Makefile.kmk

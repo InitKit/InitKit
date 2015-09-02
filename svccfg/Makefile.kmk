@@ -6,6 +6,6 @@ PROGRAMS += svccfg
 
 svccfg_TEMPLATE = CXX
 svccfg_LIBS = $(libuthash_1_TARGET) $(libs16_1_TARGET) $(libs16db_1_TARGET)
-svccfg_SOURCES = svccfg.c
+svccfg_SOURCES = svccfg.c systemd-unit.c
 
 include $(FILE_KBUILD_SUB_FOOTER)

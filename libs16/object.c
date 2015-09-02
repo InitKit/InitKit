@@ -25,6 +25,43 @@ gen_find_name_wrapper (svc);
 gen_find_id_wrapper (property);
 gen_find_name_wrapper (property);
 
+void svc_object_set_property_string (svc_t * Svc, const char * key,
+                                     const char * value)
+{
+    if ((!key) | (!Svc))
+        return;
+    DestroyPropIfExists (Svc->properties, key);
+    svc_id_t rnum;
+    property_t * newProp = calloc (1, sizeof (property_t));
+
+    newProp->name = strdup (key);
+    while (property_find_id (Svc->properties, &rnum))
+        rnum = rand ();
+    newProp->id = rnum;
+    newProp->value.type = STRING;
+    newProp->value.pval_u.s = strdup (value);
+
+    HASH_ADD_INT (Svc->properties, id, newProp);
+}
+
+void svc_object_set_property_int (svc_t * Svc, const char * key, long value)
+{
+    if ((!key) | (!Svc))
+        return;
+    DestroyPropIfExists (Svc->properties, key);
+    svc_id_t rnum;
+    property_t * newProp = calloc (1, sizeof (property_t));
+
+    newProp->name = strdup (key);
+    while (property_find_id (Svc->properties, &rnum))
+        rnum = rand ();
+    newProp->id = rnum;
+    newProp->value.type = NUMBER;
+    newProp->value.pval_u.i = value;
+
+    HASH_ADD_INT (Svc->properties, id, newProp);
+}
+
 void destroy_property (property_t * delProperty)
 {
     if (delProperty->value.type == STRING)
