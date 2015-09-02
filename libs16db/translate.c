@@ -28,7 +28,7 @@ rpc_property_t * property_list_to_rpc_property_array (property_t * box)
 
     HASH_ITER (hh, box, p_iter, p_tmp)
     {
-        printf("%s %d\n", p_iter->name, HASH_COUNT(box));
+        printf ("%s %d\n", p_iter->name, HASH_COUNT (box));
         newRpc_plist[p_index++] = property_to_rpc_property (p_iter);
     }
 
@@ -119,7 +119,7 @@ property_t * rpc_property_array_to_property_list (rpc_property_t rplist[],
 
     for (rp_index = 0; rp_index < length; rp_index++)
     {
-        printf("Add: %s\n", rplist[rp_index].name);
+        printf ("Add: %s\n", rplist[rp_index].name);
         HASH_ADD_INT (box, id, rpc_property_to_property (&rplist[rp_index]));
     }
 

@@ -69,15 +69,14 @@ int main (int argc, char * argv[])
         if (!newSvc)
             exit (1);
 
-        int ret =s16db_svc_install (clnt, newSvc);
+        int ret = s16db_svc_install (clnt, newSvc);
         printf ("installed manifest for service <%s> %d\n", newSvc->name, ret);
 
-        return 0;
+        // return 0;
 
         break;
     }
     }
-
 
     svc_t * box = s16db_svc_retrieve_all (clnt), *iter, *tmp;
     HASH_ITER (hh, box, iter, tmp)

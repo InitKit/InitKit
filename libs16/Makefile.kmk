@@ -6,7 +6,7 @@ LIBRARIES += libs16
 
 libs16_TEMPLATE = CXX
 libs16_ORDERDEPS = $(PATH_ROOT)/hdr/repositoryd_rpc.h
-libs16_SOURCES = object.c
+libs16_SOURCES = object.c list.c
 libs16_CLEAN += $(PATH_ROOT)/hdr/repositoryd_rpc.h
 
 $(PATH_ROOT)/hdr/repositoryd_rpc.h: repositoryd/repositoryd.x
