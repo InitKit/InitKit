@@ -29,6 +29,7 @@ List_t * List_new ();
 
 void List_add (List_t * n, void * data);
 void List_del (List_t * n, void * data);
+void List_destroy (List_t * n);
 
 static inline long List_count (List_t * n)
 {

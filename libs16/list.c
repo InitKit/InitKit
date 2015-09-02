@@ -83,6 +83,19 @@ unlock:
     mtx_unlock (&n->Lock);
 }
 
+void List_destroy (List_t * n)
+{
+    if (!n)
+        return;
+    for (List_t_ * it = n->List, *tmp; it != NULL; it = tmp)
+    {
+        tmp = it->Link;
+        free (it);
+    }
+    mtx_destroy (&n->Lock);
+    free (n);
+}
+
 List_t_ * List_begin (List_t * n)
 {
     if (!n)

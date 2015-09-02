@@ -85,12 +85,12 @@ void destroy_property (property_t * delProperty)
 
 void destroy_properties_list (prop_list box)
 {
-    /*property_t * i_tmp, *i_iter;
-    HASH_ITER (hh, box, i_iter, i_tmp)
+    for (prop_list_iterator it = prop_list_begin (box); it != NULL;
+         prop_list_iterator_next (&it))
     {
-        HASH_DEL (box, i_iter);
-        destroy_property (i_iter);
-    }*/
+        destroy_property (it->val);
+    }
+    List_destroy (box);
 }
 
 void destroy_instance (svc_instance_t * delInstance)
@@ -102,15 +102,23 @@ void destroy_instance (svc_instance_t * delInstance)
 
 void destroy_svc (svc_t * delSvc)
 {
-    svc_instance_t * i_tmp, *i_iter;
-    // HASH_ITER (hh, delSvc->instances, i_iter, i_tmp)
+    for (inst_list_iterator it = inst_list_begin (delSvc->instances);
+         it != NULL; inst_list_iterator_next (&it))
     {
-        // destroy_instance (i_iter);
+        destroy_instance (it->val);
     }
+    List_destroy (delSvc->instances);
     destroy_properties_list (delSvc->properties);
-    // HASH_CLEAR (hh, delSvc->instances);
     free (delSvc->name);
     free (delSvc);
 }
 
-void destroy_svcs_list (svc_list box) {}
+void destroy_svcs_list (svc_list box)
+{
+    for (svc_list_iterator it = svc_list_begin (box); it != NULL;
+         svc_list_iterator_next (&it))
+    {
+        destroy_svc (it->val);
+    }
+    List_destroy (box);
+}
