@@ -3,6 +3,7 @@ include $(KBUILD_PATH)/subheader.kmk
 
 include $(PATH_CURRENT)/external/Makefile.kmk
 
+include $(PATH_CURRENT)/libs16/Makefile.kmk
 include $(PATH_CURRENT)/libs16db/Makefile.kmk
 
 include $(PATH_CURRENT)/init/Makefile.kmk

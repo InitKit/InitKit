@@ -5,7 +5,8 @@ include $(PATH_ROOT)/Config.kmk
 PROGRAMS += s16.repositoryd
 
 s16.repositoryd_TEMPLATE = CXX
-s16.repositoryd_LIBS = $(libuthash_1_TARGET) $(libs16db_1_TARGET)
+s16.repositoryd_INCS = $(PATH_ROOT)/libs16db
+s16.repositoryd_LIBS = $(libuthash_1_TARGET) $(libs16_1_TARGET) $(libs16db_1_TARGET)
 s16.repositoryd_SOURCES = repositoryd.c object.c interface.c rd_svc.c
 s16.repositoryd_CLEAN += $(PATH_ROOT)/repositoryd/rd_svc.c \
     $(PATH_ROOT)/hdr/repositoryd_rpc.h

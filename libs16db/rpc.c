@@ -1,5 +1,6 @@
 #include "repositoryd_rpc.h"
 #include "s16db.h"
+#include "translate.h"
 
 #define RETURN_OR_FAIL(call)                                                   \
     int * result = call;                                                       \

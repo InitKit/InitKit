@@ -1,4 +1,5 @@
 #include "s16.h"
+#include "s16db.h"
 
 #define gen_find_id_wrapper(type)                                              \
     type##_t * type##_find_id (type##_t * box, unsigned long * keyptr)         \
