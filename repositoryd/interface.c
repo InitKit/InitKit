@@ -12,6 +12,13 @@ svc_id_t * svc_insert_1_svc (char * str, struct svc_req * req)
     return &result;
 }
 
+svc_id_t * svc_install_1_svc (rpc_svc_t rsvc, struct svc_req * req)
+{
+    static svc_id_t result;
+    result = install_svc (rpc_svc_to_svc (&rsvc));
+    return &result;
+}
+
 int * svc_delete_1_svc (svc_id_t id, struct svc_req * req)
 {
     static int result;

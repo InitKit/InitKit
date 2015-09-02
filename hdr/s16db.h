@@ -6,7 +6,8 @@
 CLIENT * s16db_context_create ();
 void s16db_context_destroy (CLIENT * clnt);
 
-int s16db_svc_insert (CLIENT * clnt, char const * name);
+svc_id_t s16db_svc_insert (CLIENT * clnt, char const * name);
+svc_id_t s16db_svc_install (CLIENT * clnt, svc_t * svc);
 int s16db_svc_delete (CLIENT * clnt, svc_id_t id);
 svc_t * s16db_svc_retrieve (CLIENT * clnt, svc_id_t id);
 svc_t * s16db_svc_retrieve_all (CLIENT * clnt);

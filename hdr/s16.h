@@ -55,6 +55,7 @@ void destroy_property (property_t * delProperty);
 void destroy_properties_list (property_t * box);
 void destroy_instance (svc_instance_t * delInstance);
 void destroy_svc (svc_t * delSvc);
+void destroy_svcs_list (svc_t * box);
 
 #define DestroyPropIfExists(list, name)                                        \
     property_t * Prop = property_find_name (list, name);                       \

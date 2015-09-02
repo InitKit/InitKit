@@ -10,7 +10,8 @@ typedef struct repositoryd_s
 
 extern repositoryd_t RD;
 
-int insert_svc (char const * name);
+svc_id_t insert_svc (char const * name);
+svc_id_t install_svc (svc_t * svc);
 int delete_svc (svc_id_t id);
 int count_svcs ();
 svc_t * retrieve_all_svcs ();

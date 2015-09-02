@@ -15,7 +15,7 @@
         destroy_svc (Svc);                                                     \
     }
 
-int insert_svc (char const * name)
+svc_id_t insert_svc (char const * name)
 {
     DestroySvcIfExists (RD.services, name);
     svc_t * newSvc = calloc (1, sizeof (svc_t)), *i;
@@ -29,6 +29,18 @@ int insert_svc (char const * name)
     HASH_ADD_INT (RD.services, id, newSvc);
 
     return rnum;
+}
+
+svc_id_t install_svc (svc_t * svc)
+{
+    DestroySvcIfExists (RD.services, svc->name);
+    unsigned long rnum;
+
+    while (svc_find_id (RD.services, &rnum))
+        rnum = rand ();
+    svc->id = rnum;
+
+    HASH_ADD_INT (RD.services, id, svc);
 }
 
 int delete_svc (svc_id_t id)

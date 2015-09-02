@@ -67,10 +67,11 @@ program S16_REPOSITORYD_PROG
          * string => service name
          * returns service number or 0 for fail */
         svc_id_t svc_insert(string) = 1;
-        int svc_delete(svc_id_t) = 2;
-        rpc_svc_t svc_retrieve(svc_id_t) = 3;
-        rpc_svc_array_t svc_retrieve_all() = 4;
-        int svc_set_property_int(svc_id_t, string, hyper) = 5;
-        int svc_set_property_string(svc_id_t, string, string) = 6;
+        svc_id_t svc_install(rpc_svc_t) = 2;
+        int svc_delete(svc_id_t) = 3;
+        rpc_svc_t svc_retrieve(svc_id_t) = 4;
+        rpc_svc_array_t svc_retrieve_all() = 5;
+        int svc_set_property_int(svc_id_t, string, hyper) = 6;
+        int svc_set_property_string(svc_id_t, string, string) = 7;
     } = 1;
 } = 0x16147123;

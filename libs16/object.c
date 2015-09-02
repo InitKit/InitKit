@@ -98,3 +98,13 @@ void destroy_svc (svc_t * delSvc)
     free (delSvc->name);
     free (delSvc);
 }
+
+void destroy_svcs_list (svc_t * box)
+{
+    svc_t * s_tmp, *s_iter;
+    HASH_ITER (hh, box, s_iter, s_tmp)
+    {
+        destroy_svc (s_iter);
+        HASH_DEL (box, s_iter);
+    }
+}

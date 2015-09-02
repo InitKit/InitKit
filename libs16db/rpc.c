@@ -33,9 +33,14 @@ CLIENT * s16db_context_create ()
 
 void s16db_context_destroy (CLIENT * clnt) { clnt_destroy (clnt); }
 
-int s16db_svc_insert (CLIENT * clnt, char const * name)
+svc_id_t s16db_svc_insert (CLIENT * clnt, char const * name)
 {
     RETURN_OR_FAIL (svc_insert_1 ((char *)name, clnt));
+}
+
+svc_id_t s16db_svc_install (CLIENT * clnt, svc_t * svc)
+{
+    RETURN_OR_FAIL (svc_install_1 (svc_to_rpc_svc (svc), clnt));
 }
 
 int s16db_svc_delete (CLIENT * clnt, svc_id_t id)
