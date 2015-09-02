@@ -7,13 +7,25 @@
     if (!Svc)                                                                  \
         return 1;
 
+#define DestroySvcIfExists(list, name)                                         \
+    svc_t * Svc = svc_find_name (list, name);                                  \
+    if (Svc)                                                                   \
+    {                                                                          \
+        HASH_DEL (list, Svc);                                                  \
+        destroy_svc (Svc);                                                     \
+    }
+
 #define DestroyPropIfExists(list, name)                                        \
     property_t * Prop = property_find_name (list, name);                       \
     if (Prop)                                                                  \
-        destroy_property (Prop);
+    {                                                                          \
+        HASH_DEL (list, Prop);                                                 \
+        destroy_property (Prop);                                               \
+    }
 
 int insert_svc (char const * name)
 {
+    DestroySvcIfExists (RD.services, name);
     svc_t * newSvc = calloc (1, sizeof (svc_t)), *i;
     unsigned long rnum;
 

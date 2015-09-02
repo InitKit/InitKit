@@ -26,6 +26,7 @@
 *.exe
 *.out
 *.app
+*.core
 
 # Building
 out/*
