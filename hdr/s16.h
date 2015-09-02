@@ -37,10 +37,10 @@ typedef struct property_s
 } property_t;
 
 #define gen_find_id_wrapper_proto(name, type)                                  \
-    type * name##_find_id (name##_list * box, unsigned long * keyptr);
+    type * name##_find_id (name##_list box, unsigned long keyptr);
 
-#define gen_find_name_wrapper_proto(type)                                      \
-    type * name##_find_name (name##_list * box, char const * name);
+#define gen_find_name_wrapper_proto(name, type)                                \
+    type * name##_find_name (name##_list box, char const * name);
 
 gen_find_id_wrapper_proto (svc, svc_t);
 gen_find_name_wrapper_proto (svc, svc_t);

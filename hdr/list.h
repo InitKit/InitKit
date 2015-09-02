@@ -29,6 +29,16 @@ List_t * List_new ();
 
 void List_add (List_t * n, void * data);
 void List_del (List_t * n, void * data);
+
+inline long List_count (List_t * n)
+{
+    long length = 0;
+    List_t_ * tmp;
+    for (List_t_ * e = n->List; (e) && (tmp = (e)->Link, 1); (e) = tmp)
+        length++;
+    return length;
+}
+
 List_t_ * List_begin (List_t * n);
 void List_iterator_next (List_t_ ** it);
 

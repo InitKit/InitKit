@@ -1,29 +1,35 @@
+#include <stdlib.h>
+#include <string.h>
 #include "s16.h"
 #include "s16db.h"
 
-#define gen_find_id_wrapper(type)                                              \
-    type##_t * type##_find_id (type##_t * box, unsigned long * keyptr)         \
+#define gen_find_id_wrapper(name, type)                                        \
+    type * name##_find_id (name##_list box, unsigned long key)                 \
     {                                                                          \
-        type##_t * i;                                                          \
-        HASH_FIND_INT (box, keyptr, i);                                        \
-        return i;                                                              \
-    }
-
-#define gen_find_name_wrapper(type)                                            \
-    type##_t * type##_find_name (type##_t * box, char const * name)            \
-    {                                                                          \
-        type##_t * i = box;                                                    \
-        for (i; i != NULL; i = i->hh.next)                                     \
-            if (!strcmp (i->name, name))                                       \
-                return i;                                                      \
+        name##_list_iterator * i;                                              \
+        for (i = name##_list_begin (box); i != NULL;                           \
+             name##_list_iterator_next (&i))                                   \
+            if (i->val->id == key)                                             \
+                return i->val;                                                 \
         return 0;                                                              \
     }
 
-gen_find_id_wrapper (svc);
-gen_find_name_wrapper (svc);
+#define gen_find_name_wrapper(Name, type)                                      \
+    type * Name##_find_name (Name##_list box, char const * nam)                \
+    {                                                                          \
+        Name##_list_iterator * i;                                              \
+        for (i = Name##_list_begin (box); i != NULL;                           \
+             Name##_list_iterator_next (&i))                                   \
+            if (!strcmp (i->val->name, nam))                                   \
+                return i->val;                                                 \
+        return 0;                                                              \
+    }
 
-gen_find_id_wrapper (property);
-gen_find_name_wrapper (property);
+gen_find_id_wrapper (svc, svc_t);
+gen_find_name_wrapper (svc, svc_t);
+
+gen_find_id_wrapper (prop, property_t);
+gen_find_name_wrapper (prop, property_t);
 
 void svc_object_set_property_string (svc_t * Svc, const char * key,
                                      const char * value)
@@ -41,7 +47,7 @@ void svc_object_set_property_string (svc_t * Svc, const char * key,
     newProp->value.type = STRING;
     newProp->value.pval_u.s = strdup (value);
 
-    HASH_ADD_INT (Svc->properties, id, newProp);
+    prop_list_add (Svc->properties, newProp);
 }
 
 void svc_object_set_property_int (svc_t * Svc, const char * key, long value)
@@ -59,7 +65,7 @@ void svc_object_set_property_int (svc_t * Svc, const char * key, long value)
     newProp->value.type = NUMBER;
     newProp->value.pval_u.i = value;
 
-    HASH_ADD_INT (Svc->properties, id, newProp);
+    prop_list_add (Svc->properties, newProp);
 }
 
 void destroy_property (property_t * delProperty)
@@ -71,12 +77,12 @@ void destroy_property (property_t * delProperty)
 
 void destroy_properties_list (property_t * box)
 {
-    property_t * i_tmp, *i_iter;
+    /*property_t * i_tmp, *i_iter;
     HASH_ITER (hh, box, i_iter, i_tmp)
     {
         HASH_DEL (box, i_iter);
         destroy_property (i_iter);
-    }
+    }*/
 }
 
 void destroy_instance (svc_instance_t * delInstance)
