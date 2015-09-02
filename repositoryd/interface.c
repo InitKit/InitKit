@@ -21,7 +21,9 @@ int * svc_delete_1_svc (svc_id_t id, struct svc_req * req)
 
 rpc_svc_t * svc_retrieve_1_svc (svc_id_t id, struct svc_req * req)
 {
-    return svc_to_rpc_svc (svc_find_id (RD.services, &id));
+    static rpc_svc_t result;
+    result = svc_to_rpc_svc (svc_find_id (RD.services, &id));
+    return &result;
 }
 
 rpc_svc_array_t * svc_retrieve_all_1_svc (struct svc_req * req)
