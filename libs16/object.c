@@ -74,8 +74,8 @@ void destroy_properties_list (property_t * box)
     property_t * i_tmp, *i_iter;
     HASH_ITER (hh, box, i_iter, i_tmp)
     {
-        destroy_property (i_iter);
         HASH_DEL (box, i_iter);
+        destroy_property (i_iter);
     }
 }
 
@@ -104,7 +104,7 @@ void destroy_svcs_list (svc_t * box)
     svc_t * s_tmp, *s_iter;
     HASH_ITER (hh, box, s_iter, s_tmp)
     {
-        destroy_svc (s_iter);
         HASH_DEL (box, s_iter);
+        destroy_svc (s_iter);
     }
 }
