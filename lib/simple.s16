@@ -1,0 +1,12 @@
+[S16]
+Name=SimpleTest
+Delegate=restartd
+
+[Unit]
+Description=Simple unit for testing S16.
+
+[Restartd]
+Form=exec
+
+[Method]
+Start=lib/sleep.sh

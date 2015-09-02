@@ -35,14 +35,6 @@ int main (int argc, char * argv[])
         goto mode_unknown;
 
     clnt = s16db_context_create ();
-    s16db_svc_insert (clnt, "Hello");
-
-    svc_t * box = s16db_svc_retrieve_all (clnt), *iter, *tmp;
-    HASH_ITER (hh, box, iter, tmp)
-    {
-        printf ("ID: %d Service: %s\n", iter->id, iter->name);
-    }
-
     optind++;
 
     switch (mode)
@@ -77,13 +69,20 @@ int main (int argc, char * argv[])
         if (!newSvc)
             exit (1);
 
-        s16db_svc_install (clnt, newSvc);
-        printf ("installed manifest <%s>");
+        int ret =s16db_svc_install (clnt, newSvc);
+        printf ("installed manifest for service <%s> %d\n", newSvc->name, ret);
 
         return 0;
 
         break;
     }
+    }
+
+
+    svc_t * box = s16db_svc_retrieve_all (clnt), *iter, *tmp;
+    HASH_ITER (hh, box, iter, tmp)
+    {
+        printf ("ID: %d Service: %s\n", iter->id, iter->name);
     }
 
     s16db_context_destroy (clnt);

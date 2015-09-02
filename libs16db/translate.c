@@ -28,6 +28,7 @@ rpc_property_t * property_list_to_rpc_property_array (property_t * box)
 
     HASH_ITER (hh, box, p_iter, p_tmp)
     {
+        printf("%s %d\n", p_iter->name, HASH_COUNT(box));
         newRpc_plist[p_index++] = property_to_rpc_property (p_iter);
     }
 
@@ -63,8 +64,10 @@ rpc_svc_t svc_to_rpc_svc (svc_t * svc)
         malloc (i_cnt * sizeof (rpc_svc_instance_t));
 
     HASH_ITER (hh, svc->instances, i_iter, i_tmp)
-    newRpc_svc.instances.instances_val[i_index++] =
-        svc_instance_to_rpc_svc_instance (i_iter);
+    {
+        newRpc_svc.instances.instances_val[i_index++] =
+            svc_instance_to_rpc_svc_instance (i_iter);
+    }
 
     newRpc_svc.properties.properties_len = HASH_COUNT (svc->properties);
     newRpc_svc.properties.properties_val =
@@ -90,25 +93,21 @@ rpc_svc_t * svc_list_to_rpc_svc_array (svc_t * box)
 property_t * rpc_property_to_property (rpc_property_t * rprop)
 {
     RETURN_IF_NULL (rprop);
-    property_t * newProp = malloc (sizeof (property_t));
+    property_t * newProp = calloc (1, sizeof (property_t));
 
     newProp->id = rprop->id;
     newProp->name = strdup (rprop->name);
-    free (rprop->name);
     if (rprop->value.type == STRING)
     {
         newProp->value.pval_u.s = strdup (rprop->value.pval_u.s);
-        free (rprop->value.pval_u.s);
     }
     else
         newProp->value.pval_u.i = rprop->value.pval_u.i;
 
-    free (rprop);
-
     return newProp;
 }
 
-property_t * rpc_property_array_to_property_list (rpc_property_t * rplist[],
+property_t * rpc_property_array_to_property_list (rpc_property_t rplist[],
                                                   unsigned int length)
 {
     RETURN_IF_NULL (rplist);
@@ -119,9 +118,10 @@ property_t * rpc_property_array_to_property_list (rpc_property_t * rplist[],
         return box;
 
     for (rp_index = 0; rp_index < length; rp_index++)
-        HASH_ADD_INT (box, id, rpc_property_to_property (rplist[rp_index]));
-
-    free (*rplist);
+    {
+        printf("Add: %s\n", rplist[rp_index].name);
+        HASH_ADD_INT (box, id, rpc_property_to_property (&rplist[rp_index]));
+    }
 
     return box;
 }
@@ -129,17 +129,13 @@ property_t * rpc_property_array_to_property_list (rpc_property_t * rplist[],
 svc_instance_t * rpc_svc_instance_to_svc_instance (rpc_svc_instance_t * rinst)
 {
     RETURN_IF_NULL (rinst);
-    svc_instance_t * newInst = malloc (sizeof (svc_instance_t));
+    svc_instance_t * newInst = calloc (1, sizeof (svc_instance_t));
 
     newInst->id = rinst->id;
     newInst->name = strdup (rinst->name);
-    free (rinst->name);
     newInst->svc_id = rinst->svc_id;
     newInst->properties = rpc_property_array_to_property_list (
-        &rinst->properties.properties_val, rinst->properties.properties_len);
-
-    free (rinst->properties.properties_val);
-    free (rinst);
+        rinst->properties.properties_val, rinst->properties.properties_len);
 
     return newInst;
 }
@@ -148,14 +144,12 @@ svc_t * rpc_svc_to_svc (rpc_svc_t * rsvc)
 {
     RETURN_IF_NULL (rsvc);
     register unsigned i_index;
-    svc_t * newSvc = malloc (sizeof (svc_instance_t));
+    svc_t * newSvc = calloc (1, sizeof (svc_instance_t));
 
     newSvc->id = rsvc->id;
     newSvc->name = strdup (rsvc->name);
-    free (rsvc->name);
     newSvc->properties = rpc_property_array_to_property_list (
-        &rsvc->properties.properties_val, rsvc->properties.properties_len);
-    free (rsvc->properties.properties_val);
+        rsvc->properties.properties_val, rsvc->properties.properties_len);
     newSvc->instances = 0;
 
     if (rsvc->instances.instances_len > 0)
@@ -165,7 +159,6 @@ svc_t * rpc_svc_to_svc (rpc_svc_t * rsvc)
                           rpc_svc_instance_to_svc_instance (
                               &rsvc->instances.instances_val[i_index]));
     }
-    free (rsvc->instances.instances_val);
 
     return newSvc;
 }
@@ -185,8 +178,6 @@ svc_t * rpc_svc_array_to_svc_list (rpc_svc_array_t * svcArray)
             rpc_svc_to_svc (&svcArray->rpc_svc_array_t_val[rs_index]);
         HASH_ADD_INT (box, id, newSvc);
     }
-
-    free (svcArray->rpc_svc_array_t_val);
 
     return box;
 }

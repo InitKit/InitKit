@@ -18,8 +18,10 @@ int parse_config_line (void * user, const char * section, const char * name,
     svc_object_set_property_string (svc, key, value);
     free (key);
 
-    return 0;
+    return 1;
 }
+
+#define SetOrExit(Name) if (!property_find_name(new_svc->properties, Name)) { OnError("error: %s not set", #Name); }
 
 svc_t * parse_unit (int is_systemd, char const * path)
 {
@@ -37,7 +39,17 @@ svc_t * parse_unit (int is_systemd, char const * path)
     }
 
     if (is_systemd)
-        svc_object_set_property_string (new_svc, "s16.restarter", "systemd");
+    {
+        new_svc->name=strdup(path);
+        svc_object_set_property_string (new_svc, "S16.Delegate", "systemd");
+    }
+    else
+    {
+        SetOrExit("S16.Delegate");
+        SetOrExit("S16.Name")
+        new_svc->name = strdup(property_find_name(new_svc->properties, "S16.Name")->value.pval_u.s);
+    }
+
 
     return new_svc;
 
