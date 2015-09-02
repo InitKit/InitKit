@@ -8,14 +8,8 @@ CLIENT * clnt;
 
 typedef enum
 {
-    IMPORT_SYSTEMD,
+    IMPORT,
 } svccfg_mode;
-
-void unexpected_option (const char * opt)
-{
-    fprintf (stderr, "svccfg: unexpected option `%s'\n", opt);
-    exit (1);
-}
 
 void eerror (const char * str)
 {
@@ -35,8 +29,8 @@ int main (int argc, char * argv[])
         exit (1);
     }
 
-    if (!strcasecmp (argv[1], "import-systemd"))
-        mode = IMPORT_SYSTEMD;
+    if (!strcasecmp (argv[1], "import"))
+        mode = IMPORT;
     else
         goto mode_unknown;
 
@@ -53,20 +47,25 @@ int main (int argc, char * argv[])
 
     switch (mode)
     {
-    case IMPORT_SYSTEMD:
+    case IMPORT:
     {
+        int is_systemd = 0;
         const char * manifest = 0;
         svc_t * newSvc;
 
-        while ((c = getopt (argc, argv, "m:")) != -1)
+        while ((c = getopt (argc, argv, "m:s")) != -1)
         {
             switch (c)
             {
             case 'm':
                 manifest = optarg;
                 break;
+            case 's':
+                is_systemd = 1;
+                break;
+
             case '?':
-                unexpected_option (optarg);
+                exit (1);
                 break;
             }
         }
@@ -74,7 +73,7 @@ int main (int argc, char * argv[])
         if (!manifest)
             eerror ("import manifest mode, but no manifest specified\n");
 
-        newSvc = parse_systemd_unit (manifest);
+        newSvc = parse_unit (is_systemd, manifest);
         if (!newSvc)
             exit (1);
 

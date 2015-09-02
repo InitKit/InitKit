@@ -5,8 +5,8 @@
     fprintf (stderr, __VA_ARGS__);                                             \
     goto on_error;
 
-int parse_systemd_line (void * user, const char * section, const char * name,
-                        const char * value)
+int parse_config_line (void * user, const char * section, const char * name,
+                       const char * value)
 {
     char * key;
     svc_t * svc = user;
@@ -21,20 +21,23 @@ int parse_systemd_line (void * user, const char * section, const char * name,
     return 0;
 }
 
-svc_t * parse_systemd_unit (char const * path)
+svc_t * parse_unit (int is_systemd, char const * path)
 {
     svc_t * new_svc = calloc (1, sizeof (svc_t));
-    int inierror = ini_parse (path, parse_systemd_line, new_svc);
+    int inierror = ini_parse (path, parse_config_line, new_svc);
 
     if (inierror > 0)
     {
-        OnError ("Error: failed parsing line %d of systemd unit file %s\n",
-                 inierror, path);
+        OnError ("Error: failed parsing line %d of unit file %s\n", inierror,
+                 path);
     }
     else if (inierror < 0)
     {
-        OnError ("Error: failed to read systemd unit file %s\n", path);
+        OnError ("Error: failed to read unit file %s\n", path);
     }
+
+    if (is_systemd)
+        svc_object_set_property_string (new_svc, "s16.restarter", "systemd");
 
     return new_svc;
 
