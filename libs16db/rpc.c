@@ -51,12 +51,15 @@ svc_t * s16db_svc_retrieve (CLIENT * clnt, svc_id_t id)
 svc_t * s16db_svc_retrieve_all (CLIENT * clnt, svc_id_t id)
 {
     rpc_svc_array_t * arr = svc_retrieve_all_1 (clnt);
+    svc_t * box;
 
     if (!arr)
         return 0;
 
-    return rpc_svc_array_to_svc_list (&arr->rpc_svc_array_t_val,
-                                      arr->rpc_svc_array_t_len);
+    box = rpc_svc_array_to_svc_list (&arr->rpc_svc_array_t_val,
+                                     arr->rpc_svc_array_t_len);
+    free (arr);
+    return box;
 }
 
 int s16db_svc_set_property_int (CLIENT * clnt, svc_id_t id, char const * key,
