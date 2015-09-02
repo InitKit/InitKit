@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "internal.h"
 #include "s16.h"
@@ -10,6 +11,8 @@ extern void s16_repositoryd_1 (struct svc_req * rqstp,
 
 int main (int argc, char * argv[])
 {
+    RD.services = List_new ();
+
     int sock = socket (PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (sock == -1)
     {

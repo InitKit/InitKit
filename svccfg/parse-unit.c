@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <string.h>
 #include "s16.h"
 #include "ini.h"
 
@@ -22,14 +24,14 @@ int parse_config_line (void * user, const char * section, const char * name,
 }
 
 #define SetOrExit(Name)                                                        \
-    if (!property_find_name (new_svc->properties, Name))                       \
+    if (!prop_find_name (new_svc->properties, Name))                           \
     {                                                                          \
         OnError ("error: %s not set", #Name);                                  \
     }
 
 svc_t * parse_unit (int is_systemd, char const * path)
 {
-    svc_t * new_svc = calloc (1, sizeof (svc_t));
+    svc_t * new_svc = s16_svc_new ();
     int inierror = ini_parse (path, parse_config_line, new_svc);
 
     if (inierror > 0)
@@ -50,9 +52,9 @@ svc_t * parse_unit (int is_systemd, char const * path)
     else
     {
         SetOrExit ("S16.Delegate");
-        SetOrExit ("S16.Name") new_svc->name =
-            strdup (property_find_name (new_svc->properties, "S16.Name")
-                        ->value.pval_u.s);
+        SetOrExit ("S16.Name");
+        new_svc->name = strdup (
+            prop_find_name (new_svc->properties, "S16.Name")->value.pval_u.s);
     }
 
     return new_svc;

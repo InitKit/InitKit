@@ -1,9 +1,11 @@
+#include <stdlib.h>
+#include <string.h>
 #include "s16.h"
 #include "s16db.h"
 #include "internal.h"
 
 #define FindSvcOrReturn(list, id)                                              \
-    svc_t * Svc = svc_find_id (list, &id);                                     \
+    svc_t * Svc = svc_find_id (list, id);                                      \
     if (!Svc)                                                                  \
         return 1;
 
@@ -11,22 +13,22 @@
     svc_t * Svc = svc_find_name (list, name);                                  \
     if (Svc)                                                                   \
     {                                                                          \
-        HASH_DEL (list, Svc);                                                  \
+        List_del (list, Svc);                                                  \
         destroy_svc (Svc);                                                     \
     }
 
 svc_id_t insert_svc (char const * name)
 {
     DestroySvcIfExists (RD.services, name);
-    svc_t * newSvc = calloc (1, sizeof (svc_t)), *i;
+    svc_t * newSvc = s16_svc_new ();
     unsigned long rnum;
 
     newSvc->name = strdup (name);
-    while (svc_find_id (RD.services, &rnum))
+    while (svc_find_id (RD.services, rnum))
         rnum = rand ();
     newSvc->id = rnum;
 
-    HASH_ADD_INT (RD.services, id, newSvc);
+    svc_list_add (RD.services, newSvc);
 
     return rnum;
 }
@@ -36,24 +38,25 @@ svc_id_t install_svc (svc_t * svc)
     DestroySvcIfExists (RD.services, svc->name);
     unsigned long rnum;
 
-    while (svc_find_id (RD.services, &rnum))
+    while (svc_find_id (RD.services, rnum))
         rnum = rand ();
     svc->id = rnum;
 
-    HASH_ADD_INT (RD.services, id, svc);
+    svc_list_add (RD.services, svc);
+    return rnum;
 }
 
 int delete_svc (svc_id_t id)
 {
     FindSvcOrReturn (RD.services, id);
 
+    svc_list_del (RD.services, Svc);
     destroy_svc (Svc);
-    HASH_DEL (RD.services, Svc);
 }
 
-int count_svcs () { return HASH_COUNT (RD.services); }
+int count_svcs () { return List_count (RD.services); }
 
-svc_t * retrieve_all_svcs () { return RD.services; }
+svc_list retrieve_all_svcs () { return RD.services; }
 
 int set_svc_property_int (svc_id_t id, char const * name, long value)
 {

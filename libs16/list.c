@@ -22,10 +22,10 @@ void List_add (List_t * n, void * data)
 {
     List_t_ * temp, *t;
 
-    mtx_lock (&n->Lock);
-
     if (n == 0)
         n = List_new ();
+
+    mtx_lock (&n->Lock);
 
     if (n->List == 0)
     {
@@ -83,7 +83,12 @@ unlock:
     mtx_unlock (&n->Lock);
 }
 
-List_t_ * List_begin (List_t * n) { return n->List; }
+List_t_ * List_begin (List_t * n)
+{
+    if (!n)
+        return 0;
+    return n->List;
+}
 
 void List_iterator_next (List_t_ ** it) { *it = (*it)->Link; }
 

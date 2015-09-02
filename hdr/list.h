@@ -30,10 +30,12 @@ List_t * List_new ();
 void List_add (List_t * n, void * data);
 void List_del (List_t * n, void * data);
 
-inline long List_count (List_t * n)
+static inline long List_count (List_t * n)
 {
     long length = 0;
     List_t_ * tmp;
+    if (!n)
+        return 0;
     for (List_t_ * e = n->List; (e) && (tmp = (e)->Link, 1); (e) = tmp)
         length++;
     return length;
@@ -58,15 +60,15 @@ void * List_lpop (List_t * n);
 
 #define ListGenForNameType(name, type)                                         \
     typedef List_t * name##_list;                                              \
-    inline void name##_list_add (List_t * n, type * data)                      \
+    static inline void name##_list_add (List_t * n, type * data)               \
     {                                                                          \
         List_add (n, (void *)data);                                            \
     }                                                                          \
-    inline void name##_list_del (List_t * n, type * data)                      \
+    static inline void name##_list_del (List_t * n, type * data)               \
     {                                                                          \
         List_del (n, (void *)data);                                            \
     }                                                                          \
-    inline type * name##_list_lpop (List_t * n)                                \
+    static inline type * name##_list_lpop (List_t * n)                         \
     {                                                                          \
         return (type *)List_lpop (n);                                          \
     }                                                                          \
@@ -74,12 +76,12 @@ void * List_lpop (List_t * n);
     {                                                                          \
         type * val;                                                            \
         struct List_s_ * Link;                                                 \
-    } name##_list_iterator;                                                    \
-    inline name##_list_iterator * name##_list_begin (List_t * n)               \
+    } * name##_list_iterator;                                                  \
+    static inline name##_list_iterator name##_list_begin (List_t * n)          \
     {                                                                          \
-        return (name##_list_iterator *)List_begin (n);                         \
+        return (name##_list_iterator)List_begin (n);                           \
     }                                                                          \
-    inline void name##_list_iterator_next (name##_list_iterator ** n)          \
+    static inline void name##_list_iterator_next (name##_list_iterator * n)    \
     {                                                                          \
         List_iterator_next ((List_t_ **)n);                                    \
     }

@@ -48,21 +48,23 @@ gen_find_name_wrapper_proto (svc, svc_t);
 gen_find_id_wrapper_proto (prop, property_t);
 gen_find_name_wrapper_proto (prop, property_t);
 
+svc_t * s16_svc_new ();
+
 void svc_object_set_property_string (svc_t * Svc, const char * key,
                                      const char * value);
 void svc_object_set_property_int (svc_t * Svc, const char * key, long value);
 
 void destroy_property (property_t * delProperty);
-void destroy_properties_list (property_t * box);
+void destroy_properties_list (prop_list box);
 void destroy_instance (svc_instance_t * delInstance);
 void destroy_svc (svc_t * delSvc);
-void destroy_svcs_list (svc_t * box);
+void destroy_svcs_list (svc_list box);
 
 #define DestroyPropIfExists(list, name)                                        \
-    property_t * Prop = property_find_name (list, name);                       \
+    property_t * Prop = prop_find_name (list, name);                           \
     if (Prop)                                                                  \
     {                                                                          \
-        HASH_DEL (list, Prop);                                                 \
+        prop_list_del (list, Prop);                                            \
         destroy_property (Prop);                                               \
     }
 

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <strings.h>
 #include <getopt.h>
 #include "s16db.h"
 #include "svccfg.h"
@@ -78,10 +79,11 @@ int main (int argc, char * argv[])
     }
     }
 
-    svc_t * box = s16db_svc_retrieve_all (clnt), *iter, *tmp;
-    HASH_ITER (hh, box, iter, tmp)
+    svc_list box = s16db_svc_retrieve_all (clnt);
+    for (svc_list_iterator it = svc_list_begin (box); it != NULL;
+         svc_list_iterator_next (&it))
     {
-        printf ("ID: %d Service: %s\n", iter->id, iter->name);
+        printf ("ID: %d Service: %s\n", it->val->id, it->val->name);
     }
 
     s16db_context_destroy (clnt);
