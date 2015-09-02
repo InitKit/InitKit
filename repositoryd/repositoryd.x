@@ -57,6 +57,8 @@ typedef struct rpc_property_s rpc_property_t;
 typedef struct rpc_svc_instance_s rpc_svc_instance_t;
 typedef struct rpc_svc_s rpc_svc_t;
 
+typedef rpc_svc_t rpc_svc_array_t<>;
+
 program S16_REPOSITORYD_PROG 
 {
     version S16_REPOSITORYD_V1
@@ -64,7 +66,8 @@ program S16_REPOSITORYD_PROG
         int svc_insert(string) = 1;
         int svc_delete(svc_id_t) = 2;
         rpc_svc_t svc_retrieve(svc_id_t) = 3;
-        int svc_set_property_int(svc_id_t, string, hyper) = 4;
-        int svc_set_property_string(svc_id_t, string, string) = 5;
+        rpc_svc_array_t svc_retrieve_all() = 4;
+        int svc_set_property_int(svc_id_t, string, hyper) = 5;
+        int svc_set_property_string(svc_id_t, string, string) = 6;
     } = 1;
 } = 0x16147123;

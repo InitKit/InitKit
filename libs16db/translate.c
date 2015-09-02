@@ -73,6 +73,20 @@ rpc_svc_t * svc_to_rpc_svc (svc_t * svc)
     return newRpc_svc;
 }
 
+rpc_svc_t * svc_list_to_rpc_svc_array (svc_t * box)
+{
+    register unsigned s_index = 0;
+    svc_t * s_iter, *s_tmp;
+    rpc_svc_t * newRpc_svclist = malloc (HASH_COUNT (box) * sizeof (rpc_svc_t));
+
+    HASH_ITER (hh, box, s_iter, s_tmp)
+    {
+        newRpc_svclist[s_index++] = *svc_to_rpc_svc (s_iter);
+    }
+
+    return newRpc_svclist;
+}
+
 property_t * rpc_property_to_property (rpc_property_t * rprop)
 {
     RETURN_IF_NULL (rprop);
@@ -133,4 +147,16 @@ svc_t * rpc_svc_to_svc (rpc_svc_t * rsvc)
                           &rsvc->instances.instances_val[i_index]));
 
     return newSvc;
+}
+
+svc_t * rpc_svc_array_to_svc_list (rpc_svc_t * rsvclist[], unsigned int length)
+{
+    RETURN_IF_NULL (rsvclist);
+    register unsigned rs_index;
+    svc_t * box = 0;
+
+    for (rs_index = 0; rs_index < length; rs_index++)
+        HASH_ADD_INT (box, id, rpc_svc_to_svc (rsvclist[rs_index]));
+
+    return box;
 }

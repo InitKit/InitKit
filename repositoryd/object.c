@@ -35,6 +35,10 @@ int delete_svc (svc_id_t id)
     HASH_DEL (RD.services, Svc);
 }
 
+int count_svcs () { return HASH_COUNT (RD.services); }
+
+svc_t * retrieve_all_svcs () { return RD.services; }
+
 int set_svc_property_int (svc_id_t id, char const * name, long value)
 {
     FindSvcOrReturn (RD.services, id);

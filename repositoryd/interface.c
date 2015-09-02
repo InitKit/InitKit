@@ -24,6 +24,15 @@ rpc_svc_t * svc_retrieve_1_svc (svc_id_t id, struct svc_req * req)
     return svc_to_rpc_svc (svc_find_id (RD.services, &id));
 }
 
+rpc_svc_array_t * svc_retrieve_all_1_svc (struct svc_req * req)
+{
+    static rpc_svc_array_t result;
+    result.rpc_svc_array_t_len = count_svcs ();
+    result.rpc_svc_array_t_val =
+        svc_list_to_rpc_svc_array (retrieve_all_svcs ());
+    return &result;
+}
+
 int * svc_set_property_int_1_svc (svc_id_t id, char * key, long value,
                                   struct svc_req * req)
 {
