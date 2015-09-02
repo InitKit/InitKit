@@ -12,5 +12,8 @@ extern repositoryd_t RD;
 
 int insert_svc (char const * name);
 int delete_svc (svc_id_t id);
+int set_svc_property_int (svc_id_t id, char const * name, long value);
+int set_svc_property_string (svc_id_t id, char const * name,
+                             char const * value);
 
 #endif

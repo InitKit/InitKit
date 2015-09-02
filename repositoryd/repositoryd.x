@@ -28,7 +28,7 @@ typedef enum property_type_e property_type_t;
 union pval switch (property_type_t type)
 {
 case NUMBER:
-    int i;
+    hyper i;
 case STRING:
     string s<>;
 };
@@ -61,8 +61,10 @@ program S16_REPOSITORYD_PROG
 {
     version S16_REPOSITORYD_V1
     {
-        int insert_service(string) = 1;
-        int delete_service(svc_id_t) = 2;
-        rpc_svc_t retrieve_service(svc_id_t) = 3;
+        int svc_insert(string) = 1;
+        int svc_delete(svc_id_t) = 2;
+        rpc_svc_t svc_retrieve(svc_id_t) = 3;
+        int svc_set_property_int(svc_id_t, string, hyper) = 4;
+        int svc_set_property_string(svc_id_t, string, string) = 5;
     } = 1;
 } = 0x16147123;

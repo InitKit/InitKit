@@ -16,7 +16,7 @@ typedef struct svc_s
 
 typedef struct svc_instance_s
 {
-    unsigned int id;
+    unsigned long id;
     char * name;
     struct property_s * properties;
 
@@ -26,8 +26,8 @@ typedef struct svc_instance_s
 
 typedef struct property_s
 {
-    unsigned int id; /* uthash key */
-    char * name;     /* key, but not uthash key */
+    unsigned long id; /* uthash key */
+    char * name;      /* key, but not uthash key */
     pval_t value;
 
     property_parent_type_t parent_type;

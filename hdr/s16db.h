@@ -7,18 +7,29 @@
     type##_t * type##_find_id (type##_t * box, unsigned long * keyptr);
 
 #define gen_find_name_wrapper_proto(type)                                      \
-    type##_t * type##_find_name (type##_t * box, char * name);
+    type##_t * type##_find_name (type##_t * box, char const * name);
 
 gen_find_id_wrapper_proto (svc);
 gen_find_name_wrapper_proto (svc);
 
-CLIENT * s16db_context_create ();
-void s16db_context_destroy (CLIENT * clnt);
+gen_find_id_wrapper_proto (property);
+gen_find_name_wrapper_proto (property);
 
 void destroy_property (property_t * delProperty);
 void destroy_properties_list (property_t * box);
 void destroy_instance (svc_instance_t * delInstance);
 void destroy_svc (svc_t * delSvc);
+
+CLIENT * s16db_context_create ();
+void s16db_context_destroy (CLIENT * clnt);
+
+int s16db_svc_insert (CLIENT * clnt, char const * name);
+int s16db_svc_delete (CLIENT * clnt, svc_id_t id);
+svc_t * s16db_svc_retrieve (CLIENT * clnt, svc_id_t id);
+int s16db_svc_set_property_int (CLIENT * clnt, svc_id_t id, char const * key,
+                                long value);
+int s16db_svc_set_property_string (CLIENT * clnt, svc_id_t id, char const * key,
+                                   char const * value);
 
 /* used internally */
 rpc_property_t property_to_rpc_property (property_t * prop);

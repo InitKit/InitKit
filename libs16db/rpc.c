@@ -32,17 +32,30 @@ CLIENT * s16db_context_create ()
 
 void s16db_context_destroy (CLIENT * clnt) { clnt_destroy (clnt); }
 
-int s16db_insert_service (CLIENT * clnt, char const * name)
+int s16db_svc_insert (CLIENT * clnt, char const * name)
 {
-    RETURN_OR_FAIL (insert_service_1 ((char *)name, clnt));
+    RETURN_OR_FAIL (svc_insert_1 ((char *)name, clnt));
 }
 
-int s16db_delete_service (CLIENT * clnt, svc_id_t id)
+int s16db_svc_delete (CLIENT * clnt, svc_id_t id)
 {
-    RETURN_OR_FAIL (delete_service_1 (id, clnt));
+    RETURN_OR_FAIL (svc_delete_1 (id, clnt));
 }
 
-svc_t * s16db_retrieve_service (CLIENT * clnt, svc_id_t id)
+svc_t * s16db_svc_retrieve (CLIENT * clnt, svc_id_t id)
 {
-    return rpc_svc_to_svc (retrieve_service_1 (id, clnt));
+    return rpc_svc_to_svc (svc_retrieve_1 (id, clnt));
+}
+
+int s16db_svc_set_property_int (CLIENT * clnt, svc_id_t id, char const * key,
+                                long value)
+{
+    RETURN_OR_FAIL (svc_set_property_int_1 (id, (char *)key, value, clnt));
+}
+
+int s16db_svc_set_property_string (CLIENT * clnt, svc_id_t id, char const * key,
+                                   char const * value)
+{
+    RETURN_OR_FAIL (
+        svc_set_property_string_1 (id, (char *)key, (char *)value, clnt));
 }

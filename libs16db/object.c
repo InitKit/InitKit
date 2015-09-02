@@ -10,7 +10,7 @@
     }
 
 #define gen_find_name_wrapper(type)                                            \
-    type##_t * type##_find_name (type##_t * box, char * name)                  \
+    type##_t * type##_find_name (type##_t * box, char const * name)            \
     {                                                                          \
         type##_t * i = box;                                                    \
         for (i; i != NULL; i = i->hh.next)                                     \
@@ -21,6 +21,9 @@
 
 gen_find_id_wrapper (svc);
 gen_find_name_wrapper (svc);
+
+gen_find_id_wrapper (property);
+gen_find_name_wrapper (property);
 
 void destroy_property (property_t * delProperty)
 {

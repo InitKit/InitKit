@@ -2,9 +2,19 @@
 #include "s16db.h"
 #include "internal.h"
 
+#define FindSvcOrReturn(list, id)                                              \
+    svc_t * Svc = svc_find_id (list, &id);                                     \
+    if (!Svc)                                                                  \
+        return 1;
+
+#define DestroyPropIfExists(list, name)                                        \
+    property_t * Prop = property_find_name (list, name);                       \
+    if (Prop)                                                                  \
+        destroy_property (Prop);
+
 int insert_svc (char const * name)
 {
-    svc_t * newSvc = malloc (sizeof (svc_t)), *i;
+    svc_t * newSvc = calloc (1, sizeof (svc_t)), *i;
     unsigned long rnum;
 
     newSvc->name = strdup (name);
@@ -19,11 +29,42 @@ int insert_svc (char const * name)
 
 int delete_svc (svc_id_t id)
 {
-    svc_t * delSvc = svc_find_id (RD.services, &id);
+    FindSvcOrReturn (RD.services, id);
 
-    if (!delSvc)
-        return 1;
+    destroy_svc (Svc);
+    HASH_DEL (RD.services, Svc);
+}
 
-    destroy_svc (delSvc);
-    HASH_DEL (RD.services, delSvc);
+int set_svc_property_int (svc_id_t id, char const * name, long value)
+{
+    FindSvcOrReturn (RD.services, id);
+    DestroyPropIfExists (Svc->properties, name) unsigned long rnum;
+    property_t * newProp = calloc (1, sizeof (property_t));
+
+    newProp->name = strdup (name);
+    while (property_find_id (Svc->properties, &rnum))
+        rnum = rand ();
+    newProp->id = rnum;
+    newProp->value.type = NUMBER;
+    newProp->value.pval_u.i = value;
+
+    HASH_ADD_INT (Svc->properties, id, newProp);
+    return 0;
+}
+
+int set_svc_property_string (svc_id_t id, char const * name, char const * value)
+{
+    FindSvcOrReturn (RD.services, id);
+    DestroyPropIfExists (Svc->properties, name) unsigned long rnum;
+    property_t * newProp = calloc (1, sizeof (property_t));
+
+    newProp->name = strdup (name);
+    while (property_find_id (Svc->properties, &rnum))
+        rnum = rand ();
+    newProp->id = rnum;
+    newProp->value.type = STRING;
+    newProp->value.pval_u.s = strdup (value);
+
+    HASH_ADD_INT (Svc->properties, id, newProp);
+    return 0;
 }
