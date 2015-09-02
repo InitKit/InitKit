@@ -14,6 +14,6 @@ property_t * rpc_property_array_to_property_list (rpc_property_t * rplist[],
                                                   unsigned int length);
 svc_instance_t * rpc_svc_instance_to_svc_instance (rpc_svc_instance_t * rinst);
 svc_t * rpc_svc_to_svc (rpc_svc_t * rsvc);
-svc_t * rpc_svc_array_to_svc_list (rpc_svc_t * rsvclist[], unsigned int length);
+svc_t * rpc_svc_array_to_svc_list (rpc_svc_array_t *);
 
 #endif

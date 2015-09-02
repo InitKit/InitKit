@@ -1,0 +1,11 @@
+SUB_DEPTH = ..
+include $(KBUILD_PATH)/subheader.kmk
+include $(PATH_ROOT)/Config.kmk
+
+PROGRAMS += svccfg
+
+svccfg_TEMPLATE = CXX
+svccfg_LIBS = $(libuthash_1_TARGET) $(libs16_1_TARGET) $(libs16db_1_TARGET)
+svccfg_SOURCES = svccfg.c
+
+include $(FILE_KBUILD_SUB_FOOTER)

@@ -115,10 +115,13 @@ property_t * rpc_property_array_to_property_list (rpc_property_t * rplist[],
     register unsigned rp_index;
     property_t * box = 0;
 
+    if (length == 0)
+        return box;
+
     for (rp_index = 0; rp_index < length; rp_index++)
         HASH_ADD_INT (box, id, rpc_property_to_property (rplist[rp_index]));
 
-    free (rplist);
+    free (*rplist);
 
     return box;
 }
@@ -155,26 +158,35 @@ svc_t * rpc_svc_to_svc (rpc_svc_t * rsvc)
     free (rsvc->properties.properties_val);
     newSvc->instances = 0;
 
-    for (i_index = 0; i_index < rsvc->instances.instances_len; i_index++)
-        HASH_ADD_INT (newSvc->instances, id,
-                      rpc_svc_instance_to_svc_instance (
-                          &rsvc->instances.instances_val[i_index]));
+    if (rsvc->instances.instances_len > 0)
+    {
+        for (i_index = 0; i_index < rsvc->instances.instances_len; i_index++)
+            HASH_ADD_INT (newSvc->instances, id,
+                          rpc_svc_instance_to_svc_instance (
+                              &rsvc->instances.instances_val[i_index]));
+    }
     free (rsvc->instances.instances_val);
-    free (rsvc);
 
     return newSvc;
 }
 
-svc_t * rpc_svc_array_to_svc_list (rpc_svc_t * rsvclist[], unsigned int length)
+svc_t * rpc_svc_array_to_svc_list (rpc_svc_array_t * svcArray)
 {
-    RETURN_IF_NULL (rsvclist);
-    register unsigned rs_index;
+    RETURN_IF_NULL (svcArray);
+    register unsigned rs_index, length = svcArray->rpc_svc_array_t_len;
     svc_t * box = 0;
 
-    for (rs_index = 0; rs_index < length; rs_index++)
-        HASH_ADD_INT (box, id, rpc_svc_to_svc (rsvclist[rs_index]));
+    if (length == 0)
+        return box;
 
-    free (rsvclist);
+    for (rs_index = 0; rs_index < length; rs_index++)
+    {
+        svc_t * newSvc =
+            rpc_svc_to_svc (&svcArray->rpc_svc_array_t_val[rs_index]);
+        HASH_ADD_INT (box, id, newSvc);
+    }
+
+    free (svcArray->rpc_svc_array_t_val);
 
     return box;
 }

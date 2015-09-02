@@ -16,6 +16,7 @@ int main (int argc, char * argv[])
         perror ("socket creation failed");
         exit (1);
     }
+    setsockopt (sock, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof (int));
 
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
