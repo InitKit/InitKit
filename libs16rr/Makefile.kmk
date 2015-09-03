@@ -1,0 +1,10 @@
+SUB_DEPTH = ..
+include $(KBUILD_PATH)/subheader.kmk
+include $(PATH_ROOT)/Config.kmk
+
+LIBRARIES += libs16rr
+
+libs16rr_TEMPLATE = CXX
+libs16rr_SOURCES = process.c
+
+include $(FILE_KBUILD_SUB_FOOTER)
