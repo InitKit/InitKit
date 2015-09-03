@@ -47,19 +47,26 @@ svc_t * parse_unit (int is_systemd, char const * path)
 
     if (is_systemd)
     {
+        char * fmri;
+
         new_svc->name = strdup (basename (path));
+        new_svc->name[(strlen (new_svc->name) - 4)] = '\0';
+        asprintf (&fmri, "sdu:/%s", new_svc->name);
+        svc_object_set_property_string (new_svc, "S16.FMRI", fmri);
+        free (fmri);
+
         svc_object_set_property_string (new_svc, "S16.Delegate", "systemd");
     }
     else
     {
         char * fmri;
-        char * name =
-            prop_find_name (new_svc->properties, "S16.Name")->value.pval_u.s;
+        char * name;
 
         asprintf (&fmri, "svc:/%s", name);
 
         SetOrExit ("S16.Delegate");
         SetOrExit ("S16.Name");
+        name = prop_find_name (new_svc->properties, "S16.Name")->value.pval_u.s;
         svc_object_set_property_string (new_svc, "S16.FMRI", fmri);
         free (fmri);
         svc_object_set_property_string (new_svc, "S16.Path", path);

@@ -2,10 +2,11 @@ SUB_DEPTH = ..
 include $(KBUILD_PATH)/subheader.kmk
 include $(PATH_ROOT)/Config.kmk
 
-PROGRAMS += systemdr
+PROGRAMS += s16.systemdr
 
-systemdr_TEMPLATE = CXX
-systemdr_LIBS = $(libs16db_1_TARGET) $(libs16_1_TARGET)  $(libs16rr_1_TARGET) $(libini_1_TARGET)
-systemdr_SOURCES = systemdr.cxx
+s16.systemdr_TEMPLATE = CXX
+s16.systemdr_LIBS = $(libs16db_1_TARGET) $(libs16_1_TARGET) \
+    $(libs16rr_1_TARGET) $(libini_1_TARGET)
+s16.systemdr_SOURCES = systemdr.cxx
 
 include $(FILE_KBUILD_SUB_FOOTER)

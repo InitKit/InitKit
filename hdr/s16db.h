@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-#define SVC_IS_NULL(svc) !strncmp (svc->name, "NULL", 4)
+#define SVC_IS_NULL(svc) (!svc || !strncmp (svc->name, "NULL", 4))
 
 CLIENT * s16db_context_create ();
 void s16db_context_destroy (CLIENT * clnt);
