@@ -14,14 +14,15 @@
     if (Svc)                                                                   \
     {                                                                          \
         List_del (list, Svc);                                                  \
+        rnum = Svc->id;                                                        \
         destroy_svc (Svc);                                                     \
     }
 
 svc_id_t insert_svc (char const * name)
 {
+    unsigned long rnum;
     DestroySvcIfExists (RD.services, name);
     svc_t * newSvc = s16_svc_new ();
-    unsigned long rnum;
 
     newSvc->name = strdup (name);
     while (svc_find_id (RD.services, rnum))
@@ -35,8 +36,8 @@ svc_id_t insert_svc (char const * name)
 
 svc_id_t install_svc (svc_t * svc)
 {
-    DestroySvcIfExists (RD.services, svc->name);
     unsigned long rnum;
+    DestroySvcIfExists (RD.services, svc->name);
 
     while (svc_find_id (RD.services, rnum))
         rnum = rand ();

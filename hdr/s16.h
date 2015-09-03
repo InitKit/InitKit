@@ -68,4 +68,6 @@ void destroy_svcs_list (svc_list box);
         destroy_property (Prop);                                               \
     }
 
+#define StartsWith(text, prefix) !strncmp (text, prefix, strlen (prefix))
+
 #endif

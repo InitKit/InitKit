@@ -1,9 +1,9 @@
 [S16]
-Name=SimpleTest
+Name=SimpleTest2
 Delegate=restartd
 
 [Unit]
-Description=Simple unit for testing S16 in a few ways.
+Description=Second simple unit for testing S16.
 
 [Restartd]
 Form=exec

@@ -31,7 +31,6 @@ rpc_property_t * property_list_to_rpc_property_array (prop_list box)
     for (prop_list_iterator it = prop_list_begin (box); it != NULL;
          prop_list_iterator_next (&it))
     {
-        printf ("%s %d\n", it->val->name, List_count (box));
         newRpc_plist[p_index++] = property_to_rpc_property (it->val);
     }
 
@@ -100,10 +99,9 @@ property_t * rpc_property_to_property (rpc_property_t * rprop)
 
     newProp->id = rprop->id;
     newProp->name = strdup (rprop->name);
+    newProp->value.type = rprop->value.type;
     if (rprop->value.type == STRING)
-    {
         newProp->value.pval_u.s = strdup (rprop->value.pval_u.s);
-    }
     else
         newProp->value.pval_u.i = rprop->value.pval_u.i;
 
@@ -115,14 +113,13 @@ prop_list rpc_property_array_to_property_list (rpc_property_t rplist[],
 {
     RETURN_IF_NULL (rplist);
     register unsigned rp_index;
-    prop_list box = 0;
+    prop_list box = List_new ();
 
     if (length == 0)
         return box;
 
     for (rp_index = 0; rp_index < length; rp_index++)
     {
-        printf ("Add: %s\n", rplist[rp_index].name);
         prop_list_add (box, rpc_property_to_property (&rplist[rp_index]));
     }
 

@@ -83,7 +83,14 @@ int main (int argc, char * argv[])
     for (svc_list_iterator it = svc_list_begin (box); it != NULL;
          svc_list_iterator_next (&it))
     {
-        printf ("ID: %d Service: %s\n", it->val->id, it->val->name);
+        printf ("Service: %s\n", it->val->name);
+        printf ("  ID: %d\n", it->val->id);
+        printf ("  PList:\n");
+        for (prop_list_iterator itp = prop_list_begin (it->val->properties);
+             itp != NULL; prop_list_iterator_next (&itp))
+        {
+            printf ("    %s: %s\n", itp->val->name, itp->val->value.pval_u.s);
+        }
     }
 
     s16db_context_destroy (clnt);
