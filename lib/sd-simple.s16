@@ -1,0 +1,6 @@
+[Unit]
+Description=Simple unit for testing S16 in a few ways.
+
+[Service]
+Type=simple
+ExecStart=/bin/sleep 10
