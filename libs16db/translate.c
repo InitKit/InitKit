@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "s16.h"
 #include "s16db.h"
 
 #define RETURN_IF_NULL(val)                                                    \
@@ -53,8 +54,14 @@ rpc_svc_instance_t svc_instance_to_rpc_svc_instance (svc_instance_t * inst)
 
 rpc_svc_t svc_to_rpc_svc (svc_t * svc)
 {
-    register unsigned i_index = 0, i_cnt = 0, p_index = 0, p_cnt = 0;
+    register unsigned i_cnt = 0, i_index = 0, p_cnt = 0;
     rpc_svc_t newRpc_svc;
+
+    if (!svc)
+    {
+        newRpc_svc.name = strdup ("NULL");
+        return newRpc_svc;
+    }
 
     newRpc_svc.id = svc->id;
     newRpc_svc.name = strdup (svc->name);

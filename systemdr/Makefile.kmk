@@ -5,7 +5,7 @@ include $(PATH_ROOT)/Config.kmk
 PROGRAMS += systemdr
 
 systemdr_TEMPLATE = CXX
-systemdr_LIBS = $(libs16_1_TARGET) $(libs16db_1_TARGET) $(libini_1_TARGET)
+systemdr_LIBS = $(libs16db_1_TARGET) $(libs16_1_TARGET)  $(libs16rr_1_TARGET) $(libini_1_TARGET)
 systemdr_SOURCES = systemdr.cxx
 
 include $(FILE_KBUILD_SUB_FOOTER)

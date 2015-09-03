@@ -4,6 +4,10 @@
 #include "list.h"
 #include "repositoryd_rpc.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct svc_s svc_t;
 typedef struct svc_instance_s svc_instance_t;
 typedef struct property_s property_t;
@@ -69,5 +73,9 @@ void destroy_svcs_list (svc_list box);
     }
 
 #define StartsWith(text, prefix) !strncmp (text, prefix, strlen (prefix))
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

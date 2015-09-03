@@ -1,3 +1,4 @@
+#include <libgen.h>
 #include <stdlib.h>
 #include <string.h>
 #include "s16.h"
@@ -46,15 +47,23 @@ svc_t * parse_unit (int is_systemd, char const * path)
 
     if (is_systemd)
     {
-        new_svc->name = strdup (path);
+        new_svc->name = strdup (basename (path));
         svc_object_set_property_string (new_svc, "S16.Delegate", "systemd");
     }
     else
     {
+        char * fmri;
+        char * name =
+            prop_find_name (new_svc->properties, "S16.Name")->value.pval_u.s;
+
+        asprintf (&fmri, "svc:/%s", name);
+
         SetOrExit ("S16.Delegate");
         SetOrExit ("S16.Name");
-        new_svc->name = strdup (
-            prop_find_name (new_svc->properties, "S16.Name")->value.pval_u.s);
+        svc_object_set_property_string (new_svc, "S16.FMRI", fmri);
+        free (fmri);
+        svc_object_set_property_string (new_svc, "S16.Path", path);
+        new_svc->name = strdup (name);
     }
 
     return new_svc;

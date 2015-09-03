@@ -54,6 +54,11 @@ svc_t * s16db_svc_retrieve (CLIENT * clnt, svc_id_t id)
     return rpc_svc_to_svc (svc_retrieve_1 (id, clnt));
 }
 
+svc_t * s16db_svc_retrieve_by_name (CLIENT * clnt, char * id)
+{
+    return rpc_svc_to_svc (svc_retrieve_by_name_1 (id, clnt));
+}
+
 svc_list s16db_svc_retrieve_all (CLIENT * clnt)
 {
     rpc_svc_array_t * arr = svc_retrieve_all_1 (clnt);

@@ -3,7 +3,10 @@
 #include <cstdlib>
 #include <getopt.h>
 
+#include "s16rr.h"
 #include "manager.h"
+
+CLIENT * clnt;
 
 void eerror (const char * fmt, ...)
 {
@@ -20,7 +23,8 @@ int main (int argc, char * argv[])
     int c;
     extern char * optarg;
     extern int optind;
-    const char * unit = 0;
+    char * unit = 0;
+    svc_t * svc;
 
     while ((c = getopt (argc, argv, "u:")) != -1)
     {
@@ -38,6 +42,13 @@ int main (int argc, char * argv[])
 
     if (!unit)
         eerror ("no service-unit specified\n");
+
+    clnt = s16db_context_create ();
+    subreap_acquire ();
+    svc = s16db_svc_retrieve_by_name (clnt, unit);
+
+    if (SVC_IS_NULL (svc))
+        eerror ("no such service in repository: %s\n", unit);
 
     return 0;
 }

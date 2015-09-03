@@ -33,6 +33,13 @@ rpc_svc_t * svc_retrieve_1_svc (svc_id_t id, struct svc_req * req)
     return &result;
 }
 
+rpc_svc_t * svc_retrieve_by_name_1_svc (char * id, struct svc_req * req)
+{
+    static rpc_svc_t result;
+    result = svc_to_rpc_svc (svc_find_name (RD.services, id));
+    return &result;
+}
+
 rpc_svc_array_t * svc_retrieve_all_1_svc (struct svc_req * req)
 {
     static rpc_svc_array_t result;
