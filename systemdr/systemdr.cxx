@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <getopt.h>
 
-#include "state.h"
+#include "manager.h"
 
 void eerror (const char * fmt, ...)
 {

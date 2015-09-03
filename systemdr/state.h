@@ -17,12 +17,26 @@ enum SvcStates
     RESTART,
 };
 
+struct ProcessEvent
+{
+    enum
+    {
+        EXIT_BAD,
+        EXIT_GOOD,
+        NEW,
+    } type;
+    pid_t ppid;
+    pid_t pid;
+};
+
 class SvcState
 {
     class Manager & m_manager;
 
   public:
+    virtual ~SvcState ();
     virtual int process ();
+    virtual int process_event (ProcessEvent);
 };
 
 #endif
