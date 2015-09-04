@@ -13,14 +13,19 @@ SvcManager::SvcManager (svc_t * svc) : m_svc (svc), m_state_factory (svc, *this)
         m_type = FORKING;
     else
         printf ("Fail: service type unknown\n");
+}
 
-    if (svc_object_get_property_string (svc, "Service.ExecStartPre"))
+void SvcManager::launch ()
+{
+    if (m_state_stack.size () > 0)
+        return;
+    if (svc_object_get_property_string (m_svc, "Service.ExecStartPre"))
         m_state_stack.push_back (m_state_factory.new_start_pre ());
 }
 
 int SvcManager::fork_register_exec (const char * cmd_)
 {
-    int n_spaces = 0;
+    int n_spaces = 0, ret = 1;
     char * cmd = strdup (cmd_), * tofree = cmd, ** argv = NULL;
     pid_t newPid;
 
@@ -48,9 +53,12 @@ int SvcManager::fork_register_exec (const char * cmd_)
     }
     else /* parent */
     {
+        ret = 0;
         register_pid (newPid, 0);
     }
 
     free (argv);
     free (tofree);
+
+    return ret;
 }

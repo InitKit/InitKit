@@ -26,6 +26,7 @@ class SvcManager
 
   public:
     int fork_register_exec (const char * exe);
+    void launch ();
     void register_pid (pid_t pid, pid_t ppid)
     {
         m_pids.push_back (PidPair (pid, ppid));

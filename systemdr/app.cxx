@@ -30,4 +30,23 @@ SystemDr::SystemDr (CLIENT * clnt) : m_clnt (clnt)
     sigaction (SIGCHLD, &sa, NULL);
 }
 
-void SystemDr::main_loop () {}
+void SystemDr::main_loop ()
+{
+    int i;
+    struct kevent ev;
+    struct timespec tmout = {3, /* block for 3 seconds at most */
+                             0};
+    while (1)
+    {
+        memset (&ev, 0x00, sizeof (struct kevent));
+
+        i = kevent (m_kq, NULL, 0, &ev, 1, &tmout);
+        if (i == -1)
+            printf ("Error: i = -1\n");
+
+        for (SvcManager & svc : m_managers)
+        {
+            svc.launch ();
+        }
+    }
+}
