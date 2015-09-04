@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <memory>
+#include <sys/types.h>
 #include <sys/event.h>
 #include <sys/wait.h>
 #include <vector>
@@ -14,12 +15,14 @@
 
 class SvcManager
 {
+    SvcStateFactory m_state_factory;
     std::vector<std::pair<pid_t, pid_t> > m_pid_stack;
     std::vector<std::shared_ptr<SvcState> > m_state_stack;
     svc_t * m_svc;
+    SvcTypes m_type;
 
   public:
-    SvcManager (svc_t * svc) : m_svc (svc) {}
+    SvcManager (svc_t * svc);
 };
 
 class SystemDr

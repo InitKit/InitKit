@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
@@ -12,10 +13,14 @@ typedef enum
     IMPORT,
 } svccfg_mode;
 
-void eerror (const char * str)
+void eerror (const char * fmt, ...)
 {
-    fprintf (stderr, "svccfg: error: %s", str);
+    va_list args;
+    va_start (args, fmt);
+    fprintf (stderr, "svccfg: error: ");
+    vfprintf (stderr, fmt, args);
     exit (1);
+    va_end (args);
 }
 
 int main (int argc, char * argv[])
@@ -25,15 +30,12 @@ int main (int argc, char * argv[])
     extern int optind;
     svccfg_mode mode;
     if (argc < 2)
-    {
-        fprintf (stderr, "svccfg: expected option\n");
-        exit (1);
-    }
+        eerror ("svccfg: expected option\n");
 
     if (!strcasecmp (argv[1], "import"))
         mode = IMPORT;
     else
-        goto mode_unknown;
+        eerror ("svccfg: unknown operation: %s\n", argv[1]);
 
     clnt = s16db_context_create ();
     optind++;
@@ -95,7 +97,4 @@ int main (int argc, char * argv[])
 
     s16db_context_destroy (clnt);
     return 0;
-
-mode_unknown:
-    fprintf (stderr, "svccfg: unknown operation: %s\n", argv[1]);
 }

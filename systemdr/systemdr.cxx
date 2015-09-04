@@ -18,6 +18,10 @@ void eerror (const char * fmt, ...)
     va_end (args);
 }
 
+#define SetOrFail(Name)                                                        \
+    if (!prop_find_name (svc->properties, Name))                               \
+        eerror ("required property %s not set\n", Name);
+
 int main (int argc, char * argv[])
 {
     int c;
@@ -49,6 +53,9 @@ int main (int argc, char * argv[])
 
     if (SVC_IS_NULL (svc))
         eerror ("no such service in repository: %s\n", unit);
+
+    SetOrFail ("Service.Type");
+    SetOrFail ("Service.ExecStart");
 
     app = new SystemDr (clnt);
     app->add_svc (svc);
