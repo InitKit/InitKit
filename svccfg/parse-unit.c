@@ -55,7 +55,7 @@ svc_t * parse_unit (int is_systemd, char const * path)
         svc_object_set_property_string (new_svc, "S16.FMRI", fmri);
         free (fmri);
 
-        svc_object_set_property_string (new_svc, "S16.Delegate", "systemd");
+        svc_object_set_property_string (new_svc, "S16.Delegate", "systemdr");
     }
     else
     {

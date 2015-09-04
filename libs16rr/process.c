@@ -57,3 +57,5 @@ pid_t process_get_ppid (pid_t pid)
     return info.ppid;
 #endif
 }
+
+void discard_signal (int no) { no = no; }

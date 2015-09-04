@@ -1,5 +1,5 @@
 [Unit]
-Description=Simple unit for testing S16 in a few ways.
+Description=Simple unit for testing S16's systemd compatibility.
 
 [Service]
 Type=simple

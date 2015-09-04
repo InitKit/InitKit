@@ -10,7 +10,10 @@ extern "C" {
 int subreap_acquire ();
 int subreap_relinquish ();
 int subreap_status ();
+
 pid_t process_get_ppid (pid_t pid);
+
+void discard_signal (int no);
 
 #ifdef __cplusplus
 }

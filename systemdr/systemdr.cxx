@@ -25,6 +25,7 @@ int main (int argc, char * argv[])
     extern int optind;
     char * unit = 0;
     svc_t * svc;
+    SystemDr * app;
 
     while ((c = getopt (argc, argv, "u:")) != -1)
     {
@@ -44,11 +45,15 @@ int main (int argc, char * argv[])
         eerror ("no service-unit specified\n");
 
     clnt = s16db_context_create ();
-    subreap_acquire ();
     svc = s16db_svc_retrieve_by_name (clnt, unit);
 
     if (SVC_IS_NULL (svc))
         eerror ("no such service in repository: %s\n", unit);
+
+    app = new SystemDr (clnt);
+    app->add_svc (svc);
+
+    app->main_loop ();
 
     return 0;
 }

@@ -17,6 +17,12 @@ enum SvcStates
     RESTART,
 };
 
+enum SvcTypes
+{
+    SIMPLE,
+    FORKING,
+};
+
 struct ProcessEvent
 {
     enum
@@ -35,7 +41,7 @@ class SvcState
 
   public:
     virtual ~SvcState ();
-    virtual int process ();
+    virtual int loop_iteration ();
     virtual int process_event (ProcessEvent);
 };
 
