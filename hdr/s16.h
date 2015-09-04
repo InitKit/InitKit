@@ -54,6 +54,8 @@ gen_find_name_wrapper_proto (prop, property_t);
 
 svc_t * s16_svc_new ();
 
+const char * svc_object_get_property_string (svc_t * Svc, const char * key);
+long * svc_object_get_property_int (svc_t * Svc, const char * key);
 void svc_object_set_property_string (svc_t * Svc, const char * key,
                                      const char * value);
 void svc_object_set_property_int (svc_t * Svc, const char * key, long value);
