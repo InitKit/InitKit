@@ -7,7 +7,7 @@ TEMPLATE_CXX_INCS = $(PATH_ROOT)/hdr hdr \
 
 THREADS_H =/usr/include/threads.h
 
-ifneq ("$(wildcard $(THREADS_H))","")
+ifeq ("$(wildcard $(THREADS_H))","")
     TEMPLATE_CXX_CFLAGS += -pthread
     TEMPLATE_CXX_INCS += $(PATH_ROOT)/external/c11thrd
     TEMPLATE_CXX_LIBS += -lpthread
