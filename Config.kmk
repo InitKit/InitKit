@@ -2,6 +2,17 @@ TEMPLATE_CXX = C
 TEMPLATE_CXX_TOOL = GXX
 TEMPLATE_CXX_CXXFLAGS = -std=c++11 -ggdb
 TEMPLATE_CXX_CFLAGS = $(CFLAGS)  -std=c11 -ggdb
-TEMPLATE_CXX_LIBS = stdthreads
 TEMPLATE_CXX_INCS = $(PATH_ROOT)/hdr hdr \
     $(PATH_ROOT)/external/ini/hdr
+
+THREADS_H =/usr/include/threads
+
+ifneq ("$(wildcard $(THREADS_H))","")
+    TEMPLATE_CXX_CFLAGS += -pthread
+    TEMPLATE_CXX_INCS += $(PATH_ROOT)/external/c11thrd
+    TEMPLATE_CXX_LIBS += -lpthread
+endif
+
+if "$(KBUILD_TARGET)" == "freebsd"
+    TEMPLATE_CXX_LIBS += stdthreads
+endif
