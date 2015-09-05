@@ -15,6 +15,8 @@ Main project site: https://github.com/jtsiomb/c11threads
 #ifndef C11THREADS_H_
 #define C11THREADS_H_
 
+#define _GNU_SOURCE
+
 #include <time.h>
 #include <errno.h>
 #include <pthread.h>
