@@ -5,7 +5,7 @@ TEMPLATE_CXX_CFLAGS = $(CFLAGS)  -std=c11 -ggdb
 TEMPLATE_CXX_INCS = $(PATH_ROOT)/hdr hdr \
     $(PATH_ROOT)/external/ini/hdr
 
-THREADS_H =/usr/include/threads
+THREADS_H =/usr/include/threads.h
 
 ifneq ("$(wildcard $(THREADS_H))","")
     TEMPLATE_CXX_CFLAGS += -pthread
