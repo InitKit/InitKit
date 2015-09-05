@@ -39,7 +39,7 @@ int main (int argc, char * argv[])
     }
 
     if (!svc_register (transp, S16_REPOSITORYD_PROG, S16_REPOSITORYD_V1,
-                       S16_REPOSITORYD_PROG, 0))
+                       s16_repositoryd_prog_1, 0))
     {
         fprintf (stderr, "unable to register service\n");
         exit (1);

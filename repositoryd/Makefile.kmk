@@ -9,7 +9,8 @@ s16.repositoryd_INCS = $(PATH_ROOT)/libs16db
 s16.repositoryd_LIBS = $(libs16_1_TARGET) $(libs16db_1_TARGET)
 s16.repositoryd_SOURCES = repositoryd.c object.c interface.c rd_svc.c
 s16.repositoryd_CLEAN += $(PATH_ROOT)/repositoryd/rd_svc.c \
-    $(PATH_ROOT)/hdr/repositoryd_rpc.h
+    $(PATH_ROOT)/hdr/repositoryd_rpc.h \
+    $(PATH_ROOT)/repositoryd/repositoryd_rpc.h
 
 $(PATH_SUB_CURRENT)/repositoryd_rpc.h:
 	kmk_builtin_ln -s $(PATH_ROOT)/hdr/repositoryd_rpc.h \
