@@ -8,7 +8,8 @@ libs16db_TEMPLATE = CXX
 libs16db_SOURCES = translate.c rpc.c rd_xdr.c rd_clnt.c
 libs16db_CLEAN += $(PATH_ROOT)/libs16db/rd_xdr.c \
     $(PATH_ROOT)/libs16db/rd_clnt.c
-libs16db_DEPS += $(PATH_ROOT)/hdr/repositoryd_rpc.h
+libs16db_DEPS += $(PATH_ROOT)/hdr/repositoryd_rpc.h \
+	$(PATH_ROOT)/repositoryd/repositoryd_rpc.h
 
 $(PATH_SUB_CURRENT)/rd_xdr.c: $(PATH_ROOT)/hdr/repositoryd_rpc.h
 	@printf " RPCGEN(XDR) \t$(@)\n"
