@@ -31,6 +31,18 @@ class SvcManager
     {
         m_pids.push_back (PidPair (pid, ppid));
     }
+    void deregister_pid (pid_t pid)
+    {
+        for (std::vector<PidPair>::iterator it = m_pids.begin ();
+             it != m_pids.end (); it++)
+        {
+            if (it->first == pid)
+            {
+                m_pids.erase (it);
+                break;
+            }
+        }
+    }
     SvcManager (svc_t * svc);
 };
 

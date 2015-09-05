@@ -1,3 +1,4 @@
+#include <errno.h>
 #include <signal.h>
 
 #include "s16rr.h"
@@ -34,7 +35,7 @@ void SystemDr::main_loop ()
 {
     int i;
     struct kevent ev;
-    struct timespec tmout = {3, /* block for 3 seconds at most */
+    struct timespec tmout = {0, /* return at once initially */
                              0};
     while (1)
     {
@@ -42,7 +43,20 @@ void SystemDr::main_loop ()
 
         i = kevent (m_kq, NULL, 0, &ev, 1, &tmout);
         if (i == -1)
-            printf ("Error: i = -1\n");
+            if (errno == EINTR)
+                continue;
+            else
+                fprintf (stderr, "Error: i = -1\n");
+
+        tmout.tv_sec = 3;
+
+        switch (ev.filter)
+        {
+        case EVFILT_SIGNAL:
+            printf ("Signal received: %d. Additional data: %d\n", ev.ident,
+                    ev.data);
+            break;
+        }
 
         for (SvcManager & svc : m_managers)
         {

@@ -3,5 +3,5 @@ Description=Simple unit for testing S16's systemd compatibility.
 
 [Service]
 Type=simple
-ExecStartPre=/bin/sleep 2
+ExecStartPre=/ws/newinit/lib/sleep.sh
 ExecStart=/bin/sleep 10
