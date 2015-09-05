@@ -10,9 +10,18 @@ THREADS_H =/usr/include/threads.h
 ifeq ("$(wildcard $(THREADS_H))","")
     TEMPLATE_CXX_CFLAGS += -pthread
     TEMPLATE_CXX_INCS += $(PATH_ROOT)/external/c11thrd
-    TEMPLATE_CXX_LIBS += -lpthread
+    TEMPLATE_CXX_LIBS += pthread
 endif
 
 if "$(KBUILD_TARGET)" == "freebsd"
     TEMPLATE_CXX_LIBS += stdthreads
+endif
+
+PKGCONF ?= pkg-config
+
+
+if "$(KBUILD_TARGET)" == "linux"
+    TEMPLATE_CXX_LIBS += procps kqueue 
+    TEMPLATE_CXX_CFLAGS += $(shell $(PKGCONF) libkqueue --cflags)
+    TEMPLATE_CXX_CXXFLAGS += $(shell $(PKGCONF) libkqueue --cflags)
 endif

@@ -5,7 +5,9 @@
 #include <cstdlib>
 #include <memory>
 #include <sys/types.h>
+extern "C" {
 #include <sys/event.h>
+}
 #include <sys/wait.h>
 #include <vector>
 
