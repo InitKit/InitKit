@@ -7,12 +7,38 @@
 extern "C" {
 #endif
 
+typedef struct pt_info_s pt_info_t;
+typedef struct process_tracker_s process_tracker_t;
+
+/* subreaping routines */
 int subreap_acquire ();
 int subreap_relinquish ();
 int subreap_status ();
 
+/* process basic routines */
+/* Retrieves the parent PID of a PID. */
 pid_t process_get_ppid (pid_t pid);
 
+/* process tracking routines */
+
+/* Creates a new process tracker and returns a handle to it.
+ * Passed the KQueue descriptor that it may register its events. */
+process_tracker_t * pt_new (int kq);
+
+/* Investigates a kevent, that it may determine if it contains
+ * an event that is relevant to the process tracker.
+ * Returns null for irrelevant, and a pointer to a pt_info_t for
+ * a relevant process tracker event. */
+pt_info_t * pt_investigate_kevent (struct kevent & ke);
+
+/* Destroys a process tracker.
+ * Requires KQueue descriptor to remove itself from the queue. */
+void pt_destroy (process_tracker_t * pt);
+
+/* misc routines */
+
+/* What is said on the tin, this does.
+ * i.e. it does literally nothing functional. */
 void discard_signal (int no);
 
 #ifdef __cplusplus

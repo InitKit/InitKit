@@ -7,7 +7,7 @@
 repositoryd_t RD;
 
 extern void s16_repositoryd_prog_1 (struct svc_req * rqstp,
-                               register SVCXPRT * transp);
+                                    register SVCXPRT * transp);
 
 int main (int argc, char * argv[])
 {
