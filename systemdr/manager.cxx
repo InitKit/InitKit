@@ -5,7 +5,8 @@
 #define CompareType(typ)                                                       \
     !strcasecmp (svc_object_get_property_string (svc, "Service.Type"), typ)
 
-SvcManager::SvcManager (svc_t * svc) : m_svc (svc), m_state_factory (svc, *this)
+SvcManager::SvcManager (SystemDr & sd, svc_t * svc)
+    : m_svc (svc), m_state_factory (svc, *this), m_sd (sd)
 {
     if (CompareType ("simple"))
         m_type = SIMPLE;
@@ -13,6 +14,26 @@ SvcManager::SvcManager (svc_t * svc) : m_svc (svc), m_state_factory (svc, *this)
         m_type = FORKING;
     else
         printf ("Fail: service type unknown\n");
+}
+
+void SvcManager::register_pid (pid_t pid)
+{
+    pt_watch_pid (m_sd.m_ptrack, pid);
+    m_pids.push_back (pid);
+}
+
+void SvcManager::deregister_pid (pid_t pid)
+{
+    for (std::vector<pid_t>::iterator it = m_pids.begin (); it != m_pids.end ();
+         it++)
+    {
+        if (*it == pid)
+        {
+            m_pids.erase (it);
+            break;
+        }
+    }
+    pt_disregard_pid (m_sd.m_ptrack, pid);
 }
 
 void SvcManager::launch ()

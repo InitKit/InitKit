@@ -1,3 +1,5 @@
+#include <string.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -10,6 +12,7 @@ ListGenForNameType (pid, pid_t);
 typedef struct process_tracker_s
 {
     int kq;
+    int no;
     pid_list pids;
 } process_tracker_t;
 
@@ -25,6 +28,7 @@ process_tracker_t * pt_new (int kq)
     process_tracker_t * pt = malloc (sizeof (process_tracker_t));
     pt->kq = kq;
     pt->pids = List_new ();
+    return pt;
 }
 
 int pt_watch_pid (process_tracker_t * pt, pid_t pid)
@@ -36,7 +40,8 @@ int pt_watch_pid (process_tracker_t * pt, pid_t pid)
     i = kevent (pt->kq, &ke, 1, NULL, 0, NULL);
 
     if (i == -1)
-        fprintf (stderr, "Error: failed to watch PID %d\n", pid);
+        fprintf (stderr, "Error: failed to watch PID %d: %s\n", pid,
+                 strerror (errno));
     else
         pid_list_add (pt->pids, pid_new_p (pid));
 

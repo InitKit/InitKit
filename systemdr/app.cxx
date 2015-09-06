@@ -25,6 +25,8 @@ SystemDr::SystemDr (CLIENT * clnt) : m_clnt (clnt)
         exit (EXIT_FAILURE);
     }
 
+    m_ptrack = pt_new (m_kq);
+
     sa.sa_flags = 0;
     sigemptyset (&sa.sa_mask);
     sa.sa_handler = discard_signal;
@@ -34,7 +36,6 @@ SystemDr::SystemDr (CLIENT * clnt) : m_clnt (clnt)
 void SystemDr::main_loop ()
 {
     int i;
-    process_tracker_t * ptrack = pt_new (m_kq);
     struct kevent ev;
     struct timespec tmout = {0, /* return at once initially */
                              0};
@@ -52,15 +53,19 @@ void SystemDr::main_loop ()
 
         tmout.tv_sec = 3;
 
-        if (info = pt_investigate_kevent (ptrack, &ev))
+        if (info = pt_investigate_kevent (m_ptrack, &ev))
             goto pinfo;
 
         switch (ev.filter)
         {
         case EVFILT_SIGNAL:
+        {
             printf ("Signal received: %d. Additional data: %d\n", ev.ident,
                     ev.data);
+            while (waitpid ((pid_t)(-1), 0, WNOHANG) > 0)
+                ;
             break;
+        }
         }
 
         goto post_pinfo;
@@ -81,5 +86,5 @@ void SystemDr::main_loop ()
         }
     }
 
-    pt_destroy (ptrack);
+    pt_destroy (m_ptrack);
 }
