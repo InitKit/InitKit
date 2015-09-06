@@ -7,15 +7,32 @@
 extern "C" {
 #endif
 
-typedef struct pt_info_s pt_info_t;
+/* process tracking structures */
+
+/* This structure contains details of a process tracker event.
+ * In the case of child, the field 'flags' contains the parent pid.
+ * In the case of exit, the field 'flags' contains the exit code. */
+typedef struct pt_info_s
+{
+    enum
+    {
+        CHILD,
+        EXIT,
+    } event;
+    pid_t pid;
+    long flags;
+} pt_info_t;
+
 typedef struct process_tracker_s process_tracker_t;
 
 /* subreaping routines */
+
 int subreap_acquire ();
 int subreap_relinquish ();
 int subreap_status ();
 
 /* process basic routines */
+
 /* Retrieves the parent PID of a PID. */
 pid_t process_get_ppid (pid_t pid);
 
@@ -25,11 +42,22 @@ pid_t process_get_ppid (pid_t pid);
  * Passed the KQueue descriptor that it may register its events. */
 process_tracker_t * pt_new (int kq);
 
+/* Adds a PID to the watchlist. */
+void pt_watch_pid (process_tracker_t pt, pid_t pid);
+
+/* Removes a PID from the watchlist. */
+void pt_disregard_pid (process_tracker_t pt, pid_t pid);
+
 /* Investigates a kevent, that it may determine if it contains
  * an event that is relevant to the process tracker.
+ *
  * Returns null for irrelevant, and a pointer to a pt_info_t for
- * a relevant process tracker event. */
-pt_info_t * pt_investigate_kevent (struct kevent & ke);
+ * a relevant process tracker event.
+ *
+ * In the event of a child or an exit, there is no need to manually
+ * add or remove, respectively, that PID from the watchlist - this is
+ * automatically done by the tracker. */
+pt_info_t * pt_investigate_kevent (process_tracker_t pt, struct kevent & ke);
 
 /* Destroys a process tracker.
  * Requires KQueue descriptor to remove itself from the queue. */
