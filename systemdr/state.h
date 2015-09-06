@@ -1,8 +1,9 @@
 #ifndef __STATE_H__
 #define __STATE_H__
 
-#include "s16.h"
 #include <memory>
+#include "s16.h"
+#include "s16rr.h"
 
 enum SvcStates
 {
@@ -26,18 +27,6 @@ enum SvcTypes
     FORKING,
 };
 
-struct ProcessEvent
-{
-    enum
-    {
-        EXIT_BAD,
-        EXIT_GOOD,
-        NEW,
-    } type;
-    pid_t ppid;
-    pid_t pid;
-};
-
 class SvcState
 {
   protected:
@@ -51,7 +40,7 @@ class SvcState
     }
     virtual ~SvcState () {}
     virtual int loop_iteration () = 0;
-    virtual int process_event (ProcessEvent) = 0;
+    virtual int process_event (pt_info_t *) = 0;
 };
 
 class StartPreState : public SvcState
@@ -60,7 +49,7 @@ class StartPreState : public SvcState
     StartPreState (svc_t * svc, SvcManager & manager);
     ~StartPreState () {}
     int loop_iteration () {}
-    int process_event (ProcessEvent) {}
+    int process_event (pt_info_t *) {}
 };
 
 class SvcStateFactory

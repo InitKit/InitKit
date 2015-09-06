@@ -78,7 +78,7 @@ pt_info_t * pt_investigate_kevent (process_tracker_t * pt, struct kevent * ke)
         printf ("new pid %d has %d as parent\n", ke->ident, ke->data);
         info.event = CHILD;
         info.pid = ke->ident;
-        info.flags = ke->data;
+        info.ppid = ke->data;
 
         pid_list_add (pt->pids, pid_new_p (ke->ident));
 
@@ -91,6 +91,7 @@ pt_info_t * pt_investigate_kevent (process_tracker_t * pt, struct kevent * ke)
         printf ("pid %d exited\n", ke->ident);
         info.event = EXIT;
         info.pid = ke->ident;
+        info.ppid = 0;
         info.flags = ke->data;
 
         for (it = pid_list_begin (pt->pids); it != NULL;

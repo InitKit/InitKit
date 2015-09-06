@@ -10,7 +10,7 @@ extern "C" {
 /* process tracking structures */
 
 /* This structure contains details of a process tracker event.
- * In the case of child, the field 'flags' contains the parent pid.
+ * In the case of child, the field 'ppid' contains the parent pid.
  * In the case of exit, the field 'flags' contains the exit data. */
 typedef struct pt_info_s
 {
@@ -19,7 +19,7 @@ typedef struct pt_info_s
         CHILD,
         EXIT,
     } event;
-    pid_t pid;
+    pid_t pid, ppid;
     long flags;
 } pt_info_t;
 

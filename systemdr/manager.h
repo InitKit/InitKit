@@ -13,15 +13,13 @@ extern "C" {
 
 #include "s16.h"
 #include "s16db.h"
+#include "s16rr.h"
 #include "state.h"
-
-/* pair: pid, ppid */
-typedef std::pair<pid_t, pid_t> PidPair;
 
 class SvcManager
 {
     SvcStateFactory m_state_factory;
-    std::vector<PidPair> m_pids;
+    std::vector<pid_t> m_pids;
     std::vector<std::shared_ptr<SvcState> > m_state_stack;
     svc_t * m_svc;
     SvcTypes m_type;
@@ -29,22 +27,32 @@ class SvcManager
   public:
     int fork_register_exec (const char * exe);
     void launch ();
-    void register_pid (pid_t pid, pid_t ppid)
-    {
-        m_pids.push_back (PidPair (pid, ppid));
-    }
+    void register_pid (pid_t pid) { m_pids.push_back (pid); }
     void deregister_pid (pid_t pid)
     {
-        for (std::vector<PidPair>::iterator it = m_pids.begin ();
+        for (std::vector<pid_t>::iterator it = m_pids.begin ();
              it != m_pids.end (); it++)
         {
-            if (it->first == pid)
+            if (*it == pid)
             {
                 m_pids.erase (it);
                 break;
             }
         }
     }
+    int pids_relevant (pid_t one, pid_t two)
+    {
+        for (std::vector<pid_t>::iterator it = m_pids.begin ();
+             it != m_pids.end (); it++)
+        {
+            if (*it == one | *it == two)
+            {
+                return 1;
+            }
+        }
+        return 0;
+    }
+    void process_event (pt_info_t *) {}
     SvcManager (svc_t * svc);
 };
 

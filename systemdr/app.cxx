@@ -34,11 +34,13 @@ SystemDr::SystemDr (CLIENT * clnt) : m_clnt (clnt)
 void SystemDr::main_loop ()
 {
     int i;
+    process_tracker_t * ptrack = pt_new (m_kq);
     struct kevent ev;
     struct timespec tmout = {0, /* return at once initially */
                              0};
     while (1)
     {
+        pt_info_t * info;
         memset (&ev, 0x00, sizeof (struct kevent));
 
         i = kevent (m_kq, NULL, 0, &ev, 1, &tmout);
@@ -50,6 +52,9 @@ void SystemDr::main_loop ()
 
         tmout.tv_sec = 3;
 
+        if (info = pt_investigate_kevent (ptrack, &ev))
+            goto pinfo;
+
         switch (ev.filter)
         {
         case EVFILT_SIGNAL:
@@ -58,9 +63,23 @@ void SystemDr::main_loop ()
             break;
         }
 
+        goto post_pinfo;
+
+    pinfo:
+        for (SvcManager & svc : m_managers)
+        {
+            if (svc.pids_relevant (info->pid, info->ppid))
+                svc.process_event (info);
+        }
+        free (info);
+
+    post_pinfo:
+
         for (SvcManager & svc : m_managers)
         {
             svc.launch ();
         }
     }
+
+    pt_destroy (ptrack);
 }

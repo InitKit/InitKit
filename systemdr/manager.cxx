@@ -54,7 +54,7 @@ int SvcManager::fork_register_exec (const char * cmd_)
     else /* parent */
     {
         ret = 0;
-        register_pid (newPid, 0);
+        register_pid (newPid);
     }
 
     free (argv);
