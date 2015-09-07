@@ -22,8 +22,6 @@ typedef std::pair<unsigned int, TimerCb> TimerEntry;
 
 class SvcManager
 {
-    SvcStateFactory m_state_factory;
-    std::vector<pid_t> m_pids;
     std::vector<std::shared_ptr<SvcState> > m_state_stack;
     /* This is the service we're running on. */
     svc_t * m_svc;
@@ -31,10 +29,14 @@ class SvcManager
     SvcTypes m_type;
 
   public:
+    /* Our service-state factory. */
+    SvcStateFactory m_state_factory;
     /* A reference to the System Dr. manager object. */
     class SystemDr & sd;
     /* The present primary PID we're monitoring. */
     pid_t main_pid;
+    /* The vector of service PIDs. */
+    std::vector<pid_t> m_pids;
     /* The start and stop timeouts. 90 by default. */
     unsigned int timeout_start, timeout_stop;
 
@@ -66,6 +68,12 @@ class SvcManager
             deregister_pid (pt->pid);
         m_state_stack.back ()->process_event (pt);
     }
+
+    void push_state (std::shared_ptr<SvcState> state)
+    {
+        m_state_stack.push_back (state);
+    }
+    void pop_state () { m_state_stack.pop_back (); }
 };
 
 class SystemDr

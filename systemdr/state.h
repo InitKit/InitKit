@@ -44,6 +44,18 @@ class SvcState
     virtual int process_event (pt_info_t *) = 0;
 };
 
+class StopTermState : public SvcState
+{
+    unsigned int m_timer;
+
+  public:
+    StopTermState (svc_t * svc, SvcManager & manager);
+    ~StopTermState () {}
+    int loop_iteration () {}
+    int process_event (pt_info_t *);
+    bool timer_cb (unsigned int t);
+};
+
 class StartPreState : public SvcState
 {
     unsigned int m_timer;
@@ -70,6 +82,11 @@ class SvcStateFactory
     {
         return std::shared_ptr<StartPreState> (
             new StartPreState (m_svc, m_manager));
+    }
+    std::shared_ptr<StopTermState> new_stop_term ()
+    {
+        return std::shared_ptr<StopTermState> (
+            new StopTermState (m_svc, m_manager));
     }
 };
 
