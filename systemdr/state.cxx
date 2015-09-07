@@ -6,5 +6,9 @@ StartPreState::StartPreState (svc_t * svc, SvcManager & manager)
 {
     manager.fork_register_exec (
         svc_object_get_property_string (svc, "Service.ExecStartPre"));
-    // manager.set_timer
+    m_timer = manager.sd.register_timer (
+        manager.timeout_start,
+        std::bind (&StartPreState::timer_cb, this, std::placeholders::_1));
 }
+
+bool StartPreState::timer_cb (unsigned int t) { printf ("Timer triggered\n"); }

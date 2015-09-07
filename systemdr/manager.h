@@ -17,7 +17,8 @@ extern "C" {
 #include "s16rr.h"
 #include "state.h"
 
-typedef std::pair<unsigned int, std::function<bool(unsigned int)> > TimerEntry;
+typedef std::function<bool(unsigned int)> TimerCb;
+typedef std::pair<unsigned int, TimerCb> TimerEntry;
 
 class SvcManager
 {
@@ -31,7 +32,7 @@ class SvcManager
 
   public:
     /* A reference to the System Dr. manager object. */
-    class SystemDr & m_sd;
+    class SystemDr & sd;
     /* The present primary PID we're monitoring. */
     pid_t main_pid;
     /* The start and stop timeouts. 90 by default. */

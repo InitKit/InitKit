@@ -7,7 +7,7 @@
     !strcasecmp (svc_object_get_property_string (svc, "Service.Type"), typ)
 
 SvcManager::SvcManager (SystemDr & sd, svc_t * svc)
-    : m_svc (svc), m_state_factory (svc, *this), m_sd (sd)
+    : m_svc (svc), m_state_factory (svc, *this), sd (sd)
 {
     if (CompareType ("simple"))
         m_type = SIMPLE;
@@ -22,7 +22,7 @@ SvcManager::SvcManager (SystemDr & sd, svc_t * svc)
 
 void SvcManager::register_pid (pid_t pid)
 {
-    pt_watch_pid (m_sd.m_ptrack, pid);
+    pt_watch_pid (sd.m_ptrack, pid);
     m_pids.push_back (pid);
 }
 
@@ -37,7 +37,7 @@ void SvcManager::deregister_pid (pid_t pid)
             break;
         }
     }
-    pt_disregard_pid (m_sd.m_ptrack, pid);
+    pt_disregard_pid (sd.m_ptrack, pid);
 }
 
 void SvcManager::launch ()

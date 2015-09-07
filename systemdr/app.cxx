@@ -86,7 +86,7 @@ void SystemDr::deregister_timer (unsigned int ident)
     EV_SET (&ev, ident, EVFILT_TIMER, EV_DELETE, 0, 0, 0);
     i = kevent (m_kq, &ev, 1, NULL, 0, NULL);
     if (i == -1)
-        fprintf (stderr, "timer kevent!\n");
+        fprintf (stderr, "timer kevent! (deletion)\n");
 
     for (std::vector<TimerEntry>::iterator it = m_timers.begin ();
          it != m_timers.end (); it++)
@@ -136,7 +136,11 @@ void SystemDr::main_loop ()
 
         case EVFILT_TIMER:
             if (TimerEntry * entry = find_timer (ev.ident))
+            {
                 entry->second (ev.ident);
+                deregister_timer (ev.ident);
+                break;
+            }
             break;
         }
 

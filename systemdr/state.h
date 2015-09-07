@@ -1,6 +1,7 @@
 #ifndef __STATE_H__
 #define __STATE_H__
 
+#include <cstdio>
 #include <memory>
 #include "s16.h"
 #include "s16rr.h"
@@ -45,11 +46,14 @@ class SvcState
 
 class StartPreState : public SvcState
 {
+    unsigned int m_timer;
+
   public:
     StartPreState (svc_t * svc, SvcManager & manager);
     ~StartPreState () {}
     int loop_iteration () {}
     int process_event (pt_info_t *) {}
+    bool timer_cb (unsigned int t);
 };
 
 class SvcStateFactory
