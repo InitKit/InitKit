@@ -80,7 +80,7 @@ pt_info_t * pt_investigate_kevent (process_tracker_t * pt, struct kevent * ke)
     if (ke->fflags & NOTE_CHILD)
     {
         printf ("new pid %d has %d as parent\n", ke->ident, ke->data);
-        info.event = CHILD;
+        info.event = PT_CHILD;
         info.pid = ke->ident;
         info.ppid = ke->data;
 
@@ -93,7 +93,7 @@ pt_info_t * pt_investigate_kevent (process_tracker_t * pt, struct kevent * ke)
         pid_list_iterator it;
 
         printf ("pid %d exited\n", ke->ident);
-        info.event = EXIT;
+        info.event = PT_EXIT;
         info.pid = ke->ident;
         info.ppid = 0;
         info.flags = ke->data;

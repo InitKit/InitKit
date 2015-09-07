@@ -50,6 +50,7 @@ class SvcManager
         for (std::vector<pid_t>::iterator it = m_pids.begin ();
              it != m_pids.end (); it++)
         {
+            printf ("IT: %d ONE: %d\n", it, one);
             if (*it == one | *it == two)
             {
                 return 1;

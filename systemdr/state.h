@@ -52,7 +52,7 @@ class StartPreState : public SvcState
     StartPreState (svc_t * svc, SvcManager & manager);
     ~StartPreState () {}
     int loop_iteration () {}
-    int process_event (pt_info_t *) {}
+    int process_event (pt_info_t *);
     bool timer_cb (unsigned int t);
 };
 

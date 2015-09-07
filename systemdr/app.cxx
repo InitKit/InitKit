@@ -147,6 +147,7 @@ void SystemDr::main_loop ()
         goto post_pinfo;
 
     pinfo:
+        printf ("Event one!\n");
         for (SvcManager & svc : m_managers)
         {
             if (svc.pids_relevant (info->pid, info->ppid))

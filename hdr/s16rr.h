@@ -8,17 +8,18 @@ extern "C" {
 #endif
 
 /* process tracking structures */
+typedef enum
+{
+    PT_CHILD,
+    PT_EXIT,
+} pt_event;
 
 /* This structure contains details of a process tracker event.
  * In the case of child, the field 'ppid' contains the parent pid.
  * In the case of exit, the field 'flags' contains the exit data. */
 typedef struct pt_info_s
 {
-    enum
-    {
-        CHILD,
-        EXIT,
-    } event;
+    pt_event event;
     pid_t pid, ppid;
     long flags;
 } pt_info_t;

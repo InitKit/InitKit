@@ -16,12 +16,15 @@ SvcManager::SvcManager (SystemDr & sd, svc_t * svc)
     else
         printf ("Fail: service type unknown\n");
 
+    svc_object_set_property_string (svc, "S16.Status", "offline");
+
     timeout_start = 90;
     timeout_stop = 90;
 }
 
 void SvcManager::register_pid (pid_t pid)
 {
+    printf ("Register PID %d, size %d\n", pid, m_pids.size ());
     pt_watch_pid (sd.m_ptrack, pid);
     m_pids.push_back (pid);
 }
