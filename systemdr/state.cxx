@@ -16,10 +16,9 @@ StartPreState::StartPreState (svc_t * svc, SvcManager & manager)
 
 int StartPreState::process_event (pt_info_t * info)
 {
-    printf ("Event!\n");
     if (info->event == PT_EXIT && info->pid == m_manager.main_pid)
     {
-        printf ("Main PID exited\n");
+        fprintf (stderr, "Main PID exited\n");
     }
 }
 

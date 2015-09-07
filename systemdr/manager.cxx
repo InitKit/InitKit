@@ -24,13 +24,14 @@ SvcManager::SvcManager (SystemDr & sd, svc_t * svc)
 
 void SvcManager::register_pid (pid_t pid)
 {
-    printf ("Register PID %d, size %d\n", pid, m_pids.size ());
+    fprintf (stderr, "Register PID %d, size %d\n", pid, m_pids.size ());
     pt_watch_pid (sd.m_ptrack, pid);
     m_pids.push_back (pid);
 }
 
 void SvcManager::deregister_pid (pid_t pid)
 {
+    fprintf (stderr, "Deregister PID %d, size %d\n", pid, m_pids.size ());
     for (std::vector<pid_t>::iterator it = m_pids.begin (); it != m_pids.end ();
          it++)
     {
@@ -51,7 +52,7 @@ void SvcManager::launch ()
         m_state_stack.push_back (m_state_factory.new_start_pre ());
 }
 
-int SvcManager::fork_register_exec (const char * cmd_)
+pid_t SvcManager::fork_register_exec (const char * cmd_)
 {
     int n_spaces = 0, ret = 1;
     char * cmd = strdup (cmd_), * tofree = cmd, ** argv = NULL;
@@ -78,10 +79,11 @@ int SvcManager::fork_register_exec (const char * cmd_)
     else if (newPid < 0) /* fail */
     {
         printf ("FAILED TO FORK\n");
+        ret = 0;
     }
     else /* parent */
     {
-        ret = 0;
+        ret = newPid;
         register_pid (newPid);
     }
 

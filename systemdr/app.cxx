@@ -147,18 +147,17 @@ void SystemDr::main_loop ()
         goto post_pinfo;
 
     pinfo:
-        printf ("Event one!\n");
-        for (SvcManager & svc : m_managers)
+        for (std::shared_ptr<SvcManager> & svc : m_managers)
         {
-            if (svc.pids_relevant (info->pid, info->ppid))
-                svc.process_event (info);
+            if (svc->pids_relevant (info->pid, info->ppid))
+                svc->process_event (info);
         }
         free (info);
 
     post_pinfo:
-        for (SvcManager & svc : m_managers)
+        for (std::shared_ptr<SvcManager> & svc : m_managers)
         {
-            svc.launch ();
+            svc->launch ();
         }
     }
 }

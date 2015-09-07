@@ -40,7 +40,7 @@ class SvcManager
 
     SvcManager (SystemDr & sd, svc_t * svc);
 
-    int fork_register_exec (const char * exe);
+    pid_t fork_register_exec (const char * exe);
     void launch ();
 
     void register_pid (pid_t pid);
@@ -50,7 +50,6 @@ class SvcManager
         for (std::vector<pid_t>::iterator it = m_pids.begin ();
              it != m_pids.end (); it++)
         {
-            printf ("IT: %d ONE: %d\n", it, one);
             if (*it == one | *it == two)
             {
                 return 1;
@@ -61,6 +60,10 @@ class SvcManager
 
     void process_event (pt_info_t * pt)
     {
+        if (pt->event == PT_CHILD)
+            register_pid (pt->pid);
+        else if (pt->event == PT_EXIT)
+            deregister_pid (pt->pid);
         m_state_stack.back ()->process_event (pt);
     }
 };
@@ -68,7 +71,7 @@ class SvcManager
 class SystemDr
 {
     friend class SvcManager;
-    std::vector<SvcManager> m_managers;
+    std::vector<std::shared_ptr<SvcManager> > m_managers;
     CLIENT * m_clnt;
     int m_kq;
     process_tracker_t * m_ptrack;
@@ -94,7 +97,8 @@ class SystemDr
     void main_loop ();
     void add_svc (svc_t * svc)
     {
-        m_managers.push_back (SvcManager (*this, svc));
+        m_managers.push_back (
+            std::shared_ptr<SvcManager> (new SvcManager (*this, svc)));
     }
 };
 

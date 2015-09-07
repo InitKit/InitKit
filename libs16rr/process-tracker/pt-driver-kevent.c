@@ -65,8 +65,8 @@ void pt_disregard_pid (process_tracker_t * pt, pid_t pid)
     return;
 
 found:
-    pid_list_del (pt->pids, it->val);
     free (it->val);
+    pid_list_del (pt->pids, it->val);
 }
 
 pt_info_t * pt_investigate_kevent (process_tracker_t * pt, struct kevent * ke)
