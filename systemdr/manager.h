@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <functional>
 #include <memory>
 #include <sys/types.h>
 extern "C" {
@@ -21,13 +22,26 @@ class SvcManager
     SvcStateFactory m_state_factory;
     std::vector<pid_t> m_pids;
     std::vector<std::shared_ptr<SvcState> > m_state_stack;
+    /* Here, we store a pair of timer ID and the callback function. */
+    std::vector<std::pair<unsigned int, std::function<bool(unsigned int)> > >
+        m_timers;
+    /* This is the service we're running on. */
     svc_t * m_svc;
+    /* The type of the service - simple, forking, etc. */
     SvcTypes m_type;
+    /* A reference to the System Dr. manager object. */
     class SystemDr & m_sd;
 
   public:
+    /* The present primary PID we're monitoring. */
+    pid_t main_pid;
+    /* The start and stop timeouts. 90 by default. */
+    unsigned int timeout_start, timeout_stop;
+
     int fork_register_exec (const char * exe);
     void launch ();
+    void register_timer (unsigned int sec,
+                         std::function<bool(unsigned int)> cb);
     void register_pid (pid_t pid);
     void deregister_pid (pid_t pid);
     int pids_relevant (pid_t one, pid_t two)
@@ -59,6 +73,7 @@ class SystemDr
 
   public:
     SystemDr (CLIENT * clnt);
+    ~SystemDr ();
     void main_loop ();
     void add_svc (svc_t * svc)
     {

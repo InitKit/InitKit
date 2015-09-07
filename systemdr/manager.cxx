@@ -14,6 +14,21 @@ SvcManager::SvcManager (SystemDr & sd, svc_t * svc)
         m_type = FORKING;
     else
         printf ("Fail: service type unknown\n");
+
+    timeout_start = 90;
+    timeout_stop = 90;
+}
+
+void SvcManager::register_timer (unsigned int sec,
+                                 std::function<bool(unsigned int)> cb)
+{
+    struct kevent ev;
+    int i;
+
+    EV_SET (&ev, 0, EVFILT_TIMER, EV_ADD | EV_ONESHOT, 0, sec * 1000, 0);
+    i = kevent (m_sd.m_kq, &ev, 1, NULL, 0, NULL);
+    if (i == -1)
+        printf ("timer kevent!\n");
 }
 
 void SvcManager::register_pid (pid_t pid)

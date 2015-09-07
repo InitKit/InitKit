@@ -12,7 +12,6 @@ ListGenForNameType (pid, pid_t);
 typedef struct process_tracker_s
 {
     int kq;
-    int no;
     pid_list pids;
 } process_tracker_t;
 
@@ -109,8 +108,8 @@ pt_info_t * pt_investigate_kevent (process_tracker_t * pt, struct kevent * ke)
         goto result;
 
     found:
-        pid_list_del (pt->pids, it->val);
         free (it->val);
+        pid_list_del (pt->pids, it->val);
         goto result;
     }
 

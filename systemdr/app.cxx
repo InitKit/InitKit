@@ -1,5 +1,6 @@
 #include <errno.h>
 #include <signal.h>
+#include <unistd.h>
 
 #include "s16rr.h"
 #include "manager.h"
@@ -33,6 +34,12 @@ SystemDr::SystemDr (CLIENT * clnt) : m_clnt (clnt)
     sigaction (SIGCHLD, &sa, NULL);
 }
 
+SystemDr::~SystemDr ()
+{
+    pt_destroy (m_ptrack);
+    close (m_kq);
+}
+
 void SystemDr::main_loop ()
 {
     int i;
@@ -62,8 +69,9 @@ void SystemDr::main_loop ()
         {
             printf ("Signal received: %d. Additional data: %d\n", ev.ident,
                     ev.data);
-            while (waitpid ((pid_t)(-1), 0, WNOHANG) > 0)
-                ;
+            if (ev.ident == SIGCHLD)
+                while (waitpid ((pid_t)(-1), 0, WNOHANG) > 0)
+                    ;
             break;
         }
         }
@@ -79,12 +87,9 @@ void SystemDr::main_loop ()
         free (info);
 
     post_pinfo:
-
         for (SvcManager & svc : m_managers)
         {
             svc.launch ();
         }
     }
-
-    pt_destroy (m_ptrack);
 }
