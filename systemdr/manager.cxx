@@ -1,3 +1,4 @@
+#include <climits>
 #include <strings.h>
 #include <unistd.h>
 #include "manager.h"
@@ -19,16 +20,62 @@ SvcManager::SvcManager (SystemDr & sd, svc_t * svc)
     timeout_stop = 90;
 }
 
-void SvcManager::register_timer (unsigned int sec,
-                                 std::function<bool(unsigned int)> cb)
+TimerEntry * SvcManager::find_timer (unsigned int ident)
+{
+    for (TimerEntry & entry : m_timers)
+    {
+        if (entry.first == ident)
+            return &entry;
+    }
+    return 0;
+}
+
+unsigned int SvcManager::register_timer (unsigned int sec,
+                                         std::function<bool(unsigned int)> cb)
+{
+    struct kevent ev;
+    int i;
+    unsigned int ident;
+
+    while (find_timer (ident))
+        ident = rand () % UINT_MAX;
+
+    EV_SET (&ev, ident, EVFILT_TIMER, EV_ADD | EV_ONESHOT, 0, sec * 1000, 0);
+    i = kevent (m_sd.m_kq, &ev, 1, NULL, 0, NULL);
+
+    if (i == -1)
+    {
+        fprintf (stderr, "timer kevent!\n");
+        return 0;
+    }
+    else
+    {
+        TimerEntry entry;
+        entry.first = ident;
+        entry.second = cb;
+        m_timers.push_back (entry);
+    }
+}
+
+void SvcManager::deregister_timer (unsigned int ident)
 {
     struct kevent ev;
     int i;
 
-    EV_SET (&ev, 0, EVFILT_TIMER, EV_ADD | EV_ONESHOT, 0, sec * 1000, 0);
+    EV_SET (&ev, ident, EVFILT_TIMER, EV_DELETE, 0, 0, 0);
     i = kevent (m_sd.m_kq, &ev, 1, NULL, 0, NULL);
     if (i == -1)
-        printf ("timer kevent!\n");
+        fprintf (stderr, "timer kevent!\n");
+
+    for (std::vector<TimerEntry>::iterator it = m_timers.begin ();
+         it != m_timers.end (); it++)
+    {
+        if (it->first == ident)
+        {
+            m_timers.erase (it);
+            return;
+        }
+    }
 }
 
 void SvcManager::register_pid (pid_t pid)

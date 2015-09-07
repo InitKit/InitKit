@@ -17,14 +17,15 @@ extern "C" {
 #include "s16rr.h"
 #include "state.h"
 
+typedef std::pair<unsigned int, std::function<bool(unsigned int)> > TimerEntry;
+
 class SvcManager
 {
     SvcStateFactory m_state_factory;
     std::vector<pid_t> m_pids;
     std::vector<std::shared_ptr<SvcState> > m_state_stack;
     /* Here, we store a pair of timer ID and the callback function. */
-    std::vector<std::pair<unsigned int, std::function<bool(unsigned int)> > >
-        m_timers;
+    std::vector<TimerEntry> m_timers;
     /* This is the service we're running on. */
     svc_t * m_svc;
     /* The type of the service - simple, forking, etc. */
@@ -38,10 +39,22 @@ class SvcManager
     /* The start and stop timeouts. 90 by default. */
     unsigned int timeout_start, timeout_stop;
 
+    SvcManager (SystemDr & sd, svc_t * svc);
+
     int fork_register_exec (const char * exe);
     void launch ();
-    void register_timer (unsigned int sec,
-                         std::function<bool(unsigned int)> cb);
+
+    /* Search for timer by ident.
+    Returns a pointer to a TimerEntry in the timers vector */
+    TimerEntry * find_timer (unsigned int ident);
+    /* This registers a timer, and returns its identifier. */
+    unsigned int register_timer (unsigned int sec,
+                                 std::function<bool(unsigned int)> cb);
+    /* This deregisters a timer.
+     * Note that this only makes sense for a timer that hasn't
+     * yet elapsed, as these are deleted after trigger. */
+    void deregister_timer (unsigned int ident);
+
     void register_pid (pid_t pid);
     void deregister_pid (pid_t pid);
     int pids_relevant (pid_t one, pid_t two)
@@ -56,11 +69,11 @@ class SvcManager
         }
         return 0;
     }
+
     void process_event (pt_info_t * pt)
     {
         m_state_stack.back ()->process_event (pt);
     }
-    SvcManager (SystemDr & sd, svc_t * svc);
 };
 
 class SystemDr
