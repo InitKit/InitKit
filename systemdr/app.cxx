@@ -1,3 +1,4 @@
+#include <climits>
 #include <errno.h>
 #include <signal.h>
 #include <unistd.h>
@@ -40,6 +41,64 @@ SystemDr::~SystemDr ()
     close (m_kq);
 }
 
+TimerEntry * SystemDr::find_timer (unsigned int ident)
+{
+    for (TimerEntry & entry : m_timers)
+    {
+        if (entry.first == ident)
+            return &entry;
+    }
+    return 0;
+}
+
+unsigned int SystemDr::register_timer (unsigned int sec,
+                                       std::function<bool(unsigned int)> cb)
+{
+    struct kevent ev;
+    int i;
+    unsigned int ident;
+
+    while (find_timer (ident))
+        ident = rand () % UINT_MAX;
+
+    EV_SET (&ev, ident, EVFILT_TIMER, EV_ADD | EV_ONESHOT, 0, sec * 1000, 0);
+    i = kevent (m_kq, &ev, 1, NULL, 0, NULL);
+
+    if (i == -1)
+    {
+        fprintf (stderr, "timer kevent!\n");
+        return 0;
+    }
+    else
+    {
+        TimerEntry entry;
+        entry.first = ident;
+        entry.second = cb;
+        m_timers.push_back (entry);
+    }
+}
+
+void SystemDr::deregister_timer (unsigned int ident)
+{
+    struct kevent ev;
+    int i;
+
+    EV_SET (&ev, ident, EVFILT_TIMER, EV_DELETE, 0, 0, 0);
+    i = kevent (m_kq, &ev, 1, NULL, 0, NULL);
+    if (i == -1)
+        fprintf (stderr, "timer kevent!\n");
+
+    for (std::vector<TimerEntry>::iterator it = m_timers.begin ();
+         it != m_timers.end (); it++)
+    {
+        if (it->first == ident)
+        {
+            m_timers.erase (it);
+            return;
+        }
+    }
+}
+
 void SystemDr::main_loop ()
 {
     int i;
@@ -74,6 +133,11 @@ void SystemDr::main_loop ()
                     ;
             break;
         }
+
+        case EVFILT_TIMER:
+            if (TimerEntry * entry = find_timer (ev.ident))
+                entry->second (ev.ident);
+            break;
         }
 
         goto post_pinfo;

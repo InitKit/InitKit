@@ -24,16 +24,14 @@ class SvcManager
     SvcStateFactory m_state_factory;
     std::vector<pid_t> m_pids;
     std::vector<std::shared_ptr<SvcState> > m_state_stack;
-    /* Here, we store a pair of timer ID and the callback function. */
-    std::vector<TimerEntry> m_timers;
     /* This is the service we're running on. */
     svc_t * m_svc;
     /* The type of the service - simple, forking, etc. */
     SvcTypes m_type;
-    /* A reference to the System Dr. manager object. */
-    class SystemDr & m_sd;
 
   public:
+    /* A reference to the System Dr. manager object. */
+    class SystemDr & m_sd;
     /* The present primary PID we're monitoring. */
     pid_t main_pid;
     /* The start and stop timeouts. 90 by default. */
@@ -43,17 +41,6 @@ class SvcManager
 
     int fork_register_exec (const char * exe);
     void launch ();
-
-    /* Search for timer by ident.
-    Returns a pointer to a TimerEntry in the timers vector */
-    TimerEntry * find_timer (unsigned int ident);
-    /* This registers a timer, and returns its identifier. */
-    unsigned int register_timer (unsigned int sec,
-                                 std::function<bool(unsigned int)> cb);
-    /* This deregisters a timer.
-     * Note that this only makes sense for a timer that hasn't
-     * yet elapsed, as these are deleted after trigger. */
-    void deregister_timer (unsigned int ident);
 
     void register_pid (pid_t pid);
     void deregister_pid (pid_t pid);
@@ -84,9 +71,24 @@ class SystemDr
     int m_kq;
     process_tracker_t * m_ptrack;
 
+    /* Here, we store a pair of timer ID and the callback function. */
+    std::vector<TimerEntry> m_timers;
+
   public:
     SystemDr (CLIENT * clnt);
     ~SystemDr ();
+
+    /* Search for timer by ident.
+    Returns a pointer to a TimerEntry in the timers vector */
+    TimerEntry * find_timer (unsigned int ident);
+    /* This registers a timer, and returns its identifier. */
+    unsigned int register_timer (unsigned int sec,
+                                 std::function<bool(unsigned int)> cb);
+    /* This deregisters a timer.
+     * Note that this only makes sense for a timer that hasn't
+     * yet elapsed, as these are deleted after trigger. */
+    void deregister_timer (unsigned int ident);
+
     void main_loop ();
     void add_svc (svc_t * svc)
     {
