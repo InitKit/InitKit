@@ -25,8 +25,6 @@ class SvcManager
     std::vector<std::shared_ptr<SvcState> > m_state_stack;
     /* This is the service we're running on. */
     svc_t * m_svc;
-    /* The type of the service - simple, forking, etc. */
-    SvcTypes m_type;
 
   public:
     /* Our service-state factory. */
@@ -39,6 +37,8 @@ class SvcManager
     std::vector<pid_t> m_pids;
     /* The start and stop timeouts. 90 by default. */
     unsigned int timeout_start, timeout_stop;
+    /* The type of the service - simple, forking, etc. */
+    SvcTypes m_type;
 
     SvcManager (SystemDr & sd, svc_t * svc);
 

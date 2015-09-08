@@ -37,7 +37,11 @@ int StartPreState::loop_iteration ()
         fprintf (stderr, "No PIDs left\n");
         m_manager.sd.deregister_timer (m_timer);
         m_timer = 0;
-        /* transfer to next execstartpre here*/
+        /* transfer to next execstartpre here some day */
+        if (m_manager.m_type == SIMPLE)
+        {
+            //m_manager.push_state(m_manager.m_state_factory.new_run ());
+        }
     }
 }
 
