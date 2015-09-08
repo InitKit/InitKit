@@ -75,6 +75,7 @@ unsigned int SystemDr::register_timer (unsigned int sec,
         entry.first = ident;
         entry.second = cb;
         m_timers.push_back (entry);
+        return ident;
     }
 }
 

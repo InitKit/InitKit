@@ -12,7 +12,7 @@ StartPreState::StartPreState (svc_t * svc, SvcManager & manager)
     m_manager.main_pid = manager.fork_register_exec (
         svc_object_get_property_string (svc, "Service.ExecStartPre"));
     m_timer = manager.sd.register_timer (
-        2, std::bind (&StartPreState::timer_cb, this, std::placeholders::_1));
+        3, std::bind (&StartPreState::timer_cb, this, std::placeholders::_1));
 }
 
 int StartPreState::process_event (pt_info_t * info)
@@ -20,6 +20,13 @@ int StartPreState::process_event (pt_info_t * info)
     if (info->event == PT_EXIT && info->pid == m_manager.main_pid)
     {
         fprintf (stderr, "Main PID exited\n");
+        m_manager.main_pid = 0;
+
+        if (m_manager.m_pids.size ())
+        {
+            fprintf (stderr, "Pushing StopTerm to kill remaining PIDs\n");
+            m_manager.push_state (m_manager.m_state_factory.new_stop_term ());
+        }
     }
 }
 
@@ -27,7 +34,9 @@ int StartPreState::loop_iteration ()
 {
     if (!m_manager.m_pids.size ())
     {
-        printf ("No PIDs left\n");
+        fprintf (stderr, "No PIDs left\n");
+        m_manager.sd.deregister_timer (m_timer);
+        m_timer = 0;
         /* transfer to next execstartpre here*/
     }
 }
@@ -55,7 +64,7 @@ int StopTermState::process_event (pt_info_t *)
 {
     if (m_manager.m_pids.size () == 0)
     {
-        printf ("PIDs purged\n");
+        fprintf (stderr, "PIDs purged\n");
         m_manager.pop_state ();
     }
 }
