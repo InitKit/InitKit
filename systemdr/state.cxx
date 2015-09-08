@@ -21,9 +21,14 @@ int StartPreState::process_event (pt_info_t * info)
     {
         fprintf (stderr, "Main PID exited\n");
     }
+}
+
+int StartPreState::loop_iteration ()
+{
     if (!m_manager.m_pids.size ())
     {
         printf ("No PIDs left\n");
+        /* transfer to next execstartpre here*/
     }
 }
 

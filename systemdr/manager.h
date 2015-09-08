@@ -44,6 +44,7 @@ class SvcManager
 
     pid_t fork_register_exec (const char * exe);
     void launch ();
+    void loop_iteration () { m_state_stack.back ()->loop_iteration (); }
 
     void register_pid (pid_t pid);
     void deregister_pid (pid_t pid);

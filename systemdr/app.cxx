@@ -112,14 +112,20 @@ void SystemDr::main_loop ()
 
         i = kevent (m_kq, NULL, 0, &ev, 1, &tmout);
         if (i == -1)
+        {
             if (errno == EINTR)
+            {
                 continue;
+            }
             else
+            {
                 fprintf (stderr, "Error: i = -1\n");
+            }
+        }
 
         tmout.tv_sec = 3;
 
-        if (info = pt_investigate_kevent (m_ptrack, &ev))
+        if ((info = pt_investigate_kevent (m_ptrack, &ev)))
             goto pinfo;
 
         switch (ev.filter)
@@ -135,7 +141,8 @@ void SystemDr::main_loop ()
         }
 
         case EVFILT_TIMER:
-            if (TimerEntry * entry = find_timer (ev.ident))
+            TimerEntry * entry;
+            if ((entry = find_timer (ev.ident)))
             {
                 entry->second (ev.ident);
                 deregister_timer (ev.ident);
@@ -158,6 +165,7 @@ void SystemDr::main_loop ()
         for (std::shared_ptr<SvcManager> & svc : m_managers)
         {
             svc->launch ();
+            svc->loop_iteration ();
         }
     }
 }

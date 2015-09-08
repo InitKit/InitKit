@@ -30,6 +30,7 @@ CLIENT * s16db_context_create ()
         clnt_pcreateerror ("localhost");
         return 0;
     }
+    return clnt;
 }
 
 void s16db_context_destroy (CLIENT * clnt) { clnt_destroy (clnt); }

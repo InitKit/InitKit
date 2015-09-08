@@ -62,11 +62,10 @@ svc_t * parse_unit (int is_systemd, char const * path)
         char * fmri;
         char * name;
 
-        asprintf (&fmri, "svc:/%s", name);
-
         SetOrExit ("S16.Delegate");
         SetOrExit ("S16.Name");
         name = prop_find_name (new_svc->properties, "S16.Name")->value.pval_u.s;
+        asprintf (&fmri, "svc:/%s", name);
         svc_object_set_property_string (new_svc, "S16.FMRI", fmri);
         free (fmri);
         svc_object_set_property_string (new_svc, "S16.Path", path);

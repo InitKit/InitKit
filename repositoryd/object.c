@@ -53,6 +53,7 @@ int delete_svc (svc_id_t id)
 
     svc_list_del (RD.services, Svc);
     destroy_svc (Svc);
+    return 0;
 }
 
 int count_svcs () { return List_count (RD.services); }
