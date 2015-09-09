@@ -14,7 +14,7 @@ a level where they are able to act as a service supervisor tool capable of
 running simple, forking, and oneshot systemd units.
 
 System XVI is designed for modularity. Please find a flowchart depicting
-the key components' actions and interactions [here](docs/s16.png].
+the key components' actions and interactions [here](docs/s16.png).
 
 ### Development
 
