@@ -7,6 +7,15 @@ System XVI is a modern take on service management.
 It aims to incorporate useful functionality while maintaining a modular 
 design in the UNIX tradition.
 
+This project is still under active development. It is not yet possible to
+boot with System XVI; indeed, the init subdirectory is a placeholder.
+All effort is currently focused on bringing the various components up to
+a level where they are able to act as a service supervisor tool capable of 
+running simple, forking, and oneshot systemd units.
+
+System XVI is designed for modularity. Please find a flowchart depicting
+the key components' actions and interactions [here](docs/s16.png].
+
 ### Development
 
 ##### Building
