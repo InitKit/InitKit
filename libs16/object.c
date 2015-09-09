@@ -50,7 +50,11 @@ const char * svc_object_get_property_string (svc_t * Svc, const char * key)
 
 long * svc_object_get_property_int (svc_t * Svc, const char * key)
 {
-    return &prop_find_name (Svc->properties, key)->value.pval_u.i;
+    property_t * prop = prop_find_name (Svc->properties, key);
+    if (!prop)
+        return 0;
+    else
+        return &prop->value.pval_u.i;
 }
 
 void svc_object_set_property_string (svc_t * Svc, const char * key,

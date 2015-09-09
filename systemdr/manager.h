@@ -78,6 +78,11 @@ class SvcManager
     {
         m_state_stack.push_back (state);
     }
+    void replace_state (std::shared_ptr<SvcState> state)
+    {
+        m_state_stack.pop_back ();
+        m_state_stack.push_back (state);
+    }
     void pop_state () { m_state_stack.pop_back (); }
 };
 

@@ -51,9 +51,9 @@ int StartPreState::loop_iteration ()
         /* transfer to next execstartpre instead some day, here */
         if (m_manager.m_type == SIMPLE)
         {
+            SvcManager & mgr = m_manager;
             fprintf (stderr, "Transition to Run\n");
-            m_manager.push_state (
-                m_manager.m_state_factory.new_state<RunState> ());
+            mgr.replace_state (mgr.m_state_factory.new_state<RunState> ());
         }
     }
 }
