@@ -3,18 +3,43 @@
 #include <unistd.h>
 #include "manager.h"
 
+#define SetHasExec(typ)                                                        \
+    Exec##typ = svc_object_get_property_string (svc, "Service.Exec" #typ)
 #define CompareType(typ)                                                       \
     !strcasecmp (svc_object_get_property_string (svc, "Service.Type"), typ)
+#define CompareRType(typ) !strcasecmp (rtype, typ)
 
 SvcManager::SvcManager (SystemDr & sd, svc_t * svc)
-    : m_svc (svc), m_state_factory (svc, *this), sd (sd)
+    : m_svc (svc), m_state_factory (svc, *this), sd (sd), ExecStartPre (false),
+      ExecStartPost (false), ExecStop (false), ExecStopPost (false)
 {
+    const char * rtype;
     if (CompareType ("simple"))
         m_type = SIMPLE;
     else if (CompareType ("forking"))
         m_type = FORKING;
     else
         printf ("Fail: service type unknown\n");
+
+    if ((rtype = svc_object_get_property_string (svc, "Service.Restart")))
+    {
+        if (CompareRType ("no"))
+            m_rtype = RESTART_NEVER;
+        else if (CompareType ("on-success"))
+            m_rtype = RESTART_ON_SUCCESS;
+        else if (CompareRType ("on-failure") || CompareRType ("on-abort") ||
+                 CompareRType ("on-abnormal"))
+            m_rtype = RESTART_ON_FAILURE;
+        else
+            m_rtype = RESTART_NEVER;
+    }
+    else
+        m_rtype = RESTART_NEVER;
+
+    SetHasExec (StartPre);
+    SetHasExec (StartPost);
+    SetHasExec (Stop);
+    SetHasExec (StopPost);
 
     svc_object_set_property_string (svc, "S16.Status", "offline");
 
@@ -48,8 +73,10 @@ void SvcManager::launch ()
 {
     if (m_state_stack.size () > 0)
         return;
-    if (svc_object_get_property_string (m_svc, "Service.ExecStartPre"))
-        m_state_stack.push_back (m_state_factory.new_start_pre ());
+    if (ExecStartPre)
+        m_state_stack.push_back (m_state_factory.new_state<StartPreState> ());
+    else if (m_type == SIMPLE)
+        m_state_stack.push_back (m_state_factory.new_state<RunState> ());
 }
 
 pid_t SvcManager::fork_register_exec (const char * cmd_)

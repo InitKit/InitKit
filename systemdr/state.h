@@ -5,28 +5,7 @@
 #include <memory>
 #include "s16.h"
 #include "s16rr.h"
-
-enum SvcStates
-{
-    INACTIVE,
-    START_PRE,
-    START,
-    START_POST,
-    ONLINE,
-    EXITED,
-    STOP,
-    STOP_SIGTERM,
-    STOP_SIGKILL,
-    STOP_POST,
-    FAULTED,
-    RESTART,
-};
-
-enum SvcTypes
-{
-    SIMPLE,
-    FORKING,
-};
+#include "sd-defs.h"
 
 class SvcState
 {

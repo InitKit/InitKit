@@ -39,6 +39,10 @@ class SvcManager
     unsigned int timeout_start, timeout_stop;
     /* The type of the service - simple, forking, etc. */
     SvcTypes m_type;
+    /* The restart discipline for the service. */
+    SvcRestartTypes m_rtype;
+    /* Which exec states have defined things to do. */
+    bool ExecStartPre, ExecStartPost, ExecStop, ExecStopPost;
 
     SvcManager (SystemDr & sd, svc_t * svc);
 
