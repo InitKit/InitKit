@@ -56,7 +56,7 @@ unsigned int SystemDr::register_timer (unsigned int sec,
 {
     struct kevent ev;
     int i;
-    unsigned int ident = rand() % UINT_MAX;
+    unsigned int ident = rand () % UINT_MAX;
 
     while (find_timer (ident))
         ident = rand () % UINT_MAX;

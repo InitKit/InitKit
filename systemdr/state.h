@@ -59,6 +59,7 @@ class StopTermState : public SvcState
 class StartPreState : public SvcState
 {
     unsigned int m_timer;
+    bool m_failed;
 
   public:
     StartPreState (svc_t * svc, SvcManager & manager);
@@ -66,6 +67,20 @@ class StartPreState : public SvcState
     int loop_iteration ();
     int process_event (pt_info_t *);
     bool timer_cb (unsigned int t);
+};
+
+/* This launches ExecStart for a simple service. */
+class RunState : public SvcState
+{
+    unsigned int m_timer;
+    bool m_failed;
+
+  public:
+    RunState (svc_t * svc, SvcManager & manager);
+    ~RunState () {}
+    int loop_iteration ();
+    int process_event (pt_info_t *);
+    bool timer_cb (unsigned int t) {}
 };
 
 class SvcStateFactory
@@ -78,15 +93,14 @@ class SvcStateFactory
         : m_svc (svc), m_manager (manager)
     {
     }
+    template <class T> std::shared_ptr<T> new_state ()
+    {
+        return std::shared_ptr<T> (new T (m_svc, m_manager));
+    }
     std::shared_ptr<StartPreState> new_start_pre ()
     {
         return std::shared_ptr<StartPreState> (
             new StartPreState (m_svc, m_manager));
-    }
-    std::shared_ptr<StopTermState> new_stop_term ()
-    {
-        return std::shared_ptr<StopTermState> (
-            new StopTermState (m_svc, m_manager));
     }
 };
 
