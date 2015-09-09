@@ -1,6 +1,6 @@
 # System XVI
 
-![System XVI Logo](doc/logotype_variant.png)
+![System XVI Logo](doc/logotype.png)
 
 ### Overview
 System XVI is a modern take on service management.
