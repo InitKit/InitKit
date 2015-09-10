@@ -66,6 +66,10 @@ void pt_destroy (process_tracker_t * pt);
 
 /* misc routines */
 
+/* Returns 0 for a healthy exit, and either signal number or return code if not.
+ */
+int exit_was_abnormal (int wstat);
+
 /* What is said on the tin, this does.
  * i.e. it does literally nothing functional. */
 void discard_signal (int no);

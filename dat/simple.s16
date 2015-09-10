@@ -9,4 +9,4 @@ Description=Simple unit for testing S16 in a few ways.
 Form=exec
 
 [Method]
-Start=lib/sleep.sh
+Start=dat/sleep.sh

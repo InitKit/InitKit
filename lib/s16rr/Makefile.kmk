@@ -1,4 +1,4 @@
-SUB_DEPTH = ..
+SUB_DEPTH = ../..
 include $(KBUILD_PATH)/subheader.kmk
 include $(PATH_ROOT)/Config.kmk
 

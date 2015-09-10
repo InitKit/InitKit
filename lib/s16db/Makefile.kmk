@@ -1,4 +1,4 @@
-SUB_DEPTH = ..
+SUB_DEPTH = ../..
 include $(KBUILD_PATH)/subheader.kmk
 include $(PATH_ROOT)/Config.kmk
 
@@ -6,8 +6,8 @@ LIBRARIES += libs16db
 
 libs16db_TEMPLATE = CXX
 libs16db_SOURCES = translate.c rpc.c rd_xdr.c rd_clnt.c
-libs16db_CLEAN += $(PATH_ROOT)/libs16db/rd_xdr.c \
-    $(PATH_ROOT)/libs16db/rd_clnt.c
+libs16db_CLEAN += $(PATH_ROOT)/lib/s16db/rd_xdr.c \
+    $(PATH_ROOT)/lib/s16db/rd_clnt.c
 libs16db_DEPS += $(PATH_ROOT)/hdr/repositoryd_rpc.h \
 	$(PATH_ROOT)/repositoryd/repositoryd_rpc.h
 

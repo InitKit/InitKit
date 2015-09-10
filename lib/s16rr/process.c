@@ -58,4 +58,19 @@ pid_t process_get_ppid (pid_t pid)
 #endif
 }
 
+int exit_was_abnormal (int wstat)
+{
+    if (WIFEXITED (wstat))
+        return WEXITSTATUS (wstat);
+    else if (WIFSIGNALED (wstat))
+    {
+        int sig = WTERMSIG (wstat);
+        if ((sig == SIGPIPE) || (sig == SIGTERM) || (sig == SIGHUP) ||
+            (sig == SIGINT))
+            return 0;
+        else
+            return sig;
+    }
+}
+
 void discard_signal (int no) { no = no; }
