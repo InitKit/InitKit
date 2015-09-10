@@ -2,7 +2,6 @@
  * repositoryd object. */
 
 #include "s16db.h"
-#include "translate.h"
 #include "internal.h"
 
 svc_id_t * svc_insert_1_svc (char * str, struct svc_req * req)

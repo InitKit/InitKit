@@ -1,0 +1,46 @@
+SUB_DEPTH = ..
+include $(KBUILD_PATH)/subheader.kmk
+include $(PATH_ROOT)/Config.kmk
+
+LIBRARIES += libreporpc libreposvc
+
+libreporpc_TEMPLATE = CXX
+libreporpc_INCS = $(PATH_ROOT)/lib/s16db
+libreporpc_LIBS = $(libs16_1_TARGET) $(libs16db_1_TARGET)
+libreporpc_SOURCES = rd_xdr.c rd_clnt.c
+libreporpc_DEPS += $(PATH_ROOT)/hdr/repositoryd_rpc.h
+libreporpc_CLEAN += $(PATH_ROOT)/rpc/rd_clnt.c $(PATH_ROOT)/rpc/rd_xdr.c \
+    $(PATH_ROOT)/rpc/repositoryd_rpc.h \
+    $(PATH_ROOT)/hdr/repositoryd_rpc.h
+
+libreposvc_TEMPLATE = CXX
+libreposvc_SOURCES = rd_svc.c
+libreposvc_DEPS += $(PATH_ROOT)/hdr/repositoryd_rpc.h
+libreposvc_CLEAN += $(PATH_ROOT)/rpc/rd_svc.c
+
+REPOD_X = $(PATH_ROOT)/rpc/repositoryd.x
+REPOD_H = $(PATH_ROOT)/rpc/repositoryd_rpc.h
+
+$(PATH_SUB_CURRENT)/repositoryd_rpc.h: $(REPOD_X)
+	@printf " RPCGEN(H) \t$(@)\n"
+	@rpcgen -C -N -h $< > $@
+
+$(PATH_ROOT)/hdr/repositoryd_rpc.h: $(REPOD_H)
+	kmk_builtin_ln -s $(REPOD_H) $(PATH_ROOT)/hdr/repositoryd_rpc.h
+
+$(PATH_SUB_CURRENT)/rd_xdr.c: $(REPOD_H)
+	@printf " RPCGEN(XDR) \t$(@)\n"
+	@rpcgen -C -N -c $(REPOD_X) -o $@.pre && \
+	sed  's/.h"/_rpc.h"/' $(@).pre > $(@) && rm $(@).pre
+
+$(PATH_SUB_CURRENT)/rd_clnt.c: $(REPOD_H)
+	@printf " RPCGEN(CLNT) \t$(@)\n"
+	@rpcgen -C -N -l $(REPOD_X) -o $@.pre && \
+	sed 's/.h"/_rpc.h"/' $(@).pre > $(@) && rm $(@).pre
+
+$(PATH_SUB_CURRENT)/rd_svc.c: $(REPOD_H)
+	@printf " RPCGEN(SVC) \t$(@)\n"
+	@rpcgen -C -N -m $(REPOD_X) -o $@.pre && \
+	sed  's/.h"/_rpc.h"/' $(@).pre > $(@) && rm $(@).pre
+
+include $(FILE_KBUILD_SUB_FOOTER)

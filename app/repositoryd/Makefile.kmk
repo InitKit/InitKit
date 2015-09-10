@@ -1,0 +1,13 @@
+SUB_DEPTH = ../..
+include $(KBUILD_PATH)/subheader.kmk
+include $(PATH_ROOT)/Config.kmk
+
+PROGRAMS += s16.repositoryd
+
+s16.repositoryd_TEMPLATE = CXX
+s16.repositoryd_LIBS = $(libs16_1_TARGET) $(libs16db_1_TARGET) \
+    $(libreposvc_1_TARGET) $(libreporpc_1_TARGET) 
+s16.repositoryd_SOURCES = repositoryd.c object.c interface.c
+s16.repositoryd_DEPS += $(PATH_ROOT)/hdr/repositoryd_rpc.h
+
+include $(FILE_KBUILD_SUB_FOOTER)

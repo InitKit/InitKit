@@ -4,11 +4,8 @@ include $(KBUILD_PATH)/subheader.kmk
 
 include $(PATH_CURRENT)/external/Makefile.kmk
 
+include $(PATH_CURRENT)/rpc/Makefile.kmk
 include $(PATH_CURRENT)/lib/Makefile.kmk
-
-include $(PATH_CURRENT)/init/Makefile.kmk
-include $(PATH_CURRENT)/repositoryd/Makefile.kmk
-include $(PATH_CURRENT)/svccfg/Makefile.kmk
-include $(PATH_CURRENT)/systemdr/Makefile.kmk
+include $(PATH_CURRENT)/app/Makefile.kmk
 
 include $(FILE_KBUILD_SUB_FOOTER)

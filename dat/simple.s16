@@ -1,12 +1,9 @@
 [S16]
 Name=SimpleTest
-Delegate=restartd
 
 [Unit]
 Description=Simple unit for testing S16 in a few ways.
-
-[Restartd]
 Form=exec
 
 [Method]
-Start=dat/sleep.sh
+Start=/ws/newinit/dat/sleep.sh

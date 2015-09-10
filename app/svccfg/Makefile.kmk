@@ -1,4 +1,4 @@
-SUB_DEPTH = ..
+SUB_DEPTH = ../..
 include $(KBUILD_PATH)/subheader.kmk
 include $(PATH_ROOT)/Config.kmk
 
@@ -7,5 +7,6 @@ PROGRAMS += svccfg
 svccfg_TEMPLATE = CXX
 svccfg_LIBS = $(libs16_1_TARGET) $(libs16db_1_TARGET) $(libini_1_TARGET)
 svccfg_SOURCES = svccfg.c parse-unit.c
+svccfg_DEPS += $(PATH_ROOT)/hdr/repositoryd_rpc.h
 
 include $(FILE_KBUILD_SUB_FOOTER)

@@ -5,20 +5,8 @@ include $(PATH_ROOT)/Config.kmk
 LIBRARIES += libs16db
 
 libs16db_TEMPLATE = CXX
-libs16db_SOURCES = translate.c rpc.c rd_xdr.c rd_clnt.c
-libs16db_CLEAN += $(PATH_ROOT)/lib/s16db/rd_xdr.c \
-    $(PATH_ROOT)/lib/s16db/rd_clnt.c
-libs16db_DEPS += $(PATH_ROOT)/hdr/repositoryd_rpc.h \
-	$(PATH_ROOT)/repositoryd/repositoryd_rpc.h
+libs16db_SOURCES = translate.c rpc.c $(libreporpc_1_TARGET)
+libs16db_DEPS += $(PATH_ROOT)/hdr/repositoryd_rpc.h 
 
-$(PATH_SUB_CURRENT)/rd_xdr.c: $(PATH_ROOT)/hdr/repositoryd_rpc.h
-	@printf " RPCGEN(XDR) \t$(@)\n"
-	@rpcgen -C -N -c $(PATH_ROOT)/repositoryd/repositoryd.x -o $@.pre && \
-	sed  's/.h"/_rpc.h"/' $(@).pre > $(@) && rm $(@).pre
-
-$(PATH_SUB_CURRENT)/rd_clnt.c: $(PATH_ROOT)/hdr/repositoryd_rpc.h
-	@printf " RPCGEN(CLNT) \t$(@)\n"
-	@rpcgen -C -N -l $(PATH_ROOT)/repositoryd/repositoryd.x -o $@.pre && \
-	sed 's/.h"/_rpc.h"/' $(@).pre > $(@) && rm $(@).pre
 
 include $(FILE_KBUILD_SUB_FOOTER)
