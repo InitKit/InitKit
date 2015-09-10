@@ -1,5 +1,5 @@
-#ifndef __STATE_H__
-#define __STATE_H__
+#ifndef __STATE__H__
+#define __STATE__H__
 
 #include <cstdio>
 #include <memory>
@@ -59,6 +59,17 @@ class RunState : public SvcState
     ~RunState () {}
     int loop_iteration ();
     int process_event (pt_info_t *);
+    bool timer_cb (unsigned int t) {}
+};
+
+/* This launches ExecStart for a simple service. */
+class MaintenanceState : public SvcState
+{
+  public:
+    MaintenanceState (svc_t * svc, SvcManager & manager);
+    ~MaintenanceState () {}
+    int process_event (pt_info_t *);
+    int loop_iteration () {}
     bool timer_cb (unsigned int t) {}
 };
 

@@ -6,10 +6,9 @@
 MaintenanceState::MaintenanceState (svc_t * svc, SvcManager & manager)
     : SvcState (svc, manager)
 {
+    fprintf (stderr, "Service enters Maintenance\n");
     if (m_manager.main_pid)
         svc_object_set_property_string (svc, "S16.Status", "maintenance");
 }
 
 int MaintenanceState::process_event (pt_info_t * info) {}
-
-int MaintenanceState::loop_iteration () {}
