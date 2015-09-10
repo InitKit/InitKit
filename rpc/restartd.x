@@ -10,16 +10,16 @@ program S16_RESTARTD_PROG
          * Returns 0 for success, 1 for failure. */
 
         /* Start a service instance. */
-        int svc_start_instance (svc_id_t, svc_id_t) = 1;
+        int instance_start (svc_id_t, svc_id_t) = 1;
 
         /* Stop an instance. */
-        int svc_stop_instance (svc_id_t, svc_id_t) = 2;
+        int instance_stop (svc_id_t, svc_id_t) = 2;
 
         /* Reloads an instance and then restarts it. */
-        int svc_reload_instance (svc_id_t, svc_id_t) = 3;
+        int instance_reload (svc_id_t, svc_id_t) = 3;
 
         /* Restarts an instance. */
-        int svc_restart_instance (svc_id_t, svc_id_t) = 4;
+        int instance_restart (svc_id_t, svc_id_t) = 4;
 
         /* Checks if a message is handled by this restarter.
          * string => message name

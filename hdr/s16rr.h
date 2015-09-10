@@ -1,6 +1,8 @@
 #ifndef __S16_RR_H_
 #define __S16_RR_H_
 
+#include <sys/types.h>
+#include <sys/event.h>
 #include <sys/wait.h>
 
 #ifdef __cplusplus

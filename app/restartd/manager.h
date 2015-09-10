@@ -2,11 +2,12 @@
 #define MANAGER___H___
 
 #include <threads.h>
+#include <s16rr.h>
 
 typedef struct manager_s
 {
-    mtx_t lock;
-    thrd_t rpc_thread;
+    int kq;
+    process_tracker_t * ptrack;
 } manager_t;
 
 extern manager_t Manager;
