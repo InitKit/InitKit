@@ -24,7 +24,6 @@ int s16db_svc_set_property_int (CLIENT * clnt, svc_id_t id, char const * key,
 int s16db_svc_set_property_string (CLIENT * clnt, svc_id_t id, char const * key,
                                    char const * value);
 
-
 rpc_property_t property_to_rpc_property (property_t * prop);
 rpc_property_t * property_list_to_rpc_property_array (prop_list box);
 rpc_svc_instance_t svc_instance_to_rpc_svc_instance (svc_instance_t * inst);

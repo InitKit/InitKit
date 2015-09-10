@@ -8,7 +8,7 @@ RunState::RunState (svc_t * svc, SvcManager & manager) : SvcState (svc, manager)
         svc_object_get_property_string (svc, "Service.ExecStart"));
     if (m_manager.main_pid)
         svc_object_set_property_string (svc, "S16.Status", "online");
-    if(m_manager.ExecStartPost)
+    if (m_manager.ExecStartPost)
         m_manager.push_state (
             m_manager.m_state_factory.new_state<StartPostState> ());
 }

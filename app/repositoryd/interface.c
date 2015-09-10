@@ -64,3 +64,32 @@ int * svc_set_property_string_1_svc (svc_id_t id, char * key, char * value,
     result = set_svc_property_string (id, key, value);
     return &result;
 }
+
+svc_id_t * instance_create_1_svc (svc_id_t id, char * name,
+                                  struct svc_req * req)
+{
+    static svc_id_t result;
+    return &result;
+}
+
+rpc_svc_instance_t * instance_retrieve_1_svc (svc_id_t id, svc_id_t i_id,
+                                              struct svc_req * req)
+{
+    static rpc_svc_instance_t result;
+    return &result;
+}
+
+int * instance_set_property_int_1_svc (svc_id_t id, svc_id_t i_id, char * key,
+                                       long value, struct svc_req * req)
+{
+    static int result;
+    return &result;
+}
+
+int * instance_set_property_string_1_svc (svc_id_t id, svc_id_t i_id,
+                                          char * key, char * value,
+                                          struct svc_req * req)
+{
+    static int result;
+    return &result;
+}

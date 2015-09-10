@@ -1,7 +1,7 @@
 #include <stdio.h>
 
-int main()
+int main ()
 {
-    printf("stub\n");
+    printf ("stub\n");
     return 0;
 }
