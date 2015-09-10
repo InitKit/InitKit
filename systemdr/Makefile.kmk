@@ -8,6 +8,7 @@ s16.systemdr_TEMPLATE = CXX
 s16.systemdr_LIBS = $(libs16db_1_TARGET) $(libs16_1_TARGET) \
     $(libs16rr_1_TARGET) $(libini_1_TARGET)
 s16.systemdr_SOURCES = systemdr.cxx app.cxx manager.cxx state.cxx \
-    state/run.cxx state/startpre.cxx state/maintenance.cxx
+    state/run.cxx state/startpre.cxx state/maintenance.cxx \
+    state/startpost.cxx
 
 include $(FILE_KBUILD_SUB_FOOTER)

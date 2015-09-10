@@ -3,6 +3,7 @@
 
 #include <cstdio>
 #include <memory>
+#include <vector>
 #include "s16.h"
 #include "s16rr.h"
 #include "sd-defs.h"
@@ -62,7 +63,7 @@ class RunState : public SvcState
     bool timer_cb (unsigned int t) {}
 };
 
-/* This launches ExecStart for a simple service. */
+/* This is the failure state. */
 class MaintenanceState : public SvcState
 {
   public:
@@ -70,6 +71,22 @@ class MaintenanceState : public SvcState
     ~MaintenanceState () {}
     int process_event (pt_info_t *);
     int loop_iteration () {}
+    bool timer_cb (unsigned int t) {}
+};
+
+/* This launches ExecStartPost. */
+class StartPostState : public SvcState
+{
+    unsigned int m_timer;
+    bool m_failed;
+    pid_t m_main_pid;
+    std::vector<pid_t> m_pids;
+
+  public:
+    StartPostState (svc_t * svc, SvcManager & manager);
+    ~StartPostState () {}
+    int loop_iteration ();
+    int process_event (pt_info_t *);
     bool timer_cb (unsigned int t) {}
 };
 
