@@ -59,4 +59,4 @@ program S16_REPOSITORYD_PROG
          * Returns 1 for success, or 0 for fail. */
         int instance_set_property_string(svc_id_t, svc_id_t, string, string) = 12;
     } = 1;
-} = 0x16147123;
+} = 0x261e712e;

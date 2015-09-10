@@ -2,12 +2,15 @@ SUB_DEPTH = ..
 include $(KBUILD_PATH)/subheader.kmk
 include $(PATH_ROOT)/Config.kmk
 
-LIBRARIES += libreporpc libreposvc
+LIBRARIES += libreporpc libreposvc librestartrpc librestartsvc
 
 S16_X = $(PATH_ROOT)/rpc/s16.x
-S16_H = $(PATH_ROOT)/rpc/s16rpc.h
+S16_H = $(PATH_ROOT)/rpc/s16_rpc.h
 REPOD_X = $(PATH_ROOT)/rpc/repositoryd.x
 REPOD_H = $(PATH_ROOT)/rpc/repositoryd_rpc.h
+RESTARTD_X = $(PATH_ROOT)/rpc/restartd.x
+RESTARTD_H = $(PATH_ROOT)/rpc/restartd_rpc.h
+
 
 libreporpc_TEMPLATE = CXX
 libreporpc_INCS = $(PATH_ROOT)/lib/s16db
@@ -24,6 +27,20 @@ libreposvc_SOURCES = repositoryd_svc.c
 libreposvc_DEPS += $(PATH_ROOT)/hdr/repositoryd_rpc.h
 libreposvc_CLEAN += $(PATH_ROOT)/rpc/repositoryd_svc.c
 
+librestartrpc_TEMPLATE = CXX
+librestartrpc_INCS = $(PATH_ROOT)/lib/s16db
+librestartrpc_LIBS = $(libreporpc_1_TARGET) $(libs16db_1_TARGET)
+librestartrpc_SOURCES = restartd_xdr.c restartd_clnt.c s16_xdr.c
+librestartrpc_DEPS += $(PATH_ROOT)/hdr/restartd_rpc.h $(PATH_ROOT)/hdr/s16_rpc.h
+librestartrpc_CLEAN += $(PATH_ROOT)/rpc/restartd_clnt.c \
+    $(PATH_ROOT)/rpc/restartd_xdr.c \
+    $(RESTARTD_H) $(PATH_ROOT)/hdr/restartd_rpc.h
+
+librestartsvc_TEMPLATE = CXX
+librestartsvc_SOURCES = restartd_svc.c
+librestartsvc_DEPS += $(PATH_ROOT)/hdr/restartd_rpc.h
+librestartsvc_CLEAN += $(PATH_ROOT)/rpc/restartd_svc.c
+
 $(PATH_SUB_CURRENT)/s16_rpc.h: $(S16_X)
 	@printf " RPCGEN(H) \t$(@)\n"
 	@rpcgen -C -N -h $< > $@
@@ -33,8 +50,16 @@ $(PATH_SUB_CURRENT)/repositoryd_rpc.h: $(REPOD_X)
 	@rpcgen -C -N -h $< > $@
 	kmk_sed -i '1s/^/#include "s16_rpc.h"\n/' $@
 
+$(PATH_SUB_CURRENT)/restartd_rpc.h: $(RESTARTD_X)
+	@printf " RPCGEN(H) \t$(@)\n"
+	@rpcgen -C -N -h $< > $@
+	kmk_sed -i '1s/^/#include "s16_rpc.h"\n/' $@
+
 $(PATH_ROOT)/hdr/repositoryd_rpc.h: $(REPOD_H) $(S16_H)
 	kmk_builtin_ln -s $(REPOD_H) $(PATH_ROOT)/hdr/repositoryd_rpc.h
+
+$(PATH_ROOT)/hdr/restartd_rpc.h: $(RESTARTD_H) $(REPOD_H) $(S16_H)
+	kmk_builtin_ln -s $(REPOD_H) $(PATH_ROOT)/hdr/restartd_rpc.h
 
 $(PATH_ROOT)/hdr/s16_rpc.h: $(S16_H)
 	kmk_builtin_ln -s $< $@
