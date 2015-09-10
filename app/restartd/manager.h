@@ -3,10 +3,12 @@
 
 #include <threads.h>
 
-typedef struct Manager
+typedef struct manager_s
 {
     mtx_t lock;
     thrd_t rpc_thread;
-}
+} manager_t;
+
+extern manager_t Manager;
 
 #endif

@@ -6,8 +6,8 @@ PROGRAMS += s16.restartd
 
 s16.restartd_TEMPLATE = CXX
 s16.restartd_LIBS = $(libs16_1_TARGET) $(libs16db_1_TARGET) \
-    $(libs16rr_1_TARGET) $(librestartrpc_1_TARGET) \
-    $(librestartsvc_1_TARGET)
+    $(libs16rr_1_TARGET) $(librestartsvc_1_TARGET) \
+    $(librestartrpc_1_TARGET)
 s16.restartd_SOURCES = restartd.c
 
 include $(FILE_KBUILD_SUB_FOOTER)
