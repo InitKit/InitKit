@@ -9,5 +9,6 @@ s16.restartd_LIBS = $(libs16rr_1_TARGET) $(libs16db_1_TARGET) \
     $(libs16_1_TARGET) $(librestartsvc_1_TARGET) \
     $(librestartrpc_1_TARGET)
 s16.restartd_SOURCES = restartd.c interface.c
+s16.restartd_DEPS += $(PATH_ROOT)/hdr/restartd_rpc.h
 
 include $(FILE_KBUILD_SUB_FOOTER)

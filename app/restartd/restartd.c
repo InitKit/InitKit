@@ -14,22 +14,7 @@ manager_t Manager;
 extern void s16_restartd_prog_1 (struct svc_req * rqstp,
                                  register SVCXPRT * transp);
 
-static void fd_set_to_kq (int kq, fd_set * set, int del)
-{
-    struct kevent fd_ev;
-    for (int fd = 0; fd < FD_SETSIZE; fd++)
-    {
-        if (FD_ISSET (fd, set))
-        {
-            printf ("FD %d is set\n", fd);
-            if (!del)
-                EV_SET (&fd_ev, fd, EVFILT_READ, EV_ADD, 0, 0, NULL);
-            else
-                EV_SET (&fd_ev, fd, EVFILT_READ, EV_DELETE, 0, 0, NULL);
-            kevent (kq, &fd_ev, 1, NULL, 0, NULL);
-        }
-    }
-}
+static int restartd_rpc_loop (void * userData) { svc_run (); }
 
 int main ()
 {
@@ -58,6 +43,7 @@ int main ()
     }
 
     Manager.ptrack = pt_new (Manager.kq);
+    Manager.mqueue = List_new ();
 
     sa.sa_flags = 0;
     sigemptyset (&sa.sa_mask);
@@ -96,8 +82,7 @@ int main ()
         exit (1);
     }
 
-    rpc_fds = svc_fdset;
-    fd_set_to_kq (Manager.kq, &rpc_fds, 0);
+    thrd_create (&Manager.thrd_rpc, restartd_rpc_loop, 0);
 
     /* The main loop.
      * KEvent will return for RPC requests, signals, process events...
@@ -125,22 +110,14 @@ int main ()
 
         tmout.tv_sec = 3;
 
-        // if ((info = pt_investigate_kevent (m_ptrack, &ev)))
+        if ((info = pt_investigate_kevent (Manager.ptrack, &ev)))
+            ;
 
         switch (ev.filter)
         {
         case EVFILT_SIGNAL:
             printf ("Signal received: %d. Additional data: %d\n", ev.ident,
                     ev.data);
-            break;
-
-        case EVFILT_READ:
-            if (FD_ISSET (ev.ident, &rpc_fds))
-            {
-                fd_set_to_kq (Manager.kq, &rpc_fds, 1);
-                svc_getreqset (&rpc_fds);
-                fd_set_to_kq (Manager.kq, &rpc_fds, 0);
-            }
             break;
         }
     }
