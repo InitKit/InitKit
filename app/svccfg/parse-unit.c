@@ -4,10 +4,6 @@
 #include "s16.h"
 #include "ini.h"
 
-#define OnError(...)                                                           \
-    fprintf (stderr, __VA_ARGS__);                                             \
-    goto on_error;
-
 int parse_config_line (void * user, const char * section, const char * name,
                        const char * value)
 {
@@ -23,6 +19,11 @@ int parse_config_line (void * user, const char * section, const char * name,
 
     return 1;
 }
+
+/* i don't like to type much */
+#define OnError(...)                                                           \
+    fprintf (stderr, __VA_ARGS__);                                             \
+    goto on_error;
 
 #define SetOrExit(Name)                                                        \
     if (!prop_find_name (new_svc->properties, Name))                           \
@@ -62,7 +63,6 @@ svc_t * parse_unit (int is_systemd, char const * path)
         char * fmri;
         char * name;
 
-        SetOrExit ("S16.Delegate");
         SetOrExit ("S16.Name");
         name = prop_find_name (new_svc->properties, "S16.Name")->value.pval_u.s;
         asprintf (&fmri, "svc:/%s", name);

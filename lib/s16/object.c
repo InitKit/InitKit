@@ -33,65 +33,95 @@ gen_find_name_wrapper (prop, property_t);
 
 svc_t * s16_svc_new ()
 {
-    svc_t * newSvc = calloc (1, sizeof (svc_t));
-    newSvc->properties = List_new ();
-    newSvc->instances = List_new ();
-    return newSvc;
+    svc_t * new_svc = calloc (1, sizeof (svc_t));
+    new_svc->properties = List_new ();
+    new_svc->instances = List_new ();
+    return new_svc;
 }
 
-const char * svc_object_get_property_string (svc_t * Svc, const char * key)
+svc_instance_t * s16_inst_new (const char * name)
 {
-    property_t * prop = prop_find_name (Svc->properties, key);
+    svc_instance_t * new_inst = calloc (1, sizeof (svc_instance_t));
+    new_inst->name = strdup (name);
+
+    new_inst->properties = List_new ();
+    return new_inst;
+}
+
+const char * _object_get_property_string (prop_list box, const char * key)
+{
+    property_t * prop = prop_find_name (box, key);
     if (!prop)
         return 0;
     else
         return prop->value.pval_u.s;
 }
 
-long * svc_object_get_property_int (svc_t * Svc, const char * key)
+long * _object_get_property_int (prop_list box, const char * key)
 {
-    property_t * prop = prop_find_name (Svc->properties, key);
+    property_t * prop = prop_find_name (box, key);
     if (!prop)
         return 0;
     else
         return &prop->value.pval_u.i;
 }
 
-void svc_object_set_property_string (svc_t * Svc, const char * key,
-                                     const char * value)
+void _object_set_property_string (prop_list box, const char * key,
+                                  const char * value)
 {
-    if ((!key) | (!Svc))
+    if ((!key) | (!box))
         return;
-    DestroyPropIfExists (Svc->properties, key);
+    DestroyPropIfExists (box, key);
     svc_id_t rnum;
     property_t * newProp = calloc (1, sizeof (property_t));
 
     newProp->name = strdup (key);
-    while (prop_find_id (Svc->properties, rnum))
+    while (prop_find_id (box, rnum))
         rnum = rand ();
     newProp->id = rnum;
     newProp->value.type = STRING;
     newProp->value.pval_u.s = strdup (value);
 
-    prop_list_add (Svc->properties, newProp);
+    prop_list_add (box, newProp);
 }
 
-void svc_object_set_property_int (svc_t * Svc, const char * key, long value)
+void _object_set_property_int (prop_list box, const char * key, long value)
 {
-    if ((!key) | (!Svc))
+    if ((!key) | (!box))
         return;
-    DestroyPropIfExists (Svc->properties, key);
+    DestroyPropIfExists (box, key);
     svc_id_t rnum;
     property_t * newProp = calloc (1, sizeof (property_t));
 
     newProp->name = strdup (key);
-    while (prop_find_id (Svc->properties, rnum))
+    while (prop_find_id (box, rnum))
         rnum = rand ();
     newProp->id = rnum;
     newProp->value.type = NUMBER;
     newProp->value.pval_u.i = value;
 
-    prop_list_add (Svc->properties, newProp);
+    prop_list_add (box, newProp);
+}
+
+const char * svc_object_get_property_string (svc_t * Svc, const char * key)
+{
+    return _object_get_property_string (Svc->properties, key);
+}
+
+long * svc_object_get_property_int (svc_t * Svc, const char * key)
+{
+    return _object_get_property_int (Svc->properties, key);
+}
+
+void svc_object_set_property_string (svc_t * Svc, const char * key,
+                                     const char * value)
+{
+    _object_set_property_string (Svc->properties, key, value);
+}
+
+void svc_object_set_property_int (svc_t * Svc, const char * key, long value)
+{
+    _object_set_property_int (Svc->properties, key, value);
 }
 
 void destroy_property (property_t * delProperty)
