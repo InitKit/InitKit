@@ -65,7 +65,7 @@ pid_t process_get_ppid (pid_t pid)
 
 process_wait_t * process_fork_wait (const char * cmd_)
 {
-    process_wait_t * pwait = malloc(sizeof(process_wait_t));
+    process_wait_t * pwait = malloc (sizeof (process_wait_t));
     int n_spaces = 0;
     char * cmd = strdup (cmd_), * tofree = cmd, ** argv = NULL;
     pid_t newPid;
@@ -88,8 +88,8 @@ process_wait_t * process_fork_wait (const char * cmd_)
     if (newPid == 0) /* child */
     {
         char dispose;
-        close(pwait->fd[1]);
-        read(pwait->fd[0], &dispose, 1);
+        close (pwait->fd[1]);
+        read (pwait->fd[0], &dispose, 1);
         execvp (argv[0], argv);
     }
     else if (newPid < 0) /* fail */
@@ -99,7 +99,7 @@ process_wait_t * process_fork_wait (const char * cmd_)
     }
     else
     {
-        close(pwait->fd[0]);
+        close (pwait->fd[0]);
         pwait->pid = newPid;
     }
 
@@ -109,11 +109,11 @@ process_wait_t * process_fork_wait (const char * cmd_)
     return pwait;
 }
 
-void process_fork_continue(process_wait_t * pwait)
+void process_fork_continue (process_wait_t * pwait)
 {
-    write(pwait->fd[1], "0", 1);
-    close(pwait->fd[1]);
-    free(pwait);
+    write (pwait->fd[1], "0", 1);
+    close (pwait->fd[1]);
+    free (pwait);
 }
 
 int exit_was_abnormal (int wstat)

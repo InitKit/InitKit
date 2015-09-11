@@ -51,7 +51,7 @@ pid_t process_get_ppid (pid_t pid);
 process_wait_t * process_fork_wait (const char * cmd_);
 /* Tells the child process to continue.
  * This also frees the process_wait_t structure. */
-void process_fork_continue(process_wait_t * pwait);
+void process_fork_continue (process_wait_t * pwait);
 
 /* process tracking routines */
 

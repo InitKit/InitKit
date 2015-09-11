@@ -4,6 +4,55 @@
 #include "manager.h"
 #include "unit.h"
 
+void unit_register_pid (unit_t * unit, pid_t pid)
+{
+    pid_t * rpid = malloc (sizeof (pid_t));
+    *rpid = pid;
+    pid_list_add (unit->pids, rpid);
+}
+
+void unit_deregister_pid (unit_t * unit, pid_t pid)
+{
+    for (pid_list_iterator it = pid_list_begin (unit->pids); it != 0;
+         pid_list_iterator_next (&it))
+    {
+        if (*it->val == pid)
+        {
+            pid_t * tofree = it->val;
+            pid_list_del (unit->pids, it->val);
+            pt_disregard_pid (Manager.ptrack, pid);
+            free (it->val);
+        }
+    }
+}
+
+int unit_fork_and_register (unit_t * unit, const char * cmd)
+{
+    process_wait_t * pwait = process_fork_wait (cmd);
+    if (pwait->pid == 0)
+    {
+        fprintf (stderr, "failed to fork for command %s\n", cmd);
+        return -1;
+    }
+    printf ("Child PID: %d\n", pwait->pid);
+    unit_register_pid (unit, pwait->pid);
+    pt_watch_pid (Manager.ptrack, pwait->pid);
+    process_fork_continue (pwait);
+}
+
+int unit_has_pid (unit_t * unit, pid_t pid)
+{
+    for (pid_list_iterator it = pid_list_begin (unit->pids); it != 0;
+         pid_list_iterator_next (&it))
+    {
+        if (*it->val == pid)
+        {
+            return 1;
+        }
+    }
+    return 0;
+}
+
 unit_t * unit_find (unit_list box, svc_id_t id, svc_id_t id_i)
 {
     unit_list_iterator i;
@@ -24,8 +73,8 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
     unitnew->inst = inst;
     unitnew->timer_id = 0;
     unitnew->main_pid = 0;
-    unitnew->state =S_OFFLINE;
-    unitnew->pids = List_new();
+    unitnew->state = S_OFFLINE;
+    unitnew->pids = List_new ();
 
     if (CompareType ("exec"))
         unitnew->type = T_EXEC;
@@ -49,17 +98,16 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
     return unitnew;
 }
 
-void unit_ctrl(unit_t * unit, msg_type_e ctrl)
+void unit_ctrl (unit_t * unit, msg_type_e ctrl)
 {
-    printf("Ctrl: %d\n", ctrl);
+    printf ("Ctrl: %d\n", ctrl);
     switch (ctrl)
     {
     case MSG_START:
-        if(unit->state != S_OFFLINE && unit->state != S_MAINTENANCE) return;
+        if (unit->state != S_OFFLINE && unit->state != S_MAINTENANCE)
+            return;
         {
-            process_wait_t * pwait = process_fork_wait("/bin/sh");
-            printf("Child PID: %d\n", pwait->pid);
-            process_fork_continue(pwait);
+            unit_fork_and_register (unit, "/bin/sh");
         }
     }
 }
