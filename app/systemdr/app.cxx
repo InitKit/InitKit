@@ -23,7 +23,7 @@ SystemDr::SystemDr (CLIENT * clnt) : m_clnt (clnt)
 
     if (kevent (m_kq, &sigfd, 1, 0, 0, 0) == -1)
     {
-        perror ("kqueue");
+        perror ("kqueue (sigfd)");
         exit (EXIT_FAILURE);
     }
 
@@ -120,7 +120,7 @@ void SystemDr::main_loop ()
             }
             else
             {
-                fprintf (stderr, "Error: i = -1\n");
+                perror ("kevent! (i = -1 in loop)\n");
             }
         }
 

@@ -43,7 +43,6 @@ int main ()
     }
 
     Manager.ptrack = pt_new (Manager.kq);
-    Manager.mqueue = List_new ();
 
     sa.sa_flags = 0;
     sigemptyset (&sa.sa_mask);
@@ -85,7 +84,7 @@ int main ()
     thrd_create (&Manager.thrd_rpc, restartd_rpc_loop, 0);
 
     /* The main loop.
-     * KEvent will return for RPC requests, signals, process events...
+     * KEvent will return for signals and process events.
      */
 
     while (1)
@@ -104,15 +103,16 @@ int main ()
             }
             else
             {
-                fprintf (stderr, "Error: i = -1\n");
+                perror ("kevent! (i = -1 in loop)\n");
             }
         }
 
         tmout.tv_sec = 3;
 
-        if ((info = pt_investigate_kevent (Manager.ptrack, &ev)))
-            ;
+        if (!(info = pt_investigate_kevent (Manager.ptrack, &ev)))
+            goto post_pinfo;
 
+    post_pinfo:
         switch (ev.filter)
         {
         case EVFILT_SIGNAL:

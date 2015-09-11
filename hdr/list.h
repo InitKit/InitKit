@@ -40,8 +40,10 @@ INLINE long List_count (List_t * n)
     List_t_ * tmp;
     if (!n)
         return 0;
+    mtx_lock (&n->Lock);
     for (List_t_ * e = n->List; (e) && (tmp = (e)->Link, 1); (e) = tmp)
         length++;
+    mtx_unlock (&n->Lock);
     return length;
 }
 
