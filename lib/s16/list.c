@@ -136,6 +136,21 @@ void * List_lpop (List_t * n)
     }
 }
 
+void * List_lget (List_t * n)
+{
+    void * ret;
+    List_t_ * tmp;
+
+    if (n == NULL || n->List == NULL)
+    {
+        return 0;
+    }
+    else
+    {
+        return n->List->data;
+    }
+}
+
 void List_print (List_t * n)
 {
     List_t_ * t;

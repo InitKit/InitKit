@@ -51,6 +51,7 @@ List_t_ * List_begin (List_t * n);
 void List_iterator_next (List_t_ ** it);
 
 void * List_lpop (List_t * n);
+void * List_lget (List_t * n);
 
 #define ListGenForNameType(name, type)                                         \
     typedef List_t * name##_list;                                              \
@@ -65,6 +66,10 @@ void * List_lpop (List_t * n);
     INLINE type * name##_list_lpop (List_t * n)                                \
     {                                                                          \
         return (type *)List_lpop (n);                                          \
+    }                                                                          \
+    INLINE type * name##_list_lget (List_t * n)                                \
+    {                                                                          \
+        return (type *)List_lget (n);                                          \
     }                                                                          \
     typedef struct                                                             \
     {                                                                          \

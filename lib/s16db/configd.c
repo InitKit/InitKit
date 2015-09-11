@@ -1,7 +1,11 @@
 /* RestartD needs a configuration repository, but during system initialisation,
  * ConfigD is not running, as RestartD is the 2nd daemon launched after init.
  * As such, the appropriate structures for RestartD to monitor a ConfigD are
- * constructed here and inserted into the restarter. */
+ * constructed here and inserted into the restarter.
+ * No Service ID or Instance ID is set here; we don't use them except for
+ * communication with s16.configd, and we will later retrieve unique
+ * identifiers from configd when we install into it its own service structure.
+ */
 
 svc_t * assemble_configd_svc
 {
@@ -18,4 +22,5 @@ svc_t * assemble_configd_svc
         new_svc, "Method.Start",
         "out/freebsd.amd64/debug/stage/bin/s16.configd");
     new_svc->name = strdup (name);
+    s16_svc_new_default_inst (new_svc);
 }

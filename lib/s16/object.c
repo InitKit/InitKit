@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "s16.h"
@@ -42,9 +43,24 @@ svc_t * s16_svc_new ()
 svc_instance_t * s16_inst_new (const char * name)
 {
     svc_instance_t * new_inst = calloc (1, sizeof (svc_instance_t));
-    new_inst->name = strdup (name);
 
     new_inst->properties = List_new ();
+    return new_inst;
+}
+
+svc_instance_t * s16_svc_new_default_inst (svc_t * svc)
+{
+    char * fmri;
+    svc_instance_t * new_inst = s16_inst_new ("default");
+
+    new_inst->name = strdup ("default");
+    asprintf (&fmri, "%s:default",
+              svc_object_get_property_string (svc, "S16.FMRI"));
+    inst_object_set_property_string (new_inst, "S16.FMRI", fmri);
+    free (fmri);
+
+    inst_list_add (svc->instances, new_inst);
+
     return new_inst;
 }
 
@@ -108,6 +124,12 @@ const char * svc_object_get_property_string (svc_t * Svc, const char * key)
     return _object_get_property_string (Svc->properties, key);
 }
 
+const char * inst_object_get_property_string (svc_instance_t * inst,
+                                              const char * key)
+{
+    return _object_get_property_string (inst->properties, key);
+}
+
 long * svc_object_get_property_int (svc_t * Svc, const char * key)
 {
     return _object_get_property_int (Svc->properties, key);
@@ -117,6 +139,12 @@ void svc_object_set_property_string (svc_t * Svc, const char * key,
                                      const char * value)
 {
     _object_set_property_string (Svc->properties, key, value);
+}
+
+void inst_object_set_property_string (svc_instance_t * inst, const char * key,
+                                      const char * value)
+{
+    _object_set_property_string (inst->properties, key, value);
 }
 
 void svc_object_set_property_int (svc_t * Svc, const char * key, long value)
