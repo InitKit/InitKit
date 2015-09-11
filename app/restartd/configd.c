@@ -16,6 +16,7 @@ void install_configd_svc ()
     svc_t * new_svc = s16_svc_new ();
     char * fmri;
 
+    new_svc->id = 1;
     new_svc->name = strdup ("s16/configd");
     svc_object_set_property_string (new_svc, "S16.Name", new_svc->name);
     asprintf (&fmri, "svc:/%s", new_svc->name);
@@ -32,6 +33,7 @@ void install_configd_svc ()
         new_svc, "Method.Start",
         "out/freebsd.amd64/debug/stage/bin/s16.configd");
     s16_svc_new_default_inst (new_svc);
+    inst_list_lget (new_svc->instances)->id = 1;
 
     unit_list_add (Manager.units,
                    unit_new (new_svc, inst_list_lget (new_svc->instances)));

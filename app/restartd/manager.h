@@ -37,7 +37,11 @@ typedef struct manager_s
     int kq;
     CLIENT * clnt_cfg;
     process_tracker_t * ptrack;
+
     thrd_t thrd_rpc;
+    mtx_t lock; /* this is not really necessary, as the list is already
+                   threadsafe, but it may help synchronise kevent dispatch. */
+    msg_list msgs;
 
     unit_list units;
 } manager_t;
@@ -46,24 +50,6 @@ extern manager_t Manager;
 
 #define NOTE_IDENT 712
 
-inline void note_send (enum msg_type_e type, svc_id_t id, svc_id_t i_id,
-                       void * misc)
-{
-    struct kevent ev;
-    msg_t * msg = malloc (sizeof (msg_t));
-
-    msg->type = type;
-    msg->id = id;
-    msg->i_id = i_id;
-    msg->misc = misc;
-
-    memset (&ev, 0, sizeof (ev));
-    EV_SET (&ev, NOTE_IDENT, EVFILT_USER, 0, NOTE_TRIGGER, 0, msg);
-
-    if (kevent (Manager.kq, &ev, 1, NULL, 0, 0) == -1)
-    {
-        perror ("kevent! (trigger EVFILT_USER)");
-    }
-}
+void note_send (enum msg_type_e type, svc_id_t id, svc_id_t i_id, void * misc);
 
 #endif

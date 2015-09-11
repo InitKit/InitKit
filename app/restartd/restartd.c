@@ -19,6 +19,34 @@ void install_configd_svc ();
 
 static int restartd_rpc_loop (void * userData) { svc_run (); }
 
+/* Sends a message to the main event loop. */
+void note_send (enum msg_type_e type, svc_id_t id, svc_id_t i_id, void * misc)
+{
+    struct kevent ev;
+    msg_t * msg = malloc (sizeof (msg_t));
+
+    msg->type = type;
+    msg->id = id;
+    msg->i_id = i_id;
+    msg->misc = misc;
+
+    /* In order to awaken the event loop, we may use EVFILT_USER, which
+     * is a user-controlled kevent. We enable and trigger it here, after
+     * we first secure the lock. After we have done our work, we can then
+     * add to the message queue our message. */
+    mtx_lock (&Manager.lock);
+    memset (&ev, 0, sizeof (ev));
+    EV_SET (&ev, NOTE_IDENT, EVFILT_USER, EV_ENABLE, NOTE_TRIGGER, 0, 0);
+    mtx_unlock (&Manager.lock);
+
+    if (kevent (Manager.kq, &ev, 1, NULL, 0, 0) == -1)
+    {
+        perror ("kevent! (trigger EVFILT_USER)");
+    }
+    else
+        msg_list_add (Manager.msgs, msg);
+}
+
 int main ()
 {
     struct sockaddr_in addr;
@@ -45,7 +73,8 @@ int main ()
         exit (EXIT_FAILURE);
     }
 
-    EV_SET (&userev, NOTE_IDENT, EVFILT_USER, EV_ADD, NOTE_FFNOP, 0, 0);
+    EV_SET (&userev, NOTE_IDENT, EVFILT_USER, EV_ADD | EV_ONESHOT, NOTE_FFNOP,
+            0, 0);
 
     if (kevent (Manager.kq, &userev, 1, 0, 0, 0) == -1)
     {
@@ -56,6 +85,8 @@ int main ()
     Manager.ptrack = pt_new (Manager.kq);
     Manager.units = List_new ();
     Manager.clnt_cfg = s16db_context_create ();
+    Manager.msgs = List_new ();
+    mtx_init (&Manager.lock, mtx_plain);
 
     sa.sa_flags = 0;
     sigemptyset (&sa.sa_mask);
@@ -99,10 +130,12 @@ int main ()
     if (!Manager.clnt_cfg)
     {
         install_configd_svc ();
+        note_send (MSG_START, 1, 1, 0);
+        note_send (MSG_START, 1, 1, 0);
     }
 
     /* The main loop.
-     * KEvent will return for signals and process events.
+     * KEvent will return for signals, process events, and user events.
      */
 
     while (1)
@@ -113,6 +146,12 @@ int main ()
         memset (&ev, 0x00, sizeof (struct kevent));
 
         i = kevent (Manager.kq, NULL, 0, &ev, 1, &tmout);
+
+        mtx_lock (&Manager.lock);
+        EV_SET (&userev, NOTE_IDENT, EVFILT_USER, EV_DISABLE | EV_CLEAR,
+                NOTE_FFCOPY, 0, 0);
+        mtx_unlock (&Manager.lock);
+
         if (i == -1)
         {
             if (errno == EINTR)
@@ -134,7 +173,16 @@ int main ()
         switch (ev.filter)
         {
         case EVFILT_USER:
+        {
+            msg_t * msg;
+            msg = msg_list_lpop (Manager.msgs);
+            if (msg)
+            {
+                printf ("Message: %d\n", msg->id);
+                free (msg);
+            }
             break;
+        }
         case EVFILT_SIGNAL:
             printf ("Signal received: %d. Additional data: %d\n", ev.ident,
                     ev.data);
