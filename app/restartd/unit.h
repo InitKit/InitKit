@@ -8,6 +8,13 @@
 
 ListGenForNameType (pid, pid_t);
 
+typedef enum unit_type_e
+{
+    T_EXEC,
+    T_FORKS,
+    T_ONESHOT,
+} unit_type_e;
+
 typedef enum unit_state_e
 {
     S_UNINITIALISED,
@@ -35,10 +42,15 @@ typedef struct unit_s
     svc_instance_t * inst;
 
     const char * method[_M_MAX];
+    unit_type_e type;
 
     /* state-related */
     unit_state_e state;
     pid_list pids;
+
+    unsigned int timer_id;
 } unit_t;
+
+unit_t * unit_new (svc_t * svc, svc_instance_t * inst);
 
 #endif

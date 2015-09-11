@@ -7,20 +7,32 @@
  * identifiers from configd when we install into it its own service structure.
  */
 
-svc_t * assemble_configd_svc
+#include "s16.h"
+#include "manager.h"
+#include "unit.h"
+
+void install_configd_svc ()
 {
     svc_t * new_svc = s16_svc_new ();
     char * fmri;
 
-    svc_object_set_property_string (new_svc, "S16.Name", "s16/configd");
-    asprintf (&fmri, "svc:/%s", name);
+    new_svc->name = strdup ("s16/configd");
+    svc_object_set_property_string (new_svc, "S16.Name", new_svc->name);
+    asprintf (&fmri, "svc:/%s", new_svc->name);
     svc_object_set_property_string (new_svc, "S16.FMRI", fmri);
     free (fmri);
+
+    svc_object_set_property_string (new_svc, "Unit.Form", "exec");
+    svc_object_set_property_string (
+        new_svc, "Unit.Description",
+        "The S16 Service Configuration Repository.");
 
     /* how shall we identify the location of s16 binaries? */
     svc_object_set_property_string (
         new_svc, "Method.Start",
         "out/freebsd.amd64/debug/stage/bin/s16.configd");
-    new_svc->name = strdup (name);
     s16_svc_new_default_inst (new_svc);
+
+    unit_list_add (Manager.units,
+                   unit_new (new_svc, inst_list_lget (new_svc->instances)));
 }

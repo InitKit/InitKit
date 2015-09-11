@@ -15,6 +15,7 @@ manager_t Manager;
 
 extern void s16_restartd_prog_1 (struct svc_req * rqstp,
                                  register SVCXPRT * transp);
+void install_configd_svc ();
 
 static int restartd_rpc_loop (void * userData) { svc_run (); }
 
@@ -94,6 +95,11 @@ int main ()
     }
 
     thrd_create (&Manager.thrd_rpc, restartd_rpc_loop, 0);
+
+    if (!Manager.clnt_cfg)
+    {
+        install_configd_svc ();
+    }
 
     /* The main loop.
      * KEvent will return for signals and process events.
