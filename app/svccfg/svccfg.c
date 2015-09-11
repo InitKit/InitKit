@@ -72,9 +72,13 @@ int main (int argc, char * argv[])
         if (!newSvc)
             exit (1);
 
-        int ret = s16db_svc_install (clnt, newSvc);
-        printf ("installed manifest for service <%s> %d\n", newSvc->name, ret);
-
+        svc_id_t * ret = s16db_svc_install (clnt, newSvc);
+        if (ret)
+            printf ("installed manifest for service <%s> %d\n", newSvc->name,
+                    *ret);
+        else
+            fprintf (stderr, "failed to install manifest for service <%s>",
+                     newSvc->name);
         // return 0;
 
         break;

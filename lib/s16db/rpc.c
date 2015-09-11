@@ -8,10 +8,14 @@
     if (result == NULL)                                                        \
     {                                                                          \
         clnt_perror (clnt, "local");                                           \
-        exit (3);                                                              \
+        return 0;                                                              \
     }                                                                          \
     else                                                                       \
-        return *result;
+        return result;
+
+#define RETURN_IF_CLNT_ZERO()                                                  \
+    if (clnt == 0)                                                             \
+        return 0;
 
 CLIENT * s16db_context_create ()
 {
@@ -35,17 +39,18 @@ CLIENT * s16db_context_create ()
 
 void s16db_context_destroy (CLIENT * clnt) { clnt_destroy (clnt); }
 
-svc_id_t s16db_svc_insert (CLIENT * clnt, char const * name)
+svc_id_t * s16db_svc_insert (CLIENT * clnt, char const * name)
 {
+    // RETURN_IF_CLNT_ZERO();
     RETURN_OR_FAIL (svc_insert_1 ((char *)name, clnt));
 }
 
-svc_id_t s16db_svc_install (CLIENT * clnt, svc_t * svc)
+svc_id_t * s16db_svc_install (CLIENT * clnt, svc_t * svc)
 {
     RETURN_OR_FAIL (svc_install_1 (svc_to_rpc_svc (svc), clnt));
 }
 
-int s16db_svc_delete (CLIENT * clnt, svc_id_t id)
+int * s16db_svc_delete (CLIENT * clnt, svc_id_t id)
 {
     RETURN_OR_FAIL (svc_delete_1 (id, clnt));
 }
@@ -72,14 +77,14 @@ svc_list s16db_svc_retrieve_all (CLIENT * clnt)
     return box;
 }
 
-int s16db_svc_set_property_int (CLIENT * clnt, svc_id_t id, char const * key,
-                                long value)
+int * s16db_svc_set_property_int (CLIENT * clnt, svc_id_t id, char const * key,
+                                  long value)
 {
     RETURN_OR_FAIL (svc_set_property_int_1 (id, (char *)key, value, clnt));
 }
 
-int s16db_svc_set_property_string (CLIENT * clnt, svc_id_t id, char const * key,
-                                   char const * value)
+int * s16db_svc_set_property_string (CLIENT * clnt, svc_id_t id,
+                                     char const * key, char const * value)
 {
     RETURN_OR_FAIL (
         svc_set_property_string_1 (id, (char *)key, (char *)value, clnt));
