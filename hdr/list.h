@@ -52,18 +52,6 @@ void List_iterator_next (List_t_ ** it);
 
 void * List_lpop (List_t * n);
 
-#define LIST_ITERATE_OPEN(list)                                                \
-    List_t_ * tmp;                                                             \
-    void * e_data;                                                             \
-    mtx_lock (&(list)->Lock);                                                  \
-    for (List_t_ * e = (list)->List;                                           \
-         (e) && (tmp = (e)->Link, 1) && (e_data = e->data); (e) = tmp)         \
-    {
-
-#define LIST_ITERATE_CLOSE(list)                                               \
-    }                                                                          \
-    mtx_unlock (&(list)->Lock);
-
 #define ListGenForNameType(name, type)                                         \
     typedef List_t * name##_list;                                              \
     INLINE void name##_list_add (List_t * n, type * data)                      \
@@ -90,7 +78,9 @@ void * List_lpop (List_t * n);
     INLINE void name##_list_iterator_next (name##_list_iterator * n)           \
     {                                                                          \
         List_iterator_next ((List_t_ **)n);                                    \
-    }
+    }                                                                          \
+    INLINE void name##_list_lock (List_t * l) { mtx_lock (&l->Lock); }         \
+    INLINE void name##_list_unlock (List_t * l) { mtx_unlock (&l->Lock); }
 
 #ifdef __cplusplus
 }
