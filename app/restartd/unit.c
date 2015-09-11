@@ -27,18 +27,24 @@ void unit_deregister_pid (unit_t * unit, pid_t pid)
     }
 }
 
-int unit_fork_and_register (unit_t * unit, const char * cmd)
+pid_t unit_fork_and_register (unit_t * unit, const char * cmd)
 {
     process_wait_t * pwait = process_fork_wait (cmd);
-    if (pwait->pid == 0)
+    pid_t ret;
+
+    if (pwait == NULL || pwait->pid == 0)
     {
         fprintf (stderr, "failed to fork for command %s\n", cmd);
-        return -1;
+        return ret;
     }
-    printf ("Child PID: %d\n", pwait->pid);
-    unit_register_pid (unit, pwait->pid);
-    pt_watch_pid (Manager.ptrack, pwait->pid);
+
+    ret = pwait->pid;
+    printf ("Child PID: %d\n", ret);
+    unit_register_pid (unit, ret);
+    pt_watch_pid (Manager.ptrack, ret);
     process_fork_continue (pwait);
+
+    return ret;
 }
 
 int unit_has_pid (unit_t * unit, pid_t pid)
@@ -79,6 +85,7 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
 
     unit_t * unitnew = malloc (sizeof (unit_t));
 
+    unitnew->name = inst_object_get_property_string (inst, "S16.FMRI");
     unitnew->svc = svc;
     unitnew->inst = inst;
     unitnew->timer_id = 0;
@@ -94,7 +101,7 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
         unitnew->type = T_ONESHOT;
     else
     {
-        fprintf (stderr, "Unit <%s> lacks a known type\n", svc->name);
+        fprintf (stderr, "Unit <%s> lacks a known type\n", unitnew->name);
         return 0;
     }
 
@@ -108,6 +115,26 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
     return unitnew;
 }
 
+void unit_enter_maintenance (unit_t * unit)
+{
+    printf ("Unit %s entering maintenance state\n", unit->name);
+    unit->state = S_MAINTENANCE;
+}
+
+void unit_enter_prestart (unit_t * unit)
+{
+    if (unit->method[M_PRESTART])
+    {
+        unit->main_pid =
+            unit_fork_and_register (unit, unit->method[M_PRESTART]);
+        if (!unit->main_pid)
+        {
+            unit_enter_maintenance (unit);
+            return;
+        }
+    }
+}
+
 void unit_ctrl (unit_t * unit, msg_type_e ctrl)
 {
     printf ("Ctrl: %d\n", ctrl);
@@ -117,7 +144,7 @@ void unit_ctrl (unit_t * unit, msg_type_e ctrl)
         if (unit->state != S_OFFLINE && unit->state != S_MAINTENANCE)
             return;
         {
-            unit_fork_and_register (unit, "/bin/sh");
+            unit_enter_prestart (unit);
         }
     }
 }
@@ -128,4 +155,13 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
         unit_register_pid (unit, info->pid);
     else if (info->event == PT_EXIT)
         unit_deregister_pid (unit, info->pid);
+
+    if (info->event == PT_EXIT && info->pid == unit->main_pid)
+    {
+        if (exit_was_abnormal (info->flags))
+        {
+            printf ("Bad exit in main pid\n");
+            unit_enter_maintenance (unit); /* later, stop */
+        }
+    }
 }

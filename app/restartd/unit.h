@@ -43,7 +43,7 @@ typedef struct unit_s
 {
     svc_t * svc;
     svc_instance_t * inst;
-
+    const char * name;
     const char * method[_M_MAX];
     unit_type_e type;
 

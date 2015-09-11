@@ -91,6 +91,7 @@ process_wait_t * process_fork_wait (const char * cmd_)
         close (pwait->fd[1]);
         read (pwait->fd[0], &dispose, 1);
         execvp (argv[0], argv);
+        exit (999);
     }
     else if (newPid < 0) /* fail */
     {

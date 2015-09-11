@@ -160,6 +160,7 @@ int main ()
             else
             {
                 perror ("kevent! (i = -1 in loop)\n");
+                sleep (1);
             }
         }
 

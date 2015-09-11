@@ -29,6 +29,8 @@ void install_configd_svc ()
         "The S16 Service Configuration Repository.");
 
     /* how shall we identify the location of s16 binaries? */
+    svc_object_set_property_string (new_svc, "Method.Prestart",
+                                    "/usr/bin/sleep 5");
     svc_object_set_property_string (
         new_svc, "Method.Start",
         "out/freebsd.amd64/debug/stage/bin/s16.configd");
