@@ -31,6 +31,7 @@ librestartrpc_TEMPLATE = CXX
 librestartrpc_INCS = $(PATH_ROOT)/lib/s16db
 librestartrpc_LIBS = $(libreporpc_1_TARGET) $(libs16db_1_TARGET)
 librestartrpc_SOURCES = restartd_xdr.c restartd_clnt.c s16_xdr.c
+librestartrpc_ORDERDEPS = $(RESTARTD_H)
 librestartrpc_CLEAN += $(PATH_ROOT)/rpc/restartd_clnt.c \
     $(PATH_ROOT)/rpc/restartd_xdr.c \
     $(RESTARTD_H) $(PATH_ROOT)/hdr/restartd_rpc.h
