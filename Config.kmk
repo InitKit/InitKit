@@ -23,6 +23,7 @@ PKGCONF ?= pkg-config
 
 if "$(KBUILD_TARGET)" == "linux"
     TEMPLATE_CXX_LIBS += procps kqueue 
-    TEMPLATE_CXX_CFLAGS += $(shell $(PKGCONF) libkqueue --cflags)
+    TEMPLATE_CXX_CFLAGS += $(shell $(PKGCONF) libkqueue --cflags) 
+    TEMPLATE_CXX_DEFS += _POSIX_C_SOURCE
     TEMPLATE_CXX_CXXFLAGS += $(shell $(PKGCONF) libkqueue --cflags)
 endif
