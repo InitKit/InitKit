@@ -1,3 +1,4 @@
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
@@ -115,10 +116,41 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
     return unitnew;
 }
 
+void unit_enter_offline (unit_t * unit)
+{
+    printf ("Unit %s entering offline state\n", unit->name);
+    unit->state = S_OFFLINE;
+}
+
 void unit_enter_maintenance (unit_t * unit)
 {
     printf ("Unit %s entering maintenance state\n", unit->name);
     unit->state = S_MAINTENANCE;
+}
+
+void unit_enter_stopterm (unit_t * unit)
+{
+    unit->state = S_STOP_TERM;
+    for (pid_list_iterator it = pid_list_begin (unit->pids); it != NULL;
+         pid_list_iterator_next (&it))
+    {
+        kill (*it->val, SIGTERM);
+    }
+}
+
+void unit_enter_stop (unit_t * unit)
+{
+    if (unit->method[M_STOP])
+    {
+        unit->main_pid = unit_fork_and_register (unit, unit->method[M_STOP]);
+        if (!unit->main_pid)
+        {
+            unit_enter_maintenance (unit);
+            return;
+        }
+    }
+    else
+        unit_enter_stopterm (unit);
 }
 
 void unit_enter_prestart (unit_t * unit)
@@ -158,10 +190,15 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
 
     if (info->event == PT_EXIT && info->pid == unit->main_pid)
     {
+        /* if exit was S16_FATAL, go to maintenance instead */
         if (exit_was_abnormal (info->flags))
         {
             printf ("Bad exit in main pid\n");
-            unit_enter_maintenance (unit); /* later, stop */
+            unit->target = S_OFFLINE;
+            if (List_count (unit->pids))
+                unit_enter_stopterm (unit);
+            else
+                unit_enter_offline (unit);
         }
     }
 }

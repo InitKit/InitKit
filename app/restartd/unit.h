@@ -49,6 +49,7 @@ typedef struct unit_s
 
     /* state-related */
     unit_state_e state;
+    unit_state_e target; /* target state for s_stop_term/s_stop_kill */
     pid_list pids;
     pid_t main_pid;
 
