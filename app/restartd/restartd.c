@@ -131,7 +131,6 @@ int main ()
     {
         install_configd_svc ();
         note_send (MSG_START, 1, 1, 0);
-        note_send (MSG_START, 1, 1, 0);
     }
 
     /* The main loop.

@@ -147,9 +147,7 @@ void * List_lget (List_t * n)
     }
     else
     {
-        mtx_lock (&n->Lock);
         return n->List->data;
-        mtx_unlock (&n->Lock);
     }
 }
 
