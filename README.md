@@ -34,6 +34,14 @@ Please find a copy of the GPL version 3.0 included in doc/CPYRIGHT
 ### FAQ
 A few frequently asked questions about S16:
 
+> On what platforms does S16 run?
+
+ * FreeBSD
+ * GNU+Linux
+ * muslibc+BusyBox+Linux
+
+It is likely that this will run on all the other BSD systems as well.
+
 > Why is it bigger than sinit?
 
 Because System XVI's scope is greater than sinit. sinit simply initialises

@@ -30,7 +30,6 @@ typedef struct msg_s
 } msg_t;
 
 ListGenForNameType (msg, msg_t);
-ListGenForNameType (unit, unit_t);
 
 typedef struct manager_s
 {

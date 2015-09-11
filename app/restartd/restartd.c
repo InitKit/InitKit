@@ -177,9 +177,11 @@ int main ()
             msg = msg_list_lpop (Manager.msgs);
             if (msg)
             {
-                printf ("Message: %d\n", msg->id);
-                free (msg);
+                unit_t * unit;
+                if (unit = unit_find (Manager.units, msg->id, msg->i_id))
+                    unit_ctrl(unit, msg->type);
             }
+            free (msg);
             break;
         }
         case EVFILT_SIGNAL:

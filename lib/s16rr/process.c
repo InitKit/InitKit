@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -10,6 +13,8 @@
 #include <proc/readproc.h>
 #include <sys/prctl.h>
 #endif
+
+#include "s16rr.h"
 
 int subreap_acquire ()
 {
@@ -56,6 +61,59 @@ pid_t process_get_ppid (pid_t pid)
     get_proc_stats (pid, &info);
     return info.ppid;
 #endif
+}
+
+process_wait_t * process_fork_wait (const char * cmd_)
+{
+    process_wait_t * pwait = malloc(sizeof(process_wait_t));
+    int n_spaces = 0;
+    char * cmd = strdup (cmd_), * tofree = cmd, ** argv = NULL;
+    pid_t newPid;
+
+    strtok (cmd, " ");
+
+    while (cmd)
+    {
+        argv = (char **)realloc (argv, sizeof (char *) * ++n_spaces);
+        argv[n_spaces - 1] = cmd;
+        cmd = strtok (NULL, " ");
+    }
+
+    argv = (char **)realloc (argv, sizeof (char *) * (n_spaces + 1));
+    argv[n_spaces] = 0;
+
+    pipe (pwait->fd);
+    newPid = fork ();
+
+    if (newPid == 0) /* child */
+    {
+        char dispose;
+        close(pwait->fd[1]);
+        read(pwait->fd[0], &dispose, 1);
+        execvp (argv[0], argv);
+    }
+    else if (newPid < 0) /* fail */
+    {
+        fprintf (stderr, "FAILED TO FORK\n");
+        pwait->pid = 0;
+    }
+    else
+    {
+        close(pwait->fd[0]);
+        pwait->pid = newPid;
+    }
+
+    free (argv);
+    free (tofree);
+
+    return pwait;
+}
+
+void process_fork_continue(process_wait_t * pwait)
+{
+    write(pwait->fd[1], "0", 1);
+    close(pwait->fd[1]);
+    free(pwait);
 }
 
 int exit_was_abnormal (int wstat)

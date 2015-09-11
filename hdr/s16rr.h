@@ -26,6 +26,12 @@ typedef struct pt_info_s
     long flags;
 } pt_info_t;
 
+typedef struct process_wait_s
+{
+    int fd[2];
+    pid_t pid;
+} process_wait_t;
+
 typedef struct process_tracker_s process_tracker_t;
 
 /* subreaping routines */
@@ -38,6 +44,14 @@ int subreap_status ();
 
 /* Retrieves the parent PID of a PID. */
 pid_t process_get_ppid (pid_t pid);
+
+/* Forks a process for the command specified.
+ * This process waits until process_fork_continue()
+ * is called. */
+process_wait_t * process_fork_wait (const char * cmd_);
+/* Tells the child process to continue.
+ * This also frees the process_wait_t structure. */
+void process_fork_continue(process_wait_t * pwait);
 
 /* process tracking routines */
 
