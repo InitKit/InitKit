@@ -55,11 +55,12 @@ typedef struct unit_s
     unsigned int timer_id;
 } unit_t;
 
-int unit_has_pid (unit_t * unit, pid_t pid);
+unit_t * unit_find_by_pid (unit_list box, pid_t pid);
 
 unit_t * unit_find (unit_list box, svc_id_t id, svc_id_t id_i);
 unit_t * unit_new (svc_t * svc, svc_instance_t * inst);
 typedef enum msg_type_e msg_type_e;
 void unit_ctrl (unit_t * unit, msg_type_e ctrl);
+void unit_ptevent (unit_t * unit, pt_info_t * info);
 
 #endif

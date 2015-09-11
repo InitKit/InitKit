@@ -13,7 +13,7 @@ void unit_register_pid (unit_t * unit, pid_t pid)
 
 void unit_deregister_pid (unit_t * unit, pid_t pid)
 {
-    for (pid_list_iterator it = pid_list_begin (unit->pids); it != 0;
+    for (pid_list_iterator it = pid_list_begin (unit->pids); it != NULL;
          pid_list_iterator_next (&it))
     {
         if (*it->val == pid)
@@ -21,7 +21,8 @@ void unit_deregister_pid (unit_t * unit, pid_t pid)
             pid_t * tofree = it->val;
             pid_list_del (unit->pids, it->val);
             pt_disregard_pid (Manager.ptrack, pid);
-            free (it->val);
+            free (tofree);
+            return;
         }
     }
 }
@@ -50,6 +51,15 @@ int unit_has_pid (unit_t * unit, pid_t pid)
             return 1;
         }
     }
+    return 0;
+}
+
+unit_t * unit_find_by_pid (unit_list box, pid_t pid)
+{
+    unit_list_iterator i;
+    for (i = unit_list_begin (box); i != NULL; unit_list_iterator_next (&i))
+        if (unit_has_pid (i->val, pid))
+            return i->val;
     return 0;
 }
 
@@ -110,4 +120,12 @@ void unit_ctrl (unit_t * unit, msg_type_e ctrl)
             unit_fork_and_register (unit, "/bin/sh");
         }
     }
+}
+
+void unit_ptevent (unit_t * unit, pt_info_t * info)
+{
+    if (info->event == PT_CHILD)
+        unit_register_pid (unit, info->pid);
+    else if (info->event == PT_EXIT)
+        unit_deregister_pid (unit, info->pid);
 }

@@ -164,11 +164,24 @@ int main ()
         }
 
         tmout.tv_sec = 3;
+        info = 0;
 
-        if (!(info = pt_investigate_kevent (Manager.ptrack, &ev)))
-            goto post_pinfo;
+        if ((info = pt_investigate_kevent (Manager.ptrack, &ev)))
+        {
+            unit_t * unit = unit_find_by_pid (Manager.units, info->pid);
 
-    post_pinfo:
+            if (!unit)
+                unit = unit_find_by_pid (Manager.units, info->ppid);
+
+            if (!unit)
+                fprintf (stderr, "error: no unit associated with pid %d\n",
+                         info->pid);
+            else
+                unit_ptevent (unit, info);
+
+            free (info);
+        }
+
         switch (ev.filter)
         {
         case EVFILT_USER:
@@ -188,6 +201,8 @@ int main ()
             printf ("Signal received: %d. Additional data: %d\n", ev.ident,
                     ev.data);
             break;
+        default:
+            ;
         }
     }
 
