@@ -10,7 +10,9 @@
 #include "s16.h"
 #include "s16rr.h"
 
-enum msg_type_e
+#include "unit.h"
+
+typedef enum msg_type_e
 {
     MSG_START,
     MSG_STOP,
@@ -18,7 +20,7 @@ enum msg_type_e
     MSG_RESTART,
     MSG_AVAILABLE,
     MSG,
-};
+} msg_type_e;
 
 typedef struct msg_s
 {
@@ -28,12 +30,16 @@ typedef struct msg_s
 } msg_t;
 
 ListGenForNameType (msg, msg_t);
+ListGenForNameType (unit, unit_t);
 
 typedef struct manager_s
 {
     int kq;
+    CLIENT * clnt_cfg;
     process_tracker_t * ptrack;
     thrd_t thrd_rpc;
+
+    unit_list units;
 } manager_t;
 
 extern manager_t Manager;

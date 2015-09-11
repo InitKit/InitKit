@@ -6,6 +6,8 @@
 #include <sys/types.h>
 #include <sys/event.h>
 
+#include "s16db.h"
+
 #include "manager.h"
 #include "restartd_rpc.h"
 
@@ -20,7 +22,7 @@ int main ()
 {
     struct sockaddr_in addr;
     int sock;
-    struct kevent sigfd, ev;
+    struct kevent sigfd, userev, ev;
     struct sigaction sa;
     struct timespec tmout = {0, /* return at once initially */
                              0};
@@ -30,7 +32,7 @@ int main ()
 
     if ((Manager.kq = kqueue ()) == -1)
     {
-        perror ("kqueue");
+        perror ("kqueue!");
         exit (EXIT_FAILURE);
     }
 
@@ -38,11 +40,21 @@ int main ()
 
     if (kevent (Manager.kq, &sigfd, 1, 0, 0, 0) == -1)
     {
-        perror ("kqueue");
+        perror ("kqueue! (sigfd installation)");
+        exit (EXIT_FAILURE);
+    }
+
+    EV_SET (&userev, NOTE_IDENT, EVFILT_USER, EV_ADD, NOTE_FFNOP, 0, 0);
+
+    if (kevent (Manager.kq, &userev, 1, 0, 0, 0) == -1)
+    {
+        perror ("kqueue! (userev installation)");
         exit (EXIT_FAILURE);
     }
 
     Manager.ptrack = pt_new (Manager.kq);
+    Manager.units = List_new ();
+    Manager.clnt_cfg = s16db_context_create ();
 
     sa.sa_flags = 0;
     sigemptyset (&sa.sa_mask);
@@ -115,6 +127,8 @@ int main ()
     post_pinfo:
         switch (ev.filter)
         {
+        case EVFILT_USER:
+            break;
         case EVFILT_SIGNAL:
             printf ("Signal received: %d. Additional data: %d\n", ev.ident,
                     ev.data);
