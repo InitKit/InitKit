@@ -11,6 +11,7 @@
 #include "s16rr.h"
 
 #include "unit.h"
+#include "timer.h"
 
 typedef enum msg_type_e
 {
@@ -43,6 +44,7 @@ typedef struct manager_s
     msg_list msgs;
 
     unit_list units;
+    timer_list timers;
 } manager_t;
 
 extern manager_t Manager;
