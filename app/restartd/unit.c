@@ -206,7 +206,7 @@ void unit_enter_start (unit_t * unit)
 {
     /* deal with forking case later */
     unit->state = S_START;
-    unit->main_pid = unit_fork_and_register (unit, unit->method[M_PRESTART]);
+    unit->main_pid = unit_fork_and_register (unit, unit->method[M_START]);
     if (!unit->main_pid)
     {
         unit_enter_maintenance (unit);
@@ -289,15 +289,15 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
     else if (info->event == PT_EXIT)
         unit_deregister_pid (unit, info->pid);
 
-    if (info->event == PT_EXIT && info->pid == unit->main_pid)
-    {
+    if (info->event == PT_EXIT && info->pid == unit->main_pid) 
+    { /* main PID has exited */
 	unit->main_pid = 0;
+	if (unit->timer_id)
+	    timer_del (unit->timer_id);
         /* if exit was S16_FATAL, go to maintenance instead - add this later */
         if (exit_was_abnormal (info->flags))
         {
             printf ("Bad exit in a main pid\n");
-            if (unit->timer_id)
-                timer_del (unit->timer_id);
             if (unit->rtype == R_NO)
                 unit->target = S_OFFLINE;
             else
@@ -308,6 +308,21 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
             else
                 unit_enter_state (unit, unit->target);
         }
+	else
+	{
+	       printf("Switching\n");
+	    switch (unit->state)
+	    {
+		case S_PRESTART:
+		    unit->target = S_START;
+		    if (List_count (unit->pids))
+			unit_enter_stop (unit);
+		    else
+		      unit_enter_start(unit);
+		    break;
+	    }
+	    return ;
+	}
     }
     switch (unit->state)
     {
