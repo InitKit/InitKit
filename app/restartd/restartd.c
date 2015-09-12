@@ -86,6 +86,7 @@ int main ()
     Manager.units = List_new ();
     Manager.clnt_cfg = s16db_context_create ();
     Manager.msgs = List_new ();
+    Manager.timers = List_new ();
     mtx_init (&Manager.lock, mtx_plain);
 
     sa.sa_flags = 0;
@@ -202,8 +203,15 @@ int main ()
             printf ("Signal received: %d. Additional data: %d\n", ev.ident,
                     ev.data);
             break;
-        default:
-            ;
+        case EVFILT_TIMER:
+        {
+            Timer * timer;
+            printf ("Timer\n");
+            if (timer = timer_find (ev.ident))
+                timer->cb (timer->userData, ev.ident);
+            printf ("%p\n", timer);
+        }
+        default:;
         }
     }
 

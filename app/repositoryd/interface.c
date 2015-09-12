@@ -42,7 +42,7 @@ rpc_svc_t * svc_retrieve_by_name_1_svc (char * id, struct svc_req * req)
 rpc_svc_array_t * svc_retrieve_all_1_svc (struct svc_req * req)
 {
     static rpc_svc_array_t result;
-    svc_t * iter, *tmp;
+    svc_t *iter, *tmp;
     result.rpc_svc_array_t_len = count_svcs ();
     result.rpc_svc_array_t_val =
         svc_list_to_rpc_svc_array (retrieve_all_svcs ());

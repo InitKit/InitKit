@@ -82,7 +82,7 @@ void SvcManager::launch ()
 pid_t SvcManager::fork_register_exec (const char * cmd_)
 {
     int n_spaces = 0, ret = 1;
-    char * cmd = strdup (cmd_), * tofree = cmd, ** argv = NULL;
+    char *cmd = strdup (cmd_), *tofree = cmd, **argv = NULL;
     pid_t newPid;
 
     strtok (cmd, " ");

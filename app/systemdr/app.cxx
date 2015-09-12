@@ -136,7 +136,7 @@ void SystemDr::main_loop ()
             printf ("Signal received: %d. Additional data: %d\n", ev.ident,
                     ev.data);
             if (ev.ident == SIGCHLD)
-                while (waitpid ((pid_t)(-1), 0, WNOHANG) > 0)
+                while (waitpid ((pid_t) (-1), 0, WNOHANG) > 0)
                     ;
             break;
         }

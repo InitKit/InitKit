@@ -5,6 +5,11 @@
 #include "manager.h"
 #include "unit.h"
 
+void unit_timer_event (void * data, long id);
+
+#define UnitTimerReg()                                                         \
+    unit->timer_id = timer_add (unit->timeout_secs, unit, unit_timer_event);
+
 void unit_register_pid (unit_t * unit, pid_t pid)
 {
     pid_t * rpid = malloc (sizeof (pid_t));
@@ -113,6 +118,8 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
     unitnew->method[M_STOP] =
         svc_object_get_property_string (svc, "Method.Stop");
 
+    unitnew->timeout_secs = 2;
+
     return unitnew;
 }
 
@@ -125,12 +132,28 @@ void unit_enter_offline (unit_t * unit)
 void unit_enter_maintenance (unit_t * unit)
 {
     printf ("Unit %s entering maintenance state\n", unit->name);
-    unit->state = S_MAINTENANCE;
+    unit->target = S_MAINTENANCE;
+    if (List_count (unit->pids))
+        unit_enter_stop (unit);
+    else
+        unit->state = S_MAINTENANCE;
+}
+
+void unit_enter_stopkill (unit_t * unit)
+{
+    unit->state = S_STOP_KILL;
+    UnitTimerReg ();
+    for (pid_list_iterator it = pid_list_begin (unit->pids); it != NULL;
+         pid_list_iterator_next (&it))
+    {
+        kill (*it->val, SIGKILL);
+    }
 }
 
 void unit_enter_stopterm (unit_t * unit)
 {
     unit->state = S_STOP_TERM;
+    UnitTimerReg ();
     for (pid_list_iterator it = pid_list_begin (unit->pids); it != NULL;
          pid_list_iterator_next (&it))
     {
@@ -157,6 +180,8 @@ void unit_enter_prestart (unit_t * unit)
 {
     if (unit->method[M_PRESTART])
     {
+        unit->state = S_PRESTART;
+        UnitTimerReg ();
         unit->main_pid =
             unit_fork_and_register (unit, unit->method[M_PRESTART]);
         if (!unit->main_pid)
@@ -181,6 +206,32 @@ void unit_ctrl (unit_t * unit, msg_type_e ctrl)
     }
 }
 
+void unit_timer_event (void * data, long id)
+{
+    unit_t * unit = data;
+    unit->timer_id = 0;
+    timer_del (id);
+
+    if (unit->state == S_STOP_TERM)
+    {
+        printf ("timeout in stopterm\n");
+        unit_enter_stopkill (unit);
+        return;
+    }
+    else if (unit->state == S_STOP_KILL)
+    {
+        printf ("timeout in stopkill(!)\n");
+    }
+    else if (unit->state == S_PRESTART)
+    {
+        printf ("timeout in prestart\n");
+        if (unit->rtype == R_YES)
+            unit_enter_prestart (unit);
+        else
+            unit_enter_maintenance (unit);
+    }
+}
+
 void unit_ptevent (unit_t * unit, pt_info_t * info)
 {
     if (info->event == PT_CHILD)
@@ -193,12 +244,27 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
         /* if exit was S16_FATAL, go to maintenance instead */
         if (exit_was_abnormal (info->flags))
         {
-            printf ("Bad exit in main pid\n");
+            printf ("Bad exit in a main pid\n");
+            if (unit->timer_id)
+                timer_del (unit->timer_id);
             unit->target = S_OFFLINE;
             if (List_count (unit->pids))
-                unit_enter_stopterm (unit);
+                unit_enter_stop (unit);
             else
                 unit_enter_offline (unit);
         }
+    }
+    switch (unit->state)
+    {
+    case S_STOP:
+    case S_STOP_TERM:
+    case S_STOP_KILL:
+        if (!List_count (unit->pids))
+            timer_del (unit->timer_id);
+        unit->main_pid = 0;
+        unit->timer_id = 0;
+        printf ("All PIDs purged\n");
+
+        break;
     }
 }

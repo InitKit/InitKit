@@ -11,11 +11,11 @@ typedef struct Timer
 {
     long id;
     void * userData;
-    void (*cb)(void *, long);
+    void (*cb) (void *, long);
 } Timer;
 
 Timer * timer_find (long id);
 void timer_del (long id);
-long timer_add (int sec, void * userData, void (*cb)(void *, long));
+long timer_add (int sec, void * userData, void (*cb) (void *, long));
 
 #endif

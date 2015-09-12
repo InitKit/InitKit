@@ -28,6 +28,12 @@
 *.app
 *.core
 
+# Trinity-Kate
+*~
+
 # Building
 out/*
 bld/*
+
+# Jeera isn't ready for the public yet
+jeera/*

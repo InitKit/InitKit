@@ -34,8 +34,8 @@ typedef pthread_cond_t cnd_t;
 typedef pthread_key_t tss_t;
 typedef pthread_once_t once_flag;
 
-typedef void (*thrd_start_t)(void *);
-typedef void (*tss_dtor_t)(void *);
+typedef void (*thrd_start_t) (void *);
+typedef void (*tss_dtor_t) (void *);
 
 typedef struct
 {
@@ -245,7 +245,7 @@ static inline void * tss_get (tss_t key) { return pthread_getspecific (key); }
 
 /* ---- misc ---- */
 
-static inline void call_once (once_flag * flag, void (*func)(void))
+static inline void call_once (once_flag * flag, void (*func) (void))
 {
     pthread_once (flag, func);
 }

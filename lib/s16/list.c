@@ -20,7 +20,7 @@ List_t * List_new ()
 
 void List_add (List_t * n, void * data)
 {
-    List_t_ * temp, *t;
+    List_t_ *temp, *t;
 
     if (n == 0)
         n = List_new ();
@@ -53,7 +53,7 @@ unlock:
 
 void List_del (List_t * n, void * data)
 {
-    List_t_ * current, *previous;
+    List_t_ *current, *previous;
 
     previous = NULL;
 
@@ -87,7 +87,7 @@ void List_destroy (List_t * n)
 {
     if (!n)
         return;
-    for (List_t_ * it = n->List, *tmp; it != NULL; it = tmp)
+    for (List_t_ *it = n->List, *tmp; it != NULL; it = tmp)
     {
         tmp = it->Link;
         free (it);

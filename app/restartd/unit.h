@@ -39,6 +39,12 @@ typedef enum unit_method_e
     _M_MAX,
 } unit_method_e;
 
+typedef enum unit_restart_e
+{
+    R_YES,
+    R_NO,
+} unit_restart_e;
+
 typedef struct unit_s
 {
     svc_t * svc;
@@ -46,6 +52,9 @@ typedef struct unit_s
     const char * name;
     const char * method[_M_MAX];
     unit_type_e type;
+    unit_restart_e rtype;
+
+    int timeout_secs;
 
     /* state-related */
     unit_state_e state;

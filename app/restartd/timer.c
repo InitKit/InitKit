@@ -30,7 +30,7 @@ void timer_del (long id)
     }
 }
 
-long timer_add (int sec, void * userData, void (*cb)(void *, long))
+long timer_add (int sec, void * userData, void (*cb) (void *, long))
 {
     struct kevent ev;
     long ident = rand () % UINT_MAX;

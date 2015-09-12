@@ -67,7 +67,7 @@ process_wait_t * process_fork_wait (const char * cmd_)
 {
     process_wait_t * pwait = malloc (sizeof (process_wait_t));
     int n_spaces = 0;
-    char * cmd = strdup (cmd_), * tofree = cmd, ** argv = NULL;
+    char *cmd = strdup (cmd_), *tofree = cmd, **argv = NULL;
     pid_t newPid;
 
     strtok (cmd, " ");

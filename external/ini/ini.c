@@ -61,8 +61,8 @@ static char * strncpy0 (char * dest, const char * src, size_t size)
 }
 
 /* See documentation in header file. */
-int ini_parse_file (FILE * file, int (*handler)(void *, const char *,
-                                                const char *, const char *),
+int ini_parse_file (FILE * file, int (*handler) (void *, const char *,
+                                                 const char *, const char *),
                     void * user)
 {
 /* Uses a fair bit of stack (use heap instead if you need to) */
@@ -178,7 +178,8 @@ int ini_parse_file (FILE * file, int (*handler)(void *, const char *,
 
 /* See documentation in header file. */
 int ini_parse (const char * filename,
-               int (*handler)(void *, const char *, const char *, const char *),
+               int (*handler) (void *, const char *, const char *,
+                               const char *),
                void * user)
 {
     FILE * file;

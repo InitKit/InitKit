@@ -31,15 +31,15 @@ extern "C" {
    error (only when INI_USE_STACK is zero).
 */
 int ini_parse (const char * filename,
-               int (*handler)(void * user, const char * section,
-                              const char * name, const char * value),
+               int (*handler) (void * user, const char * section,
+                               const char * name, const char * value),
                void * user);
 
 /* Same as ini_parse(), but takes a FILE* instead of filename. This doesn't
    close the file when it's finished -- the caller must do that. */
 int ini_parse_file (FILE * file,
-                    int (*handler)(void * user, const char * section,
-                                   const char * name, const char * value),
+                    int (*handler) (void * user, const char * section,
+                                    const char * name, const char * value),
                     void * user);
 
 /* Nonzero to allow multi-line value parsing, in the style of Python's
