@@ -5,6 +5,7 @@ AllowShortBlocksOnASingleLine: true
 AllowShortFunctionsOnASingleLine: true
 BreakBeforeBraces: Allman
 ColumnLimit: 80
+DerivePointerAlignment: false
 DerivePointerBinding: false
 IndentWidth: 4
 Language: Cpp

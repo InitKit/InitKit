@@ -96,6 +96,7 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
     unitnew->inst = inst;
     unitnew->timer_id = 0;
     unitnew->main_pid = 0;
+    unitnew->rtype = R_YES;
     unitnew->state = S_OFFLINE;
     unitnew->pids = List_new ();
 
@@ -123,6 +124,8 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
     return unitnew;
 }
 
+void unit_enter_stop (unit_t * unit);
+
 void unit_enter_offline (unit_t * unit)
 {
     printf ("Unit %s entering offline state\n", unit->name);
@@ -136,7 +139,10 @@ void unit_enter_maintenance (unit_t * unit)
     if (List_count (unit->pids))
         unit_enter_stop (unit);
     else
+    {
+        printf ("Unit %s arrives in maintenance\n", unit->name);
         unit->state = S_MAINTENANCE;
+    }
 }
 
 void unit_enter_stopkill (unit_t * unit)
@@ -165,6 +171,8 @@ void unit_enter_stop (unit_t * unit)
 {
     if (unit->method[M_STOP])
     {
+        unit->state = S_STOP;
+        UnitTimerReg ();
         unit->main_pid = unit_fork_and_register (unit, unit->method[M_STOP]);
         if (!unit->main_pid)
         {
@@ -192,6 +200,37 @@ void unit_enter_prestart (unit_t * unit)
     }
 }
 
+void unit_enter_start (unit_t * unit)
+{
+    /* deal with forking case later */
+    unit->state = S_START;
+    unit->main_pid = unit_fork_and_register (unit, unit->method[M_PRESTART]);
+    if (!unit->main_pid)
+    {
+        unit_enter_maintenance (unit);
+        return;
+    }
+}
+
+void unit_enter_state (unit_t * unit, unit_state_e state)
+{
+    switch (state)
+    {
+    case S_OFFLINE:
+        unit_enter_offline (unit);
+        break;
+    case S_MAINTENANCE:
+        unit_enter_maintenance (unit);
+        break;
+    case S_PRESTART:
+        unit_enter_prestart (unit);
+        break;
+    case S_START:
+        unit_enter_start (unit);
+        break;
+    }
+}
+
 void unit_ctrl (unit_t * unit, msg_type_e ctrl)
 {
     printf ("Ctrl: %d\n", ctrl);
@@ -212,23 +251,32 @@ void unit_timer_event (void * data, long id)
     unit->timer_id = 0;
     timer_del (id);
 
-    if (unit->state == S_STOP_TERM)
+    switch (unit->state)
+    {
+    case S_STOP_TERM:
     {
         printf ("timeout in stopterm\n");
         unit_enter_stopkill (unit);
         return;
     }
-    else if (unit->state == S_STOP_KILL)
+    case S_STOP_KILL:
     {
         printf ("timeout in stopkill(!)\n");
+        unit_enter_state (unit, unit->target);
+        return;
     }
-    else if (unit->state == S_PRESTART)
+    case S_PRESTART:
     {
         printf ("timeout in prestart\n");
         if (unit->rtype == R_YES)
+        {
+            printf ("restarting for prestart\n");
             unit_enter_prestart (unit);
+        }
         else
             unit_enter_maintenance (unit);
+        return;
+    }
     }
 }
 
@@ -247,11 +295,15 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
             printf ("Bad exit in a main pid\n");
             if (unit->timer_id)
                 timer_del (unit->timer_id);
-            unit->target = S_OFFLINE;
+            if (unit->rtype == R_NO)
+                unit->target = S_OFFLINE;
+            else
+                unit->target = unit->state;
+
             if (List_count (unit->pids))
                 unit_enter_stop (unit);
             else
-                unit_enter_offline (unit);
+                unit_enter_state (unit, unit->target);
         }
     }
     switch (unit->state)
