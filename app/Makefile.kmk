@@ -1,5 +1,4 @@
 include $(PATH_ROOT)/app/restartd/Makefile.kmk
 include $(PATH_ROOT)/app/init/Makefile.kmk
 include $(PATH_ROOT)/app/svccfg/Makefile.kmk
-include $(PATH_ROOT)/app/systemdr/Makefile.kmk
 include $(PATH_ROOT)/app/repositoryd/Makefile.kmk

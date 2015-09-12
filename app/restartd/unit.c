@@ -159,6 +159,8 @@ void unit_enter_stopkill (unit_t * unit)
 void unit_enter_stopterm (unit_t * unit)
 {
     unit->state = S_STOP_TERM;
+    if (unit->main_pid)
+	kill(unit->main_pid, SIGTERM);
     UnitTimerReg ();
     for (pid_list_iterator it = pid_list_begin (unit->pids); it != NULL;
          pid_list_iterator_next (&it))
@@ -289,7 +291,8 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
 
     if (info->event == PT_EXIT && info->pid == unit->main_pid)
     {
-        /* if exit was S16_FATAL, go to maintenance instead */
+	unit->main_pid = 0;
+        /* if exit was S16_FATAL, go to maintenance instead - add this later */
         if (exit_was_abnormal (info->flags))
         {
             printf ("Bad exit in a main pid\n");
@@ -316,6 +319,7 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
         unit->main_pid = 0;
         unit->timer_id = 0;
         printf ("All PIDs purged\n");
+	unit_enter_state (unit, unit->target);
 
         break;
     }
