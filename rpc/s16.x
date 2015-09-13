@@ -1,3 +1,13 @@
+enum svc_state_e
+{
+    OFFLINE,
+    ONLINE,
+    DEGRADED,
+    MAINTENANCE
+};
+
+typedef enum svc_state_e svc_state_e;
+
 typedef unsigned long svc_id_t;
 
 struct rpc_svc_s

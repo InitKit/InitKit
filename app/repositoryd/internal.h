@@ -3,9 +3,17 @@
 
 #include "s16.h"
 
+typedef struct subscriber_s
+{
+    int port;
+} subscriber_t;
+
+ListGenForNameType (subscriber, subscriber_t);
+
 typedef struct repositoryd_s
 {
     svc_list services;
+    subscriber_list subscribers;
 } repositoryd_t;
 
 extern repositoryd_t RD;

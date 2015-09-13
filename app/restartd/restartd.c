@@ -150,7 +150,6 @@ int main ()
         mtx_lock (&Manager.lock);
         EV_SET (&userev, NOTE_IDENT, EVFILT_USER, EV_DISABLE | EV_CLEAR,
                 NOTE_FFCOPY, 0, 0);
-        mtx_unlock (&Manager.lock);
 
         if (i == -1)
         {
@@ -216,6 +215,7 @@ int main ()
         }
         default:;
         }
+        mtx_unlock (&Manager.lock);
     }
 
     return 0;

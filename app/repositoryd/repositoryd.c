@@ -12,6 +12,7 @@ extern void s16_repositoryd_prog_1 (struct svc_req * rqstp,
 int main (int argc, char * argv[])
 {
     RD.services = List_new ();
+    RD.subscribers = List_new ();
 
     int sock = socket (PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (sock == -1)
