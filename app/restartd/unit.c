@@ -115,10 +115,10 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
     else
     {
         fprintf (stderr, "Unit <%s> lacks a known type\n", unitnew->name);
-        free(unitnew->name);
-	List_destroy(unitnew->pids);
-	free(unitnew);
-	return 0;
+        free (unitnew->name);
+        List_destroy (unitnew->pids);
+        free (unitnew);
+        return 0;
     }
 
     unitnew->method[M_PRESTART] =
@@ -169,6 +169,8 @@ void unit_enter_stopkill (unit_t * unit)
 {
     DbgEnteredState (Stopkill);
     unit->state = S_STOP_KILL;
+    /* set a timer so that, should this fail to terminate all PIDs, we can do
+     * something else (this should never happen with SIGKILL) */
     UnitTimerReg ();
     for (pid_list_iterator it = pid_list_begin (unit->pids); it != NULL;
          pid_list_iterator_next (&it))
@@ -181,9 +183,11 @@ void unit_enter_stopterm (unit_t * unit)
 {
     DbgEnteredState (Stopterm);
     unit->state = S_STOP_TERM;
+    /* first, just try to kill the main PID */
     if (unit->main_pid)
         kill (unit->main_pid, SIGTERM);
     UnitTimerReg ();
+    /* now the rest */
     for (pid_list_iterator it = pid_list_begin (unit->pids); it != NULL;
          pid_list_iterator_next (&it))
     {
@@ -194,12 +198,15 @@ void unit_enter_stopterm (unit_t * unit)
 void unit_enter_stop (unit_t * unit)
 {
     DbgEnteringState (Stop);
+    /* if the unit has a `stop` method, try that */
     if (unit->method[M_STOP])
     {
         DbgEnteredState (Stop);
         unit->state = S_STOP;
         UnitTimerReg ();
         unit->main_pid = unit_fork_and_register (unit, unit->method[M_STOP]);
+        /* if no pid emerged, fork failed; immediately go to maintenance after
+         * clearing any remaining processes */
         if (!unit->main_pid)
         {
             unit->target = S_MAINTENANCE;
@@ -261,6 +268,8 @@ void unit_enter_start (unit_t * unit)
             unit_enter_maintenance (unit);
             return;
         }
+        /* in a T_EXEC service, we consider it online as soon as the process
+         * specified in the start method is running. */
         unit_enter_poststart (unit);
     }
 }
@@ -302,6 +311,7 @@ void unit_ctrl (unit_t * unit, msg_type_e ctrl)
     switch (ctrl)
     {
     case MSG_START:
+        /* you can't start a service that has already started */
         if (unit->state != S_OFFLINE && unit->state != S_MAINTENANCE)
             return;
 
@@ -363,6 +373,8 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
             printf ("Bad exit in a main pid\n");
             if (unit->rtype == R_NO)
                 unit->target = S_OFFLINE;
+            /* if we were online, we'll go all the way back to the prestart
+             * state, after purging any remaining PIDs. */
             else if (unit->state == S_ONLINE)
                 unit->target = S_PRESTART;
             else
@@ -375,14 +387,20 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
             switch (unit->state)
             {
             case S_PRESTART:
+                /* the main PID exited from prestart; we'll clean up any
+                 * remnants and then enter the start state. */
                 unit->target = S_START;
                 unit_purge_and_target (unit);
                 break;
             case S_POSTSTART:
+                /* we won't bother purging any PIDs left over by poststart. */
                 unit_enter_online (unit);
                 break;
             case S_ONLINE:
-                unit->target = S_PRESTART;
+                if (unit->rtype == R_YES)
+                    unit->target = S_PRESTART;
+                else
+                    unit->taret = S_OFFLINE;
                 unit_purge_and_target (unit);
                 break;
             }
@@ -407,6 +425,8 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
         unit->main_pid = 0;
         unit->timer_id = 0;
         printf ("All PIDs purged\n");
+        /* having purged all the PIDs we need to, we are free to enter the
+         * targeted next state. */
         unit_enter_state (unit, unit->target);
 
         break;
