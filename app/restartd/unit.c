@@ -6,9 +6,15 @@
 #include "unit.h"
 
 void unit_timer_event (void * data, long id);
+void unit_enter_state (unit_t * unit, unit_state_e state);
 
 #define UnitTimerReg()                                                         \
     unit->timer_id = timer_add (unit->timeout_secs, unit, unit_timer_event);
+
+#define DbgEnteringState(x)                                                    \
+    printf ("[%s] Unit entering state %s\n", unit->name, #x);
+#define DbgEnteredState(x)                                                     \
+    printf ("[%s] Unit arrived at state %s\n", unit->name, #x);
 
 void unit_register_pid (unit_t * unit, pid_t pid)
 {
@@ -116,6 +122,8 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
         svc_object_get_property_string (svc, "Method.Prestart");
     unitnew->method[M_START] =
         svc_object_get_property_string (svc, "Method.Start");
+    unitnew->method[M_POSTSTART] =
+        svc_object_get_property_string (svc, "Method.Poststart");
     unitnew->method[M_STOP] =
         svc_object_get_property_string (svc, "Method.Stop");
 
@@ -128,25 +136,35 @@ void unit_enter_stop (unit_t * unit);
 
 void unit_enter_offline (unit_t * unit)
 {
-    printf ("Unit %s entering offline state\n", unit->name);
+    DbgEnteredState (Offline);
     unit->state = S_OFFLINE;
 }
 
 void unit_enter_maintenance (unit_t * unit)
 {
-    printf ("Unit %s entering maintenance state\n", unit->name);
+    DbgEnteringState (Maintenance);
     unit->target = S_MAINTENANCE;
     if (List_count (unit->pids))
         unit_enter_stop (unit);
     else
     {
+        DbgEnteredState (Maintenance);
         printf ("Unit %s arrives in maintenance\n", unit->name);
         unit->state = S_MAINTENANCE;
     }
 }
 
+void unit_purge_and_target (unit_t * unit)
+{
+    if (List_count (unit->pids))
+        unit_enter_stop (unit);
+    else
+        unit_enter_state (unit, unit->target);
+}
+
 void unit_enter_stopkill (unit_t * unit)
 {
+    DbgEnteredState (Stopkill);
     unit->state = S_STOP_KILL;
     UnitTimerReg ();
     for (pid_list_iterator it = pid_list_begin (unit->pids); it != NULL;
@@ -158,9 +176,10 @@ void unit_enter_stopkill (unit_t * unit)
 
 void unit_enter_stopterm (unit_t * unit)
 {
+    DbgEnteredState (Stopterm);
     unit->state = S_STOP_TERM;
     if (unit->main_pid)
-	kill(unit->main_pid, SIGTERM);
+        kill (unit->main_pid, SIGTERM);
     UnitTimerReg ();
     for (pid_list_iterator it = pid_list_begin (unit->pids); it != NULL;
          pid_list_iterator_next (&it))
@@ -171,14 +190,17 @@ void unit_enter_stopterm (unit_t * unit)
 
 void unit_enter_stop (unit_t * unit)
 {
+    DbgEnteringState (Stop);
     if (unit->method[M_STOP])
     {
+        DbgEnteredState (Stop);
         unit->state = S_STOP;
         UnitTimerReg ();
         unit->main_pid = unit_fork_and_register (unit, unit->method[M_STOP]);
         if (!unit->main_pid)
         {
-            unit_enter_maintenance (unit);
+            unit->target = S_MAINTENANCE;
+            unit_purge_and_target (unit);
             return;
         }
     }
@@ -190,13 +212,33 @@ void unit_enter_prestart (unit_t * unit)
 {
     if (unit->method[M_PRESTART])
     {
+        DbgEnteredState (Prestart);
         unit->state = S_PRESTART;
         UnitTimerReg ();
         unit->main_pid =
             unit_fork_and_register (unit, unit->method[M_PRESTART]);
         if (!unit->main_pid)
         {
-            unit_enter_maintenance (unit);
+            unit->target = S_MAINTENANCE;
+            unit_purge_and_target (unit);
+            return;
+        }
+    }
+}
+
+void unit_enter_poststart (unit_t * unit)
+{
+    if (unit->method[M_POSTSTART])
+    {
+        DbgEnteredState (Poststart);
+        unit->state = S_POSTSTART;
+        UnitTimerReg ();
+        unit->secondary_pid =
+            unit_fork_and_register (unit, unit->method[M_POSTSTART]);
+        if (!unit->secondary_pid)
+        {
+            unit->target = S_MAINTENANCE;
+            unit_purge_and_target (unit);
             return;
         }
     }
@@ -205,13 +247,25 @@ void unit_enter_prestart (unit_t * unit)
 void unit_enter_start (unit_t * unit)
 {
     /* deal with forking case later */
-    unit->state = S_START;
-    unit->main_pid = unit_fork_and_register (unit, unit->method[M_START]);
-    if (!unit->main_pid)
+    if (unit->type == T_EXEC)
     {
-        unit_enter_maintenance (unit);
-        return;
+        DbgEnteredState (Start);
+
+        unit->state = S_START;
+        unit->main_pid = unit_fork_and_register (unit, unit->method[M_START]);
+        if (!unit->main_pid)
+        {
+            unit_enter_maintenance (unit);
+            return;
+        }
+        unit_enter_poststart (unit);
     }
+}
+
+void unit_enter_online (unit_t * unit)
+{
+    DbgEnteredState (Online);
+    unit->state = S_ONLINE;
 }
 
 void unit_enter_state (unit_t * unit, unit_state_e state)
@@ -230,6 +284,12 @@ void unit_enter_state (unit_t * unit, unit_state_e state)
     case S_START:
         unit_enter_start (unit);
         break;
+    case S_POSTSTART:
+        unit_enter_poststart (unit);
+        break;
+    case S_ONLINE:
+        unit_enter_online (unit);
+        break;
     }
 }
 
@@ -241,9 +301,9 @@ void unit_ctrl (unit_t * unit, msg_type_e ctrl)
     case MSG_START:
         if (unit->state != S_OFFLINE && unit->state != S_MAINTENANCE)
             return;
-        {
-            unit_enter_prestart (unit);
-        }
+
+        unit_enter_prestart (unit);
+        break;
     }
 }
 
@@ -289,41 +349,51 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
     else if (info->event == PT_EXIT)
         unit_deregister_pid (unit, info->pid);
 
-    if (info->event == PT_EXIT && info->pid == unit->main_pid) 
+    if (info->event == PT_EXIT && info->pid == unit->main_pid)
     { /* main PID has exited */
-	unit->main_pid = 0;
-	if (unit->timer_id)
-	    timer_del (unit->timer_id);
+        unit->main_pid = 0;
+        if (unit->timer_id)
+            timer_del (unit->timer_id);
         /* if exit was S16_FATAL, go to maintenance instead - add this later */
         if (exit_was_abnormal (info->flags))
         {
             printf ("Bad exit in a main pid\n");
             if (unit->rtype == R_NO)
                 unit->target = S_OFFLINE;
+            else if (unit->state == S_ONLINE)
+                unit->target = S_PRESTART;
             else
                 unit->target = unit->state;
 
-            if (List_count (unit->pids))
-                unit_enter_stop (unit);
-            else
-                unit_enter_state (unit, unit->target);
+            unit_purge_and_target (unit);
         }
-	else
-	{
-	       printf("Switching\n");
-	    switch (unit->state)
-	    {
-		case S_PRESTART:
-		    unit->target = S_START;
-		    if (List_count (unit->pids))
-			unit_enter_stop (unit);
-		    else
-		      unit_enter_start(unit);
-		    break;
-	    }
-	    return ;
-	}
+        else
+        {
+            switch (unit->state)
+            {
+            case S_PRESTART:
+                unit->target = S_START;
+                unit_purge_and_target (unit);
+                break;
+            case S_POSTSTART:
+                unit_enter_online (unit);
+                break;
+            case S_ONLINE:
+                unit->target = S_PRESTART;
+                unit_purge_and_target (unit);
+                break;
+            }
+            return;
+        }
     }
+    else if (info->event == PT_EXIT && info->pid == unit->secondary_pid)
+    {
+        if (unit->timer_id)
+            timer_del (unit->timer_id);
+        unit->secondary_pid = 0;
+        unit_enter_online (unit);
+    }
+
     switch (unit->state)
     {
     case S_STOP:
@@ -334,7 +404,7 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
         unit->main_pid = 0;
         unit->timer_id = 0;
         printf ("All PIDs purged\n");
-	unit_enter_state (unit, unit->target);
+        unit_enter_state (unit, unit->target);
 
         break;
     }

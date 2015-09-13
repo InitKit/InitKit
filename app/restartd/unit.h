@@ -23,6 +23,7 @@ typedef enum unit_state_e
     S_OFFLINE,
     S_PRESTART,
     S_START,
+    S_POSTSTART,
     S_ONLINE,
     S_EXITED, /* for Oneshot services */
     S_STOP,
@@ -35,6 +36,7 @@ typedef enum unit_method_e
 {
     M_PRESTART,
     M_START,
+    M_POSTSTART,
     M_STOP,
     _M_MAX,
 } unit_method_e;
@@ -60,7 +62,7 @@ typedef struct unit_s
     unit_state_e state;
     unit_state_e target; /* target state for s_stop_term/s_stop_kill */
     pid_list pids;
-    pid_t main_pid;
+    pid_t main_pid, secondary_pid;
 
     unsigned int timer_id;
 } unit_t;
