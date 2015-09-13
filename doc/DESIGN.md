@@ -72,3 +72,38 @@ acts as an S16 delegate restarter. It would convert primitive management
 directives, for example, _start sshd_, into the appropriate action - for an
 inetd form, it would start listening for connections on the appropriate port,
 and launch instances of the _sshd_ service to handle incoming connections.
+
+### Interactions
+
+#### How they will interact on a typical boot
+
+##### Init
+Init has a simple job. It should reap zombies, be ready for shutdown, and
+keep s16.restartd running.
+
+##### s16.restartd
+s16.restard will attempt to connect to repositoryd via RPC. This will fail on
+boot. It will load a hard-coded repositoryd service and run it. When
+repositoryd is up, it will establish a connection. It will update repositoryd
+with service state and property changes.
+
+##### s16.repositoryd
+s16.repositoryd will run and launch svccfg.
+
+As events occurs (changes of service state or properties), repositoryd will
+deliver to processes that have subscribed for notification information about
+these changes.
+
+##### svccfg
+svccfg will scan for services in the appropriate folder. svccfg will deliver to
+repositoryd via RPC the serialised representation of these services. 
+svccfg will now tell restartd to launch the s16.svcorder service.
+
+##### s16.svcorder
+s16.svcorder will scan the dependencies of the services in the default
+milestone and will ask s16.restartd to launch these services in the right
+order. svcorder will subscribe to repositoryd service state notifications
+in order to take the appropriate further action in starting services. It will
+remain running in order to continue to perform the correct actions when a
+service should stop, as well as to handle requests to shut down by ordering
+the shutdown milestone.

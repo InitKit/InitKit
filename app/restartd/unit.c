@@ -42,7 +42,7 @@ void unit_deregister_pid (unit_t * unit, pid_t pid)
 pid_t unit_fork_and_register (unit_t * unit, const char * cmd)
 {
     process_wait_t * pwait = process_fork_wait (cmd);
-    pid_t ret;
+    pid_t ret = 0;
 
     if (pwait == NULL || pwait->pid == 0)
     {
@@ -115,7 +115,10 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
     else
     {
         fprintf (stderr, "Unit <%s> lacks a known type\n", unitnew->name);
-        return 0;
+        free(unitnew->name);
+	List_destroy(unitnew->pids);
+	free(unitnew);
+	return 0;
     }
 
     unitnew->method[M_PRESTART] =
