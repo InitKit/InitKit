@@ -47,22 +47,6 @@ int subreap_status ()
 #endif
 }
 
-pid_t process_get_ppid (pid_t pid)
-{
-#if defined(__FreeBSD__) || defined(__DragonFly__)
-    struct kinfo_proc info;
-    size_t l = sizeof (info);
-    int mib[4] = {CTL_KERN, KERN_PROC, KERN_PROC_PID, pid};
-    if (sysctl (mib, 4, &info, &l, NULL, 0) < 0)
-        return 0;
-    return info.ki_ppid;
-#elif defined(__linux__)
-    proc_t info;
-    get_proc_stats (pid, &info);
-    return info.ppid;
-#endif
-}
-
 process_wait_t * process_fork_wait (const char * cmd_)
 {
     process_wait_t * pwait = malloc (sizeof (process_wait_t));

@@ -42,9 +42,6 @@ int subreap_status ();
 
 /* process basic routines */
 
-/* Retrieves the parent PID of a PID. */
-pid_t process_get_ppid (pid_t pid);
-
 /* Forks a process for the command specified.
  * This process waits until process_fork_continue()
  * is called. */
