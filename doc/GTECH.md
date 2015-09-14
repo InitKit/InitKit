@@ -8,6 +8,8 @@ This appears to be unlikely given that:
  * the channel has the same topic of discussion as the 4chan board - technology
  * the channel frequently uses 4chan memes
  * the channel is largely frequented by 4chan users.
+ * the channel had the following description on Rizon's channels listing:
+ ` 22:12 -- ChanServ (service@rizon.net): Description: Irc Channel for 4chan's resident technology board.`.
 
 For some bizarre reason, the channel's owners threatened to send me a cease
 and desist letter, or to sue me for defamation, if I maintained a reference
