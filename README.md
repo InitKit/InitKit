@@ -17,8 +17,21 @@ currently focused on bringing the various components up to a level where they
 are able to act as a service supervisor tool capable of running simple,
 forking, and oneshot systemd units.
 
-S16 is designed for modularity. Please find a flowchart depicting the
-key components' actions and interactions [here](doc/s16.png).
+##### The Four Motives of S16
+
+ * Interface-orientation: the system should be designed to fit a clean and
+   stable interface. The interface should come before the implementation.
+ * Seperation of concerns: individual components should not do much alone, but
+   work in concert to create a grand system.
+ * Pluggable modularity: components should be easily replaceable and
+   extensible.
+ * Self-healing: components that crash should be able to restart without
+   forgetting system state or otherwise causing breakage.
+
+From those four motives emerges a naturally clean and lightweight system.
+
+Please find a flowchart depicting the key components' actions and interactions
+[here](doc/s16.png).
 
 ### Development
 
@@ -44,7 +57,6 @@ just run `kmk` in the source directory. You will find binaries under **out/**.
 System XVI is free software. You may use it and its source code under the terms
 of the Revised BSD licence; this is reproduced in full in
 [doc/CPYRIGHT.md](doc/CPYRIGHT.md).
-
 
 ### FAQ
 A few frequently asked questions about S16:
@@ -79,16 +91,6 @@ Whilst systemd's PID 1 may not be as big as some claim - systemd is, after all,
 split into 69 binaries - it still includes complex logic for parsing
 configuration files, handling D-Bus calls, a transactional dependency
 resolution system, et al.
-
-> What are System XVI's main design ideals?
-
- * Interface-orientation: the system should be designed to fit a clean and
-   stable interface.
- * Seperation of concerns: individual components should not do much alone, but
-   work in concert to create a grand system.
- * Pluggability: components should be easily replaceable.
- * Self-healing: components that crash should be able to restart without
-   forgetting system state or otherwise causing breakage.
 
 ### Testimonials
 System XVI has received unexpected publicity. Several commentators have written
