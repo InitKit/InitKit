@@ -82,10 +82,8 @@ svc_id_t * instance_create_1_svc (svc_id_t id, char * name,
     return &result;
 }
 
-rpc_svc_instance_t * instance_retrieve_1_svc (svc_id_t id, svc_id_t i_id,
-                                              struct svc_req * req)
+static svc_instance_t * _find_instance (svc_id_t id, svc_id_t i_id)
 {
-    static rpc_svc_instance_t result;
     svc_t * svc = svc_find_id (RD.services, id);
     svc_instance_t * inst;
 
@@ -93,7 +91,16 @@ rpc_svc_instance_t * instance_retrieve_1_svc (svc_id_t id, svc_id_t i_id,
         return 0;
 
     inst = inst_find_id (svc->instances, i_id);
-    if (!inst)
+    return inst;
+}
+
+rpc_svc_instance_t * instance_retrieve_1_svc (svc_id_t id, svc_id_t i_id,
+                                              struct svc_req * req)
+{
+    static rpc_svc_instance_t result;
+    svc_instance_t * inst;
+
+    if (!(inst = _find_instance (id, i_id)))
         return 0;
 
     result = svc_instance_to_rpc_svc_instance (inst);
@@ -105,6 +112,17 @@ int * instance_set_property_int_1_svc (svc_id_t id, svc_id_t i_id, char * key,
                                        long value, struct svc_req * req)
 {
     static int result;
+    svc_instance_t * inst;
+
+    if (!(inst = _find_instance (id, i_id)))
+    {
+        result = 1;
+        return &result;
+    }
+
+    inst_object_set_property_int (inst, key, value);
+
+    result = 0;
     return &result;
 }
 
@@ -113,6 +131,17 @@ int * instance_set_property_string_1_svc (svc_id_t id, svc_id_t i_id,
                                           struct svc_req * req)
 {
     static int result;
+    svc_instance_t * inst;
+
+    if (!(inst = _find_instance (id, i_id)))
+    {
+        result = 1;
+        return &result;
+    }
+
+    inst_object_set_property_string (inst, key, value);
+
+    result = 0;
     return &result;
 }
 

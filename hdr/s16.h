@@ -63,12 +63,15 @@ const char * svc_object_get_property_string (svc_t * Svc, const char * key);
 const char * inst_object_get_property_string (svc_instance_t * inst,
                                               const char * key);
 long * svc_object_get_property_int (svc_t * Svc, const char * key);
+long * inst_object_get_property_int (svc_instance_t * inst, const char * key);
 
 void svc_object_set_property_string (svc_t * Svc, const char * key,
                                      const char * value);
 void inst_object_set_property_string (svc_instance_t * inst, const char * key,
                                       const char * value);
 void svc_object_set_property_int (svc_t * Svc, const char * key, long value);
+void inst_object_set_property_int (svc_instance_t * Svc, const char * key,
+                                   long value);
 
 void destroy_property (property_t * delProperty);
 void destroy_properties_list (prop_list box);
