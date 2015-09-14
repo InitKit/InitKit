@@ -5,6 +5,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/event.h>
+#include <unistd.h>
 
 #include "s16db.h"
 

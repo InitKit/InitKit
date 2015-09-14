@@ -12,9 +12,9 @@ void unit_enter_state (unit_t * unit, unit_state_e state);
     unit->timer_id = timer_add (unit->timeout_secs, unit, unit_timer_event);
 
 #define DbgEnteringState(x)                                                    \
-    printf ("[%s] Unit entering state %s\n", unit->name, #x);
+    fprintf (stderr, "[%s] Unit entering state %s\n", unit->name, #x);
 #define DbgEnteredState(x)                                                     \
-    printf ("[%s] Unit arrived at state %s\n", unit->name, #x);
+    fprintf (stderr, "[%s] Unit arrived at state %s\n", unit->name, #x);
 
 void unit_register_pid (unit_t * unit, pid_t pid)
 {
@@ -135,6 +135,7 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
 }
 
 void unit_enter_stop (unit_t * unit);
+void unit_enter_stopterm (unit_t * unit);
 
 void unit_enter_offline (unit_t * unit)
 {
@@ -158,7 +159,7 @@ void unit_enter_maintenance (unit_t * unit)
 void unit_purge_and_target (unit_t * unit)
 {
     if (List_count (unit->pids))
-        unit_enter_stop (unit);
+        unit_enter_stopterm (unit);
     else
         unit_enter_state (unit, unit->target);
 }
@@ -347,7 +348,10 @@ void unit_timer_event (void * data, long id)
             unit_enter_prestart (unit);
         }
         else
-            unit_enter_maintenance (unit);
+        {
+            unit->target = S_MAINTENANCE;
+            unit_purge_and_target (unit);
+        }
         return;
     }
     }
@@ -399,7 +403,7 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
                     unit->target = S_PRESTART;
                 else
                     unit->target = S_OFFLINE;
-                unit_purge_and_target (unit);
+                unit_enter_stop (unit);
                 break;
             }
             return;
