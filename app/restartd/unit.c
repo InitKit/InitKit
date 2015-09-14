@@ -93,7 +93,7 @@ unit_t * unit_find (unit_list box, svc_id_t id, svc_id_t id_i)
 unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
 {
 #define CompareType(typ)                                                       \
-    !strcasecmp (svc_object_get_property_string (svc, "Unit.Form"), typ)
+    !strcasecmp (svc_object_get_property_string (svc, "Unit.Strategy"), typ)
 
     unit_t * unitnew = malloc (sizeof (unit_t));
 

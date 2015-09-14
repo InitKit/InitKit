@@ -79,12 +79,13 @@ int main (int argc, char * argv[])
         else
             fprintf (stderr, "failed to install manifest for service <%s>",
                      newSvc->name);
-        // return 0;
+        return 0;
 
         break;
     }
     }
 
+    /* this will be moved to another utility */
     svc_list box = s16db_svc_retrieve_all (clnt);
     for (svc_list_iterator it = svc_list_begin (box); it != NULL;
          svc_list_iterator_next (&it))

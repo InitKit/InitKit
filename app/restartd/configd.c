@@ -23,7 +23,7 @@ void install_configd_svc ()
     svc_object_set_property_string (new_svc, "S16.FMRI", fmri);
     free (fmri);
 
-    svc_object_set_property_string (new_svc, "Unit.Form", "exec");
+    svc_object_set_property_string (new_svc, "Unit.Strategy", "exec");
     svc_object_set_property_string (
         new_svc, "Unit.Description",
         "The S16 Service Configuration Repository.");
