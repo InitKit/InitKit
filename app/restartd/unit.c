@@ -115,7 +115,6 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
     else
     {
         fprintf (stderr, "Unit <%s> lacks a known type\n", unitnew->name);
-        free (unitnew->name);
         List_destroy (unitnew->pids);
         free (unitnew);
         return 0;
@@ -152,7 +151,6 @@ void unit_enter_maintenance (unit_t * unit)
     else
     {
         DbgEnteredState (Maintenance);
-        printf ("Unit %s arrives in maintenance\n", unit->name);
         unit->state = S_MAINTENANCE;
     }
 }
@@ -307,7 +305,7 @@ void unit_enter_state (unit_t * unit, unit_state_e state)
 
 void unit_ctrl (unit_t * unit, msg_type_e ctrl)
 {
-    printf ("Ctrl: %d\n", ctrl);
+    fprintf (stderr, "ctrl: %d\n", ctrl);
     switch (ctrl)
     {
     case MSG_START:
@@ -330,22 +328,22 @@ void unit_timer_event (void * data, long id)
     {
     case S_STOP_TERM:
     {
-        printf ("timeout in stopterm\n");
+        fprintf (stderr, "timeout in stopterm\n");
         unit_enter_stopkill (unit);
         return;
     }
     case S_STOP_KILL:
     {
-        printf ("timeout in stopkill(!)\n");
+        fprintf (stderr, "timeout in stopkill(!)\n");
         unit_enter_state (unit, unit->target);
         return;
     }
     case S_PRESTART:
     {
-        printf ("timeout in prestart\n");
+        fprintf (stderr, "timeout in prestart\n");
         if (unit->rtype == R_YES)
         {
-            printf ("restarting for prestart\n");
+            fprintf (stderr, "restarting for prestart\n");
             unit_enter_prestart (unit);
         }
         else
@@ -370,7 +368,7 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
         /* if exit was S16_FATAL, go to maintenance instead - add this later */
         if (exit_was_abnormal (info->flags))
         {
-            printf ("Bad exit in a main pid\n");
+            fprintf (stderr, "Bad exit in a main pid\n");
             if (unit->rtype == R_NO)
                 unit->target = S_OFFLINE;
             /* if we were online, we'll go all the way back to the prestart
@@ -400,7 +398,7 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
                 if (unit->rtype == R_YES)
                     unit->target = S_PRESTART;
                 else
-                    unit->taret = S_OFFLINE;
+                    unit->target = S_OFFLINE;
                 unit_purge_and_target (unit);
                 break;
             }
@@ -424,7 +422,7 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
             timer_del (unit->timer_id);
         unit->main_pid = 0;
         unit->timer_id = 0;
-        printf ("All PIDs purged\n");
+        fprintf (stderr, "All PIDs purged\n");
         /* having purged all the PIDs we need to, we are free to enter the
          * targeted next state. */
         unit_enter_state (unit, unit->target);

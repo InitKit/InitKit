@@ -93,3 +93,16 @@ int * instance_set_property_string_1_svc (svc_id_t id, svc_id_t i_id,
     static int result;
     return &result;
 }
+
+int * config_register_1_svc (struct svc_req * req)
+{
+    static int result;
+    return &result;
+}
+
+int * config_subscribe_status_1_svc (int p, svc_id_t id, svc_id_t i_id,
+                                     struct svc_req * req)
+{
+    static int result;
+    return &result;
+}
