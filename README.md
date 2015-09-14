@@ -119,4 +119,6 @@ these glowing endorsements of System XVI:
 
 > As soon as a distro maintainer sees that goto, it'll be rejected.
 
- - vitimiti, a 4chan-associated technology IRC channel.
+ - vitimiti, speaking in an IRC channel on Rizon called #/g/technology that
+   [threatens those who assert that it is 4chan-related](doc/GTECH.md), despite
+   having the same name as 4chan's technology board.
