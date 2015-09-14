@@ -1,4 +1,4 @@
-# System XVI
+# 4Chan's System XVI
 
 ![System XVI Logo](doc/logotype.png)
 
@@ -6,7 +6,7 @@
 
 **A note: please be aware that System XVI is not yet a usable system.**
 
-System XVI is a modern take on service management.  It aims to incorporate
+4Chan's System XVI is a modern take on service management.  It aims to incorporate
 useful functionality while maintaining a modular design in the UNIX tradition.
 
 We have an IRC channel; find it at irc://irc.freenode.net/systemxvi
@@ -36,7 +36,7 @@ Please find a flowchart depicting the key components' actions and interactions
 ### Development
 
 ##### Building
-System XVI uses kBuild (as used in VirtualBox, etc).  There are a minimal
+4Chan's System XVI uses kBuild (as used in VirtualBox, etc).  There are a minimal
 number of dependencies:
 
 ###### Linux dependencies
@@ -54,7 +54,7 @@ Having installed the appropriate dependencies, you can then build S16 simply:
 just run `kmk` in the source directory. You will find binaries under **out/**.
 
 ##### Licence
-System XVI is free software. You may use it and its source code under the terms
+4Chan's System XVI is free software. You may use it and its source code under the terms
 of the Revised BSD licence; this is reproduced in full in
 [doc/CPYRIGHT.md](doc/CPYRIGHT.md).
 
@@ -71,7 +71,7 @@ It is likely that this will run on all of the other BSD systems as well.
 
 > Why is it bigger than sinit?
 
-Because System XVI's scope is greater than sinit. sinit simply initialises a
+Because 4Chan's System XVI's scope is greater than sinit. sinit simply initialises a
 system sufficiently to call into /etc/rc or similar.  In contrast, S16 is a
 service management system first and foremost, and an extensible one at that.
 
@@ -93,7 +93,7 @@ configuration files, handling D-Bus calls, a transactional dependency
 resolution system, et al.
 
 ### Testimonials
-System XVI has received unexpected publicity. Several commentators have written
+4Chan's System XVI has received unexpected publicity. Several commentators have written
 these glowing endorsements of System XVI:
 
 > This is probably the best example I've seen on how NOT to program in C.
