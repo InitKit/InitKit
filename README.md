@@ -117,4 +117,4 @@ these glowing endorsements of System XVI:
 
 > As soon as a distro maintainer sees that goto, it'll be rejected.
 
- - vitimiti, 4chan's technology IRC channel.
+ - vitimiti, #/g/technology on Rizon IRC.
