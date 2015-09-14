@@ -111,10 +111,10 @@ these glowing endorsements of System XVI:
 - /u/TheReverend403, reddit.
 
 > [...] the world doesn't like goto. First of all, it can cause all kinds of
-> memory leaks. 
+> memory leaks.
 
 > Your program is simply an attacker's target.
 
 > As soon as a distro maintainer sees that goto, it'll be rejected.
 
- - vitimiti, 4chan's technology IRC channel.
+ - vitimiti, a 4chan-associated technology IRC channel.
