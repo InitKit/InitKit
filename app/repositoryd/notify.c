@@ -33,7 +33,7 @@ int i_config_subscribe_status (int p, svc_id_t id, svc_id_t i_id)
     sub_config_sub_t * conf;
     subscriber_t * sub = i_subscriber_find_by_port (p);
 
-    if (!p)
+    if (!sub)
         return 1;
 
     conf = malloc (sizeof (sub_config_sub_t));
