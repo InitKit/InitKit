@@ -35,7 +35,7 @@ void install_configd_svc ()
     svc_object_set_property_string (new_svc, "Method.Poststart",
                                     "/bin/echo Execed poststart");
     /* "out/freebsd.amd64/debug/stage/bin/s16.repositoryd");*/
-    s16_svc_new_default_inst (new_svc);
+    s16_inst_new_default (new_svc);
     inst_list_lget (new_svc->instances)->id = 1;
 
     unit_list_add (Manager.units,

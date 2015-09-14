@@ -69,6 +69,16 @@ svc_id_t * instance_create_1_svc (svc_id_t id, char * name,
                                   struct svc_req * req)
 {
     static svc_id_t result;
+    svc_t * svc;
+
+    if ((!svc_find_id (RD.services, id)))
+        return 0;
+
+    if (strcmp (name, "default"))
+        result = s16_inst_new_default (svc);
+    else
+        result = s16_inst_new (svc, name);
+
     return &result;
 }
 
@@ -76,6 +86,18 @@ rpc_svc_instance_t * instance_retrieve_1_svc (svc_id_t id, svc_id_t i_id,
                                               struct svc_req * req)
 {
     static rpc_svc_instance_t result;
+    svc_t * svc = svc_find_id (RD.services, id);
+    svc_instance_t * inst;
+
+    if (!svc)
+        return 0;
+
+    inst = inst_find_id (svc->instances, i_id);
+    if (!inst)
+        return 0;
+
+    result = svc_instance_to_rpc_svc_instance (inst);
+
     return &result;
 }
 

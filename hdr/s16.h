@@ -49,12 +49,15 @@ typedef struct property_s
 gen_find_id_wrapper_proto (svc, svc_t);
 gen_find_name_wrapper_proto (svc, svc_t);
 
+gen_find_id_wrapper_proto (inst, svc_instance_t);
+gen_find_name_wrapper_proto (inst, svc_instance_t);
+
 gen_find_id_wrapper_proto (prop, property_t);
 gen_find_name_wrapper_proto (prop, property_t);
 
 svc_t * s16_svc_new ();
-svc_instance_t * s16_inst_new (const char * name);
-svc_instance_t * s16_svc_new_default_inst (svc_t * svc);
+svc_id_t s16_inst_new (svc_t * svc, const char * name);
+svc_id_t s16_inst_new_default (svc_t * svc);
 
 const char * svc_object_get_property_string (svc_t * Svc, const char * key);
 const char * inst_object_get_property_string (svc_instance_t * inst,

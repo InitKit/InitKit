@@ -29,6 +29,9 @@
 gen_find_id_wrapper (svc, svc_t);
 gen_find_name_wrapper (svc, svc_t);
 
+gen_find_id_wrapper (inst, svc_instance_t);
+gen_find_name_wrapper (inst, svc_instance_t);
+
 gen_find_id_wrapper (prop, property_t);
 gen_find_name_wrapper (prop, property_t);
 
@@ -40,20 +43,14 @@ svc_t * s16_svc_new ()
     return new_svc;
 }
 
-svc_instance_t * s16_inst_new (const char * name)
-{
-    svc_instance_t * new_inst = calloc (1, sizeof (svc_instance_t));
-
-    new_inst->properties = List_new ();
-    return new_inst;
-}
-
-svc_instance_t * s16_svc_new_default_inst (svc_t * svc)
+svc_id_t s16_inst_new (svc_t * svc, const char * name)
 {
     char * fmri;
-    svc_instance_t * new_inst = s16_inst_new ("default");
+    svc_instance_t * new_inst = calloc (1, sizeof (svc_instance_t));
 
-    new_inst->name = strdup ("default");
+    new_inst->name = strdup (name);
+    new_inst->properties = List_new ();
+
     asprintf (&fmri, "%s:default",
               svc_object_get_property_string (svc, "S16.FMRI"));
     inst_object_set_property_string (new_inst, "S16.FMRI", fmri);
@@ -61,7 +58,12 @@ svc_instance_t * s16_svc_new_default_inst (svc_t * svc)
 
     inst_list_add (svc->instances, new_inst);
 
-    return new_inst;
+    return new_inst->id;
+}
+
+svc_id_t s16_inst_new_default (svc_t * svc)
+{
+    return s16_inst_new (svc, "default");
 }
 
 const char * _object_get_property_string (prop_list box, const char * key)
