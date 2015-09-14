@@ -6,6 +6,8 @@
 System XVI is a modern take on service management.  It aims to incorporate
 useful functionality while maintaining a modular design in the UNIX tradition.
 
+We have an IRC channel; find it at irc://irc.freenode.net/systemxvi
+
 This project is still under heavy development. It is not yet possible to boot
 with System XVI; indeed, the init subdirectory is a placeholder.  All effort is
 currently focused on bringing the various components up to a level where they
