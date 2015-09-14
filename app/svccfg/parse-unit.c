@@ -20,15 +20,15 @@ int parse_config_line (void * user, const char * section, const char * name,
     return 1;
 }
 
-int keyprop_is_set(svc_t * svc, const char * name)
+int keyprop_is_set (svc_t * svc, const char * name)
 {
     if (!prop_find_name (svc->properties, name))
     {
-	fprintf(stderr, "Error: name %s not set\n");
+        fprintf (stderr, "Error: name %s not set\n");
         return 0;
     }
     else
-	return 1;
+        return 1;
 }
 
 svc_t * parse_unit (int is_systemd, char const * path)
@@ -38,14 +38,14 @@ svc_t * parse_unit (int is_systemd, char const * path)
 
     if (inierror > 0)
     {
-	fprintf (stderr, "Error: failed parsing line %d of unit file %s\n", inierror,
-                 path);                                        \
-	goto on_error;
+        fprintf (stderr, "Error: failed parsing line %d of unit file %s\n",
+                 inierror, path);
+        goto on_error;
     }
     else if (inierror < 0)
     {
-	fprintf (stderr, "Error: failed to read unit file %s\n", path);
-	goto on_error;
+        fprintf (stderr, "Error: failed to read unit file %s\n", path);
+        goto on_error;
     }
 
     if (is_systemd)
@@ -65,12 +65,12 @@ svc_t * parse_unit (int is_systemd, char const * path)
         char * fmri;
         char * name;
 
-        if(!keyprop_is_set(new_svc, "S16.Name"))
-	    goto on_error;
-        else if (!keyprop_is_set(new_svc, "S16.Strategy"))
-	    goto on_error;
-	else if (!keyprop_is_set(new_svc, "Method.Start"))
-	    goto on_error;
+        if (!keyprop_is_set (new_svc, "S16.Name"))
+            goto on_error;
+        else if (!keyprop_is_set (new_svc, "S16.Strategy"))
+            goto on_error;
+        else if (!keyprop_is_set (new_svc, "Method.Start"))
+            goto on_error;
 
         name = prop_find_name (new_svc->properties, "S16.Name")->value.pval_u.s;
         asprintf (&fmri, "svc:/%s", name);

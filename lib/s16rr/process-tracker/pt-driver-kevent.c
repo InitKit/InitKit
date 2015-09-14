@@ -59,14 +59,14 @@ void pt_disregard_pid (process_tracker_t * pt, pid_t pid)
          pid_list_iterator_next (&it))
     {
         if (*it->val == pid)
-            goto found;
+        {
+            free (it->val);
+            pid_list_del (pt->pids, it->val);
+            break;
+        }
     }
 
     return;
-
-found:
-    free (it->val);
-    pid_list_del (pt->pids, it->val);
 }
 
 pt_info_t * pt_investigate_kevent (process_tracker_t * pt, struct kevent * ke)
@@ -75,7 +75,7 @@ pt_info_t * pt_investigate_kevent (process_tracker_t * pt, struct kevent * ke)
     pt_info_t info;
 
     if (ke->filter != EVFILT_PROC)
-        goto no_result;
+        return 0;
 
     if (ke->fflags & NOTE_CHILD)
     {
@@ -85,10 +85,8 @@ pt_info_t * pt_investigate_kevent (process_tracker_t * pt, struct kevent * ke)
         info.ppid = ke->data;
 
         pid_list_add (pt->pids, pid_new_p (ke->ident));
-
-        goto result;
     }
-    if (ke->fflags & NOTE_EXIT)
+    else if (ke->fflags & NOTE_EXIT)
     {
         pid_list_iterator it;
 
@@ -102,19 +100,15 @@ pt_info_t * pt_investigate_kevent (process_tracker_t * pt, struct kevent * ke)
              pid_list_iterator_next (&it))
         {
             if (*it->val == ke->ident)
-                goto found;
+            {
+                free (it->val);
+                pid_list_del (pt->pids, it->val);
+                break;
+            }
         }
-
-        goto result;
-
-    found:
-        free (it->val);
-        pid_list_del (pt->pids, it->val);
-        goto result;
     }
-
-no_result:
-    return 0;
+    else
+        return 0;
 
 result:
     result = malloc (sizeof (pt_info_t));
