@@ -49,8 +49,10 @@ typedef struct manager_s
 
 extern manager_t Manager;
 
+#define NOTE_AWAKE 711
 #define NOTE_IDENT 712
 
+void note_awake ();
 void note_send (enum msg_type_e type, svc_id_t id, svc_id_t i_id, void * misc);
 
 #endif

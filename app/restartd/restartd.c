@@ -48,6 +48,16 @@ void note_send (enum msg_type_e type, svc_id_t id, svc_id_t i_id, void * misc)
         msg_list_add (Manager.msgs, msg);
 }
 
+/* Awakens the main event loop - no message. */
+void note_awake ()
+{
+    struct kevent ev;
+    mtx_lock (&Manager.lock);
+    memset (&ev, 0, sizeof (ev));
+    EV_SET (&ev, NOTE_AWAKE, EVFILT_USER, EV_ENABLE, NOTE_TRIGGER, 0, 0);
+    mtx_unlock (&Manager.lock);
+}
+
 int main ()
 {
     struct sockaddr_in addr;
@@ -75,6 +85,15 @@ int main ()
     }
 
     EV_SET (&userev, NOTE_IDENT, EVFILT_USER, EV_ADD | EV_ONESHOT, NOTE_FFNOP,
+            0, 0);
+
+    if (kevent (Manager.kq, &userev, 1, 0, 0, 0) == -1)
+    {
+        perror ("kqueue! (userev installation)");
+        exit (EXIT_FAILURE);
+    }
+
+    EV_SET (&userev, NOTE_AWAKE, EVFILT_USER, EV_ADD | EV_ONESHOT, NOTE_FFNOP,
             0, 0);
 
     if (kevent (Manager.kq, &userev, 1, 0, 0, 0) == -1)
@@ -188,15 +207,18 @@ int main ()
         {
         case EVFILT_USER:
         {
-            msg_t * msg;
-            msg = msg_list_lpop (Manager.msgs);
-            if (msg)
+            if (ev.ident == NOTE_IDENT)
             {
-                unit_t * unit;
-                if (unit = unit_find (Manager.units, msg->id, msg->i_id))
-                    unit_ctrl (unit, msg->type);
+                msg_t * msg;
+                msg = msg_list_lpop (Manager.msgs);
+                if (msg)
+                {
+                    unit_t * unit;
+                    if (unit = unit_find (Manager.units, msg->id, msg->i_id))
+                        unit_ctrl (unit, msg->type);
+                }
+                free (msg);
             }
-            free (msg);
             break;
         }
         case EVFILT_SIGNAL:

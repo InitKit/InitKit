@@ -129,7 +129,7 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
     unitnew->method[M_STOP] =
         svc_object_get_property_string (svc, "Method.Stop");
 
-    unitnew->timeout_secs = 2;
+    unitnew->timeout_secs = 12;
 
     return unitnew;
 }
@@ -180,6 +180,12 @@ void unit_enter_stopkill (unit_t * unit)
 
 void unit_enter_stopterm (unit_t * unit)
 {
+    if (!List_count (unit->pids))
+    {
+        unit_enter_state (unit, unit->target);
+        return;
+    }
+
     DbgEnteredState (Stopterm);
     unit->state = S_STOP_TERM;
     /* first, just try to kill the main PID */
@@ -192,6 +198,7 @@ void unit_enter_stopterm (unit_t * unit)
     {
         kill (*it->val, SIGTERM);
     }
+    note_awake (); /* prepare for more events */
 }
 
 void unit_enter_stop (unit_t * unit)
@@ -405,6 +412,9 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
                     unit->target = S_OFFLINE;
                 unit_enter_stop (unit);
                 break;
+            case S_STOP:
+                unit_purge_and_enter (unit->target);
+                break;
             }
             return;
         }
@@ -423,13 +433,15 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
     case S_STOP_TERM:
     case S_STOP_KILL:
         if (!List_count (unit->pids))
+        {
             timer_del (unit->timer_id);
-        unit->main_pid = 0;
-        unit->timer_id = 0;
-        fprintf (stderr, "All PIDs purged\n");
-        /* having purged all the PIDs we need to, we are free to enter the
-         * targeted next state. */
-        unit_enter_state (unit, unit->target);
+            unit->main_pid = 0;
+            unit->timer_id = 0;
+            fprintf (stderr, "All PIDs purged\n");
+            /* having purged all the PIDs we need to, we are free to enter the
+             * targeted next state. */
+            unit_enter_state (unit, unit->target);
+        }
 
         break;
     }
