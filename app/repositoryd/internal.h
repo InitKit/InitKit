@@ -9,6 +9,7 @@ typedef struct sub_config_sub_s
 {
     svc_id_t id;
     svc_id_t i_id;
+    int status_only;
 } sub_config_sub_t;
 
 ListGenForNameType (config_sub, sub_config_sub_t);
@@ -19,6 +20,7 @@ typedef struct subscriber_s
                * later we might consider allowing remote subscriptions; but
                * but first, we'd need to secure things. */
     CLIENT * clnt;
+    int all_config_sub; /* subscription to all config events */
     config_sub_list config_subs;
 } subscriber_t;
 
@@ -52,5 +54,6 @@ int set_svc_property_string (svc_id_t id, char const * name,
 
 subscriber_t * i_subscriber_find_by_port (int port);
 int i_config_register ();
+int i_config_subscribe_status (int port, svc_id_t id, svc_id_t i_id);
 
 #endif

@@ -27,3 +27,20 @@ int i_config_register ()
 
     return randnum;
 }
+
+int i_config_subscribe_status (int p, svc_id_t id, svc_id_t i_id)
+{
+    sub_config_sub_t * conf;
+    subscriber_t * sub = i_subscriber_find_by_port (p);
+
+    if (!p)
+        return 1;
+
+    conf = malloc (sizeof (sub_config_sub_t));
+    conf->id = id;
+    conf->i_id = i_id;
+    conf->status_only = 1;
+
+    config_sub_list_add (sub->config_subs, conf);
+    return 0;
+}
