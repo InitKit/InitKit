@@ -9,42 +9,31 @@
 System XVI is a modern take on service management.  It aims to incorporate
 useful functionality while maintaining a modular design in the UNIX tradition.
 
-We have an IRC channel; find it at irc://irc.freenode.net/systemxvi
+### Main design ideas
+
+ * Interface-orientation: the system should be designed to fit a clean and
+   stable interface.
+ * Seperation of concerns: individual components should not do much alone, but
+   work in concert to create a grand system.
+ * Pluggability: components should be easily replaceable.
+ * Self-healing: components that crash should be able to restart without
+   forgetting system state or otherwise causing breakage.
+
+![component flowchart](doc/s16.png).
+
+### Development
 
 This project is still under heavy development. It is *not yet possible* to boot
-with S16; indeed, the init subdirectory is a placeholder.  All effort is
+with System XVI; indeed, the init subdirectory is a placeholder.  All effort is
 currently focused on bringing the various components up to a level where they
 are able to act as a service supervisor tool capable of running simple,
 forking, and oneshot systemd units.
 
-S16 is designed for modularity. Please find a flowchart depicting the
-key components' actions and interactions [here](doc/s16.png).
-
-### Development
-
 ##### Building
 System XVI uses kBuild (as used in VirtualBox, etc).  There are a minimal
-number of dependencies:
-
-###### Linux dependencies
- * libkqueue
- * rpcgen
- * libtirpc (on musl systems)
-
-###### All-platform dependencies
- * kBuild
-
-Note that some of these packages may need to be affixed with -devel on systems
-that are not source-based.
-
-Having installed the appropriate dependencies, you can then build S16 simply:
-just run `kmk` in the source directory. You will find binaries under **out/**.
-
-##### Licence
-System XVI is free software. You may use it and its source code under the terms
-of the Revised BSD licence; this is reproduced in full in
-[doc/CPYRIGHT.md](doc/CPYRIGHT.md).
-
+number of dependencies: you need procps and libkqueue in their development
+formats. Then just install your distro's package for kBuild (probably called
+kbuild) and run kmk.
 
 ### FAQ
 A few frequently asked questions about S16:
@@ -56,6 +45,12 @@ A few frequently asked questions about S16:
  * muslibc+BusyBox+Linux
 
 It is likely that this will run on all of the other BSD systems as well.
+
+> What is the license?
+
+System XVI is free software. You may use it and its source code under the terms
+of the Revised BSD licence; this is reproduced in full in
+[doc/CPYRIGHT.md](doc/CPYRIGHT.md).
 
 > Why is it bigger than sinit?
 
@@ -80,16 +75,6 @@ split into 69 binaries - it still includes complex logic for parsing
 configuration files, handling D-Bus calls, a transactional dependency
 resolution system, et al.
 
-> What are System XVI's main design ideals?
-
- * Interface-orientation: the system should be designed to fit a clean and
-   stable interface.
- * Seperation of concerns: individual components should not do much alone, but
-   work in concert to create a grand system.
- * Pluggability: components should be easily replaceable.
- * Self-healing: components that crash should be able to restart without
-   forgetting system state or otherwise causing breakage.
-
 ### Testimonials
 System XVI has received unexpected publicity. Several commentators have written
 these glowing endorsements of System XVI:
@@ -109,3 +94,7 @@ these glowing endorsements of System XVI:
 > the main S16 developer drunkenly arguing with someone about code style.]
 
 - /u/TheReverend403, reddit.
+
+### Community
+
+We have an IRC channel; find it at irc://irc.freenode.net/systemxvi
