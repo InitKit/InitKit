@@ -109,3 +109,12 @@ these glowing endorsements of System XVI:
 > the main S16 developer drunkenly arguing with someone about code style.]
 
 - /u/TheReverend403, reddit.
+
+> [...] the world doesn't like goto. First of all, it can cause all kinds of
+> memory leaks. 
+
+> Your program is simply an attacker's target.
+
+> As soon as a distro maintainer sees that goto, it'll be rejected.
+
+ - vitimiti, 4chan's technology IRC channel.
