@@ -4,11 +4,12 @@ This IRC channel claims to not be associated with 4chan.
 
 This appears to be unlikely given that:
  * the channel has the same name as 4chan's 
-   (technology forum)[http://boards.4chan.org/g/]
+   [technology forum](http://boards.4chan.org/g/)
  * the channel has the same topic of discussion as the 4chan board - technology
  * the channel frequently uses 4chan memes
  * the channel is largely frequented by 4chan users.
- * the channel had the following description on Rizon's channels listing:
+ * the channel had the following description on Rizon's channels listing,
+ according to GitHub user @installgen2:
  ` 22:12 -- ChanServ (service@rizon.net): Description: Irc Channel for 4chan's resident technology board.`.
 
 For some bizarre reason, the channel's owners threatened to send me a cease
