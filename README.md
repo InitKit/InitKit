@@ -31,7 +31,7 @@ kbuild) and run kmk.
 ##### Licence
 System XVI is free software. You may use it and its source code under the terms
 of the Revised BSD licence; this is reproduced in full in
-[doc/CPYRIGHT](doc/CPYRIGHT).
+[doc/CPYRIGHT.md](doc/CPYRIGHT.md).
 
 
 ### FAQ
