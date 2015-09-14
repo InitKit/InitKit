@@ -22,10 +22,10 @@ typedef struct subscriber_s
     config_sub_list config_subs;
 } subscriber_t;
 
-static inline subscriber_t * new_subscriber ()
+static inline subscriber_t * new_subscriber (int port)
 {
     subscriber_t * ret = malloc (sizeof (subscriber_t));
-    ret->port = 0;
+    ret->port = port;
     ret->clnt = 0;
     ret->config_subs = List_new ();
     return ret;
@@ -49,5 +49,8 @@ svc_list retrieve_all_svcs ();
 int set_svc_property_int (svc_id_t id, char const * name, long value);
 int set_svc_property_string (svc_id_t id, char const * name,
                              char const * value);
+
+subscriber_t * i_subscriber_find_by_port (int port);
+int i_config_register ();
 
 #endif

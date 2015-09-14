@@ -413,7 +413,7 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
                 unit_enter_stop (unit);
                 break;
             case S_STOP:
-                unit_purge_and_enter (unit->target);
+                unit_purge_and_target (unit);
                 break;
             }
             return;
