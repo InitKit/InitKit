@@ -20,17 +20,9 @@ int parse_config_line (void * user, const char * section, const char * name,
     return 1;
 }
 
-/* i don't like to type much */
 #define OnError(...)                                                           \
     fprintf (stderr, __VA_ARGS__);                                             \
     goto on_error;
-
-#define SetOrExit(Name)                                                        \
-    if (!prop_find_name (new_svc->properties, Name))                           \
-    {                                                                          \
-        OnError ("error: %s not set", #Name);                                  \
-    }
-
 svc_t * parse_unit (int is_systemd, char const * path)
 {
     svc_t * new_svc = s16_svc_new ();
@@ -63,7 +55,10 @@ svc_t * parse_unit (int is_systemd, char const * path)
         char * fmri;
         char * name;
 
-        SetOrExit ("S16.Name");
+        if (!prop_find_name (new_svc->properties, "S16.Name"))
+        {
+            OnError ("error: S16.Name not set");
+        }
         name = prop_find_name (new_svc->properties, "S16.Name")->value.pval_u.s;
         asprintf (&fmri, "svc:/%s", name);
         svc_object_set_property_string (new_svc, "S16.FMRI", fmri);
