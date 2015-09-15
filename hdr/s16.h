@@ -2,6 +2,7 @@
 #define _S16_H_
 
 #include "list.h"
+#include "s16_rpc.h"
 #include "repositoryd_rpc.h"
 
 #ifdef __cplusplus

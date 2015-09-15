@@ -8,5 +8,4 @@ libs16db_TEMPLATE = CXX
 libs16db_SOURCES = translate.c rpc.c $(libreporpc_1_TARGET) $(libs16_1_TARGET)
 libs16db_DEPS += $(PATH_ROOT)/hdr/repositoryd_rpc.h 
 
-
 include $(FILE_KBUILD_SUB_FOOTER)

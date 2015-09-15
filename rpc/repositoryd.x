@@ -1,3 +1,5 @@
+%#include "s16.h"
+
 program S16_REPOSITORYD_PROG 
 {
     version S16_REPOSITORYD_V1

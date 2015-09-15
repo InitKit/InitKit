@@ -1,3 +1,5 @@
+%#include "s16.h"
+
 program S16_CONFIG_SUBSCRIBER_PROG 
 {
     version S16_CONFIG_SUBSCRIBER_V1

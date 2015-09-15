@@ -1,3 +1,5 @@
+%#include "s16.h"
+
 typedef opaque opaque_array<>;
 
 program S16_RESTARTD_PROG 
