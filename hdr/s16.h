@@ -55,6 +55,15 @@ gen_find_name_wrapper_proto (inst, svc_instance_t);
 gen_find_id_wrapper_proto (prop, property_t);
 gen_find_name_wrapper_proto (prop, property_t);
 
+#define POOL_SIZE 8 * 1024
+#define MIN_POOL_ALLOC_QUANTAS 16
+
+typedef void(s16memcallback_t) (void *);
+
+void s16mem_init ();
+void * s16mem_alloc (unsigned long nbytes);
+void s16mem_free (void * ap);
+
 svc_t * s16_svc_new ();
 svc_id_t s16_inst_new (svc_t * svc, const char * name);
 svc_id_t s16_inst_new_default (svc_t * svc);
