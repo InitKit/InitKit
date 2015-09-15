@@ -63,6 +63,7 @@ typedef void(s16memcallback_t) (void *);
 
 void s16mem_init ();
 void * s16mem_alloc (unsigned long nbytes);
+void * s16mem_calloc (size_t cnt, unsigned long nbytes);
 void s16mem_free (void * ap);
 
 svc_t * s16_svc_new ();

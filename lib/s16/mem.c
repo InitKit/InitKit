@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "s16.h"
 
 /* a linked list of memory headers */
@@ -146,6 +147,12 @@ void * s16mem_alloc (unsigned long nbytes)
             }
         }
     }
+}
+
+void * s16mem_calloc (size_t cnt, unsigned long nbytes)
+{
+    void * ptr = s16mem_alloc (cnt * nbytes);
+    return memset (ptr, '\0', cnt * nbytes);
 }
 
 // Scans the free list, starting at freep, looking the the place to insert the

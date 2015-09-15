@@ -4,6 +4,7 @@
  * Implementation of linked lists.
  */
 
+#include <assert.h>
 #include <threads.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,10 +12,14 @@
 
 #include "list.h"
 
+void * s16mem_alloc (unsigned long);
+void * s16mem_calloc (size_t, unsigned long);
+void s16mem_free (void *);
+
 List_t * List_new ()
 {
-    List_t * new = calloc (1, sizeof (List_t));
-    mtx_init (&new->Lock, mtx_plain);
+    List_t * new = s16mem_calloc (1, sizeof (List_t));
+    assert (mtx_init (&new->Lock, mtx_plain) == thrd_success);
     return new;
 }
 
@@ -30,7 +35,7 @@ void List_add (List_t * n, void * data)
     if (n->List == 0)
     {
         /* create new list */
-        t = malloc (sizeof (List_t_));
+        t = s16mem_alloc (sizeof (List_t_));
         t->data = data;
         t->Link = NULL;
         n->List = t;
@@ -39,7 +44,7 @@ void List_add (List_t * n, void * data)
     else
     {
         t = n->List;
-        temp = malloc (sizeof (List_t_));
+        temp = s16mem_alloc (sizeof (List_t_));
         while (t->Link != NULL)
             t = t->Link;
         temp->data = data;
@@ -75,7 +80,7 @@ void List_del (List_t * n, void * data)
                 previous->Link = current->Link;
             }
 
-            free (current);
+            s16mem_free (current);
             goto unlock;
         }
     }
@@ -90,10 +95,10 @@ void List_destroy (List_t * n)
     for (List_t_ *it = n->List, *tmp; it != NULL; it = tmp)
     {
         tmp = it->Link;
-        free (it);
+        s16mem_free (it);
     }
     mtx_destroy (&n->Lock);
-    free (n);
+    s16mem_free (n);
 }
 
 List_t_ * List_begin (List_t * n)
@@ -122,12 +127,12 @@ void * List_lpop (List_t * n)
         if (n->List->Link)
         {
             tmp = n->List->Link;
-            free (n->List);
+            s16mem_free (n->List);
             n->List = tmp;
         }
         else
         {
-            free (n->List);
+            s16mem_free (n->List);
             n->List = NULL;
         }
 

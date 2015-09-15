@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <errno.h>
 #include <signal.h>
 #include <stdio.h>
@@ -111,7 +112,8 @@ int main ()
     Manager.clnt_cfg = s16db_context_create ();
     Manager.msgs = List_new ();
     Manager.timers = List_new ();
-    mtx_init (&Manager.lock, mtx_plain);
+
+    assert (mtx_init (&Manager.lock, mtx_plain) == thrd_success);
 
     sa.sa_flags = 0;
     sigemptyset (&sa.sa_mask);
@@ -124,7 +126,13 @@ int main ()
         perror ("socket creation failed");
         exit (1);
     }
-    setsockopt (sock, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof (int));
+
+    if (setsockopt (sock, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof (int)) ==
+        -1)
+    {
+        perror ("setsockopt failed\n");
+        exit (1);
+    }
 
     addr.sin_family = AF_INET;
     addr.sin_port = htons (12280);

@@ -11,6 +11,7 @@ extern void s16_repositoryd_prog_1 (struct svc_req * rqstp,
 
 int main (int argc, char * argv[])
 {
+    SVCXPRT * transp;
     RD.services = List_new ();
     RD.subscribers = List_new ();
 
@@ -20,20 +21,26 @@ int main (int argc, char * argv[])
         perror ("socket creation failed");
         exit (1);
     }
-    setsockopt (sock, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof (int));
+
+    if (setsockopt (sock, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof (int)) ==
+        -1)
+    {
+        perror ("setsockopt failed\n");
+        exit (1);
+    }
 
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_port = htons (12288);
     addr.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
+
     if (bind (sock, (struct sockaddr *)&addr, sizeof addr) == -1)
     {
         perror ("bindinding socket failed");
         exit (1);
     }
 
-    SVCXPRT * transp = svctcp_create (sock, 0, 0);
-    if (!transp)
+    if (!(transp = svctcp_create (sock, 0, 0)))
     {
         fprintf (stderr, "failed to create RPC service on TCP port 12288\n");
         exit (1);
