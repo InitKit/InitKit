@@ -50,6 +50,12 @@ long timer_add (int sec, void * userData, void (*cb) (void *, long))
     }
 
     newTimer = malloc (sizeof (Timer));
+    if (!newTimer)
+    {
+        fprintf (stderr, "timer alloc!\n");
+        return 0;
+    }
+
     newTimer->id = ident;
     newTimer->userData = userData;
     newTimer->cb = cb;

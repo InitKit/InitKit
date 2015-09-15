@@ -19,6 +19,11 @@ void unit_enter_state (unit_t * unit, unit_state_e state);
 void unit_register_pid (unit_t * unit, pid_t pid)
 {
     pid_t * rpid = malloc (sizeof (pid_t));
+    if (!rpid)
+    {
+        fprintf (stderr, "pid alloc! (%d)\n", pid);
+        return;
+    }
     *rpid = pid;
     pid_list_add (unit->pids, rpid);
 }
@@ -39,6 +44,7 @@ void unit_deregister_pid (unit_t * unit, pid_t pid)
     }
 }
 
+/* 0 for failure, valid PID for success */
 pid_t unit_fork_and_register (unit_t * unit, const char * cmd)
 {
     process_wait_t * pwait = process_fork_wait (cmd);
@@ -96,6 +102,12 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
     !strcasecmp (svc_object_get_property_string (svc, "Unit.Strategy"), typ)
 
     unit_t * unitnew = malloc (sizeof (unit_t));
+    if (!unitnew)
+    {
+        fprintf (stderr, "unit alloc! (%s)\n",
+                 inst_object_get_property_string (inst, "S16.FMRI"));
+        return 0;
+    }
 
     unitnew->name = inst_object_get_property_string (inst, "S16.FMRI");
     unitnew->svc = svc;
@@ -105,6 +117,12 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
     unitnew->rtype = R_YES;
     unitnew->state = S_OFFLINE;
     unitnew->pids = List_new ();
+    if (!unitnew->pids)
+    {
+        fprintf (stderr, "unit alloc! (%s pids)\n",
+                 inst_object_get_property_string (inst, "S16.FMRI"));
+        return 0;
+    }
 
     if (CompareType ("exec"))
         unitnew->type = T_EXEC;
