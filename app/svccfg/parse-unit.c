@@ -24,7 +24,7 @@ int keyprop_is_set (svc_t * svc, const char * name)
 {
     if (!prop_find_name (svc->properties, name))
     {
-        fprintf (stderr, "Error: name %s not set\n");
+        fprintf (stderr, "Error: property %s not set\n", name);
         return 0;
     }
     else
