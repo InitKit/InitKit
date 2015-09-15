@@ -30,7 +30,7 @@ static int restartd_rpc_loop (void * userData)
 void note_send (enum msg_type_e type, svc_id_t id, svc_id_t i_id, void * misc)
 {
     struct kevent ev;
-    msg_t * msg = malloc (sizeof (msg_t));
+    msg_t * msg = s16mem_alloc (sizeof (msg_t));
 
     msg->type = type;
     msg->id = id;
@@ -223,13 +223,18 @@ int main ()
             {
                 msg_t * msg;
                 msg = msg_list_lpop (Manager.msgs);
-                if (msg)
+
+                if (!msg)
+                    break;
+
+                if (msg->type == MSG_START)
                 {
                     unit_t * unit;
                     if ((unit = unit_find (Manager.units, msg->id, msg->i_id)))
                         unit_ctrl (unit, msg->type);
                 }
-                free (msg);
+
+                s16mem_free (msg);
             }
             break;
         }
