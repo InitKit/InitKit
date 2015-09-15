@@ -3,8 +3,8 @@
 #include "s16db.h"
 #include "translate.h"
 
-#define RETURN_OR_FAIL(call)                                                   \
-    long * result = (long *)call;                                              \
+#define RETURN_OR_FAIL(typ, call)                                              \
+    typ * result = call;                                                       \
     if (result == NULL)                                                        \
     {                                                                          \
         clnt_perror (clnt, "local");                                           \
@@ -42,17 +42,17 @@ void s16db_context_destroy (CLIENT * clnt) { clnt_destroy (clnt); }
 svc_id_t * s16db_svc_insert (CLIENT * clnt, char const * name)
 {
     // RETURN_IF_CLNT_ZERO();
-    RETURN_OR_FAIL (svc_insert_1 ((char *)name, clnt));
+    RETURN_OR_FAIL (svc_id_t, svc_insert_1 ((char *)name, clnt));
 }
 
 svc_id_t * s16db_svc_install (CLIENT * clnt, svc_t * svc)
 {
-    RETURN_OR_FAIL (svc_install_1 (svc_to_rpc_svc (svc), clnt));
+    RETURN_OR_FAIL (svc_id_t, svc_install_1 (svc_to_rpc_svc (svc), clnt));
 }
 
 int * s16db_svc_delete (CLIENT * clnt, svc_id_t id)
 {
-    RETURN_OR_FAIL (svc_delete_1 (id, clnt));
+    RETURN_OR_FAIL (int, svc_delete_1 (id, clnt));
 }
 
 svc_t * s16db_svc_retrieve (CLIENT * clnt, svc_id_t id)
@@ -80,12 +80,12 @@ svc_list s16db_svc_retrieve_all (CLIENT * clnt)
 int * s16db_svc_set_property_int (CLIENT * clnt, svc_id_t id, char const * key,
                                   long value)
 {
-    RETURN_OR_FAIL (svc_set_property_int_1 (id, (char *)key, value, clnt));
+    RETURN_OR_FAIL (int, svc_set_property_int_1 (id, (char *)key, value, clnt));
 }
 
 int * s16db_svc_set_property_string (CLIENT * clnt, svc_id_t id,
                                      char const * key, char const * value)
 {
     RETURN_OR_FAIL (
-        svc_set_property_string_1 (id, (char *)key, (char *)value, clnt));
+        int, svc_set_property_string_1 (id, (char *)key, (char *)value, clnt));
 }

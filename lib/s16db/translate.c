@@ -31,7 +31,7 @@ rpc_property_t * property_list_to_rpc_property_array (prop_list box)
     if (List_count (box) == 0)
         return 0;
 
-    newRpc_plist = malloc (List_count (box) * sizeof (rpc_property_t));
+    newRpc_plist = s16mem_alloc (List_count (box) * sizeof (rpc_property_t));
 
     for (prop_list_iterator it = prop_list_begin (box); it != NULL;
          prop_list_iterator_next (&it))
@@ -58,7 +58,7 @@ rpc_svc_instance_t svc_instance_to_rpc_svc_instance (svc_instance_t * inst)
 
 rpc_svc_t svc_to_rpc_svc (svc_t * svc)
 {
-    register unsigned i_cnt = 0, i_index = 0, p_cnt = 0;
+    register unsigned i_cnt = 0, i_index = 0;
     rpc_svc_t newRpc_svc;
 
     if (!svc)
@@ -76,7 +76,7 @@ rpc_svc_t svc_to_rpc_svc (svc_t * svc)
     if (i_cnt > 0)
     {
         newRpc_svc.instances.instances_val =
-            malloc (i_cnt * sizeof (rpc_svc_instance_t));
+            s16mem_alloc (i_cnt * sizeof (rpc_svc_instance_t));
         for (inst_list_iterator it = inst_list_begin (svc->instances);
              it != NULL; inst_list_iterator_next (&it))
         {
@@ -102,7 +102,7 @@ rpc_svc_t * svc_list_to_rpc_svc_array (svc_list box)
     if (List_count (box) == 0)
         return 0;
 
-    newRpc_svclist = malloc (List_count (box) * sizeof (rpc_svc_t));
+    newRpc_svclist = s16mem_alloc (List_count (box) * sizeof (rpc_svc_t));
 
     for (svc_list_iterator it = svc_list_begin (box); it != NULL;
          svc_list_iterator_next (&it))
@@ -116,7 +116,7 @@ rpc_svc_t * svc_list_to_rpc_svc_array (svc_list box)
 property_t * rpc_property_to_property (rpc_property_t * rprop)
 {
     RETURN_IF_NULL (rprop);
-    property_t * newProp = calloc (1, sizeof (property_t));
+    property_t * newProp = s16mem_alloc (sizeof (property_t));
 
     newProp->id = rprop->id;
     newProp->name = strdup (rprop->name);
@@ -150,7 +150,7 @@ prop_list rpc_property_array_to_property_list (rpc_property_t rplist[],
 svc_instance_t * rpc_svc_instance_to_svc_instance (rpc_svc_instance_t * rinst)
 {
     RETURN_IF_NULL (rinst);
-    svc_instance_t * newInst = calloc (1, sizeof (svc_instance_t));
+    svc_instance_t * newInst = s16mem_alloc (sizeof (svc_instance_t));
 
     newInst->id = rinst->id;
     newInst->name = strdup (rinst->name);

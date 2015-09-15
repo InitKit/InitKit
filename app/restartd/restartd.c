@@ -18,7 +18,12 @@ extern void s16_restartd_prog_1 (struct svc_req * rqstp,
                                  register SVCXPRT * transp);
 void install_configd_svc ();
 
-static int restartd_rpc_loop (void * userData) { svc_run (); }
+static int restartd_rpc_loop (void * userData)
+{
+    svc_run ();
+    thrd_exit (1);
+    return 1;
+}
 
 /* Sends a message to the main event loop. */
 void note_send (enum msg_type_e type, svc_id_t id, svc_id_t i_id, void * misc)
@@ -66,7 +71,6 @@ int main ()
     struct sigaction sa;
     struct timespec tmout = {0, /* return at once initially */
                              0};
-    fd_set rpc_fds;
 
     subreap_acquire ();
 
@@ -214,7 +218,7 @@ int main ()
                 if (msg)
                 {
                     unit_t * unit;
-                    if (unit = unit_find (Manager.units, msg->id, msg->i_id))
+                    if ((unit = unit_find (Manager.units, msg->id, msg->i_id)))
                         unit_ctrl (unit, msg->type);
                 }
                 free (msg);
@@ -232,7 +236,7 @@ int main ()
         {
             Timer * timer;
             printf ("Timer\n");
-            if (timer = timer_find (ev.ident))
+            if ((timer = timer_find (ev.ident)))
                 timer->cb (timer->userData, ev.ident);
             printf ("%p\n", timer);
         }

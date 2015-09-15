@@ -14,6 +14,7 @@ Timer * timer_find (long id)
             return it->val;
         }
     }
+    return 0;
 }
 
 void timer_del (long id)

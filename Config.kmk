@@ -1,7 +1,9 @@
+WFLAGS = -Wall -Wno-unused-function -Wno-format -Wno-switch
+
 TEMPLATE_CXX = C
 TEMPLATE_CXX_TOOL = GXX
-TEMPLATE_CXX_CXXFLAGS = -std=c++11 -ggdb
-TEMPLATE_CXX_CFLAGS = $(CFLAGS)  -std=c11 -ggdb
+TEMPLATE_CXX_CXXFLAGS = -std=c++11 -ggdb $(WFLAGS)
+TEMPLATE_CXX_CFLAGS = $(CFLAGS)  -std=c11 -ggdb -Wall $(WFLAGS)
 TEMPLATE_CXX_INCS = $(PATH_ROOT)/hdr hdr \
     $(PATH_ROOT)/external/ini/hdr .
 

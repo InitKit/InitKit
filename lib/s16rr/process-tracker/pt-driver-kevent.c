@@ -110,9 +110,9 @@ pt_info_t * pt_investigate_kevent (process_tracker_t * pt, struct kevent * ke)
     else
         return 0;
 
-result:
     result = malloc (sizeof (pt_info_t));
     *result = info;
+
     return result;
 }
 

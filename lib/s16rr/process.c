@@ -114,6 +114,8 @@ int exit_was_abnormal (int wstat)
         else
             return sig;
     }
+    else
+        return 1;
 }
 
 void discard_signal (int no) { no = no; }

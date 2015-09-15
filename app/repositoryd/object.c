@@ -64,7 +64,6 @@ int set_svc_property_int (svc_id_t id, char const * name, long value)
 {
     FindSvcOrReturn (RD.services, id);
     DestroyPropIfExists (Svc->properties, name);
-    unsigned long rnum;
     svc_object_set_property_int (Svc, name, value);
     return 0;
 }
@@ -73,7 +72,6 @@ int set_svc_property_string (svc_id_t id, char const * name, char const * value)
 {
     FindSvcOrReturn (RD.services, id);
     DestroyPropIfExists (Svc->properties, name);
-    unsigned long rnum;
     svc_object_set_property_string (Svc, name, value);
     return 0;
 }
