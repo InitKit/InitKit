@@ -1,5 +1,5 @@
-#ifndef _S16_H_
-#define _S16_H_
+#ifndef S16_H__
+#define S16_H__
 
 #include "list.h"
 #include "s16_rpc.h"

@@ -1,5 +1,5 @@
-#ifndef __INTERNAL_H_
-#define __INTERNAL_H_
+#ifndef INTERNAL__H__
+#define INTERNAL__H__
 
 #include <stdlib.h>
 #include "s16.h"

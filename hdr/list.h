@@ -4,8 +4,8 @@
  * Function & type definitions for linked list implementation.
  */
 
-#ifndef List_h
-#define List_h
+#ifndef List_h_
+#define List_h_
 
 #include <threads.h>
 

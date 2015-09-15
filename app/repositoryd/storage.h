@@ -1,5 +1,5 @@
-#ifndef _STORAGE_H_
-#define _STORAGE_H_
+#ifndef STORAGE__H___
+#define STORAGE__H___
 
 #include "list.h"
 

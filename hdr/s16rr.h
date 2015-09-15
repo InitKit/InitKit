@@ -1,5 +1,5 @@
-#ifndef __S16_RR_H_
-#define __S16_RR_H_
+#ifndef S16_RR_H__
+#define S16_RR_H__
 
 #include <sys/types.h>
 #include <sys/event.h>
