@@ -47,7 +47,7 @@ void s16mem_init ()
     pool_free_pos = 0;
 }
 
-static mem_header_t * get_mem_from_pool (ulong nquantas)
+static mem_header_t * get_mem_from_pool (unsigned long nquantas)
 {
     unsigned long total_req_size;
 
@@ -83,8 +83,13 @@ static mem_header_t * get_mem_from_pool (ulong nquantas)
 //
 void * s16mem_alloc (unsigned long nbytes)
 {
+    void * m;
     mem_header_t * p;
     mem_header_t * prevp;
+
+    /* We first try to use the system malloc. */
+    if ((m = malloc (nbytes)))
+        return m;
 
     // Calculate how many quantas are required: we need enough to house all
     // the requested bytes, plus the header. The -1 and +1 are there to make
@@ -154,6 +159,14 @@ void s16mem_free (void * ap)
 
     // acquire pointer to block header
     block = ((mem_header_t *)ap) - 1;
+
+    if (ap < (void *)&pool || ap > (void *)(&pool + POOL_SIZE))
+    {
+        /* We managed to use system malloc in this case.
+         * That, or someone doesn't know what they are doing. */
+        free (ap);
+        return;
+    }
 
     // Find the correct place to place the block in (the free list is sorted by
     // address, increasing order)

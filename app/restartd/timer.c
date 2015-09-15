@@ -26,7 +26,7 @@ void timer_del (long id)
         timer_list_del (Manager.timers, toDel);
         EV_SET (&ev, toDel->id, EVFILT_TIMER, EV_DELETE, 0, 0, 0);
         kevent (Manager.kq, &ev, 1, NULL, 0, NULL);
-        free (toDel);
+        s16mem_free (toDel);
     }
 }
 
@@ -49,12 +49,7 @@ long timer_add (int sec, void * userData, void (*cb) (void *, long))
         return 0;
     }
 
-    newTimer = malloc (sizeof (Timer));
-    if (!newTimer)
-    {
-        fprintf (stderr, "timer alloc!\n");
-        return 0;
-    }
+    newTimer = s16mem_alloc (sizeof (Timer));
 
     newTimer->id = ident;
     newTimer->userData = userData;

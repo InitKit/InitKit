@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
+
+#include "s16.h"
 #include "manager.h"
 #include "unit.h"
 
@@ -18,12 +20,7 @@ void unit_enter_state (unit_t * unit, unit_state_e state);
 
 void unit_register_pid (unit_t * unit, pid_t pid)
 {
-    pid_t * rpid = malloc (sizeof (pid_t));
-    if (!rpid)
-    {
-        fprintf (stderr, "pid alloc! (%d)\n", pid);
-        return;
-    }
+    pid_t * rpid = s16mem_alloc (sizeof (pid_t));
     *rpid = pid;
     pid_list_add (unit->pids, rpid);
 }
@@ -38,7 +35,7 @@ void unit_deregister_pid (unit_t * unit, pid_t pid)
             pid_t * tofree = it->val;
             pid_list_del (unit->pids, it->val);
             pt_disregard_pid (Manager.ptrack, pid);
-            free (tofree);
+            s16mem_free (tofree);
             return;
         }
     }
@@ -101,13 +98,7 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
 #define CompareType(typ)                                                       \
     !strcasecmp (svc_object_get_property_string (svc, "Unit.Strategy"), typ)
 
-    unit_t * unitnew = malloc (sizeof (unit_t));
-    if (!unitnew)
-    {
-        fprintf (stderr, "unit alloc! (%s)\n",
-                 inst_object_get_property_string (inst, "S16.FMRI"));
-        return 0;
-    }
+    unit_t * unitnew = s16mem_alloc (sizeof (unit_t));
 
     unitnew->name = inst_object_get_property_string (inst, "S16.FMRI");
     unitnew->svc = svc;
