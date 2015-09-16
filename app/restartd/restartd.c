@@ -72,41 +72,30 @@ int main ()
     struct sigaction sa;
     struct timespec tmout = {0, /* return at once initially */
                              0};
+    SVCXPRT * transp;
 
     subreap_acquire ();
     s16mem_init ();
 
     if ((Manager.kq = kqueue ()) == -1)
-    {
-        perror ("kqueue!");
-        exit (EXIT_FAILURE);
-    }
+        perror_fatal ("kqueue!");
 
     EV_SET (&sigfd, SIGCHLD, EVFILT_SIGNAL, EV_ADD, 0, 0, 0);
 
     if (kevent (Manager.kq, &sigfd, 1, 0, 0, 0) == -1)
-    {
-        perror ("kqueue! (sigfd installation)");
-        exit (EXIT_FAILURE);
-    }
+        perror_fatal ("kqueue! (sigfd installation)");
 
     EV_SET (&userev, NOTE_IDENT, EVFILT_USER, EV_ADD | EV_ONESHOT, NOTE_FFNOP,
             0, 0);
 
     if (kevent (Manager.kq, &userev, 1, 0, 0, 0) == -1)
-    {
-        perror ("kqueue! (userev installation)");
-        exit (EXIT_FAILURE);
-    }
+        perror_fatal ("kqueue! (userev installation)");
 
     EV_SET (&userev, NOTE_AWAKE, EVFILT_USER, EV_ADD | EV_ONESHOT, NOTE_FFNOP,
             0, 0);
 
     if (kevent (Manager.kq, &userev, 1, 0, 0, 0) == -1)
-    {
-        perror ("kqueue! (userev installation)");
-        exit (EXIT_FAILURE);
-    }
+        perror_fatal ("kqueue! (userev installation)");
 
     Manager.ptrack = pt_new (Manager.kq);
     Manager.units = List_new ();
@@ -114,50 +103,34 @@ int main ()
     Manager.msgs = List_new ();
     Manager.timers = List_new ();
 
-    assert (mtx_init (&Manager.lock, mtx_plain) == thrd_success);
+    if (mtx_init (&Manager.lock, mtx_plain) != thrd_success)
+        error_fatal ("mtx_init failed\n");
 
     sa.sa_flags = 0;
     sigemptyset (&sa.sa_mask);
     sa.sa_handler = discard_signal;
     sigaction (SIGCHLD, &sa, NULL);
 
-    sock = socket (PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (sock == -1)
-    {
-        perror ("socket creation failed");
-        exit (1);
-    }
+    if (!(sock = socket (PF_INET, SOCK_STREAM, IPPROTO_TCP)))
+        perror_fatal ("socket creation failed");
 
     if (setsockopt (sock, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof (int)) ==
         -1)
-    {
-        perror ("setsockopt failed\n");
-        exit (1);
-    }
+        perror_fatal ("setsockopt failed\n");
 
     addr.sin_family = AF_INET;
     addr.sin_port = htons (12280);
     addr.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
 
     if (bind (sock, (struct sockaddr *)&addr, sizeof addr) == -1)
-    {
-        perror ("bindinding socket failed");
-        exit (1);
-    }
+        perror_fatal ("binding socket failed");
 
-    SVCXPRT * transp = svctcp_create (sock, 0, 0);
-    if (!transp)
-    {
-        fprintf (stderr, "failed to create RPC service on TCP port 12288\n");
-        exit (1);
-    }
+    if (!(transp = svctcp_create (sock, 0, 0)))
+        error_fatal ("failed to create RPC service on TCP port 12288\n");
 
     if (!svc_register (transp, S16_RESTARTD_PROG, S16_RESTARTD_V1,
                        s16_restartd_prog_1, 0))
-    {
-        fprintf (stderr, "unable to register service\n");
-        exit (1);
-    }
+        error_fatal ("unable to register service\n");
 
     thrd_create (&Manager.thrd_rpc, restartd_rpc_loop, 0);
 

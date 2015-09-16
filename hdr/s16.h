@@ -56,6 +56,9 @@ gen_find_name_wrapper_proto (inst, svc_instance_t);
 gen_find_id_wrapper_proto (prop, property_t);
 gen_find_name_wrapper_proto (prop, property_t);
 
+void perror_fatal (const char * str);
+void error_fatal (const char * fmt, ...);
+
 #define POOL_SIZE 8 * 1024
 #define MIN_POOL_ALLOC_QUANTAS 16
 
