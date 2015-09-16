@@ -42,7 +42,7 @@ number of dependencies:
 ###### Linux dependencies
  * libkqueue
  * rpcgen
- * libtirpc (on musl systems)
+ * libtirpc
 
 ###### All-platform dependencies
  * kBuild
