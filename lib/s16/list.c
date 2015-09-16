@@ -19,8 +19,14 @@ void s16mem_free (void *);
 List_t * List_new ()
 {
     List_t * new = s16mem_calloc (1, sizeof (List_t));
-    assert (mtx_init (&new->Lock, mtx_plain) == thrd_success);
-    return new;
+    if (mtx_init (&new->Lock, mtx_plain) == thrd_success)
+        return new;
+    else
+    {
+        fprintf (stderr, "mtx_init failed (list)\n");
+        exit (EXIT_FAILURE);
+        return 0; /* silences linter */
+    }
 }
 
 void List_add (List_t * n, void * data)
