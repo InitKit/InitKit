@@ -31,7 +31,10 @@ rpc_property_t * property_list_to_rpc_property_array (prop_list box)
     if (List_count (box) == 0)
         return 0;
 
-    newRpc_plist = s16mem_alloc (List_count (box) * sizeof (rpc_property_t));
+    newRpc_plist = malloc (List_count (box) * sizeof (rpc_property_t));
+
+    if (!newRpc_plist)
+        return 0;
 
     for (prop_list_iterator it = prop_list_begin (box); it != NULL;
          prop_list_iterator_next (&it))
@@ -76,13 +79,14 @@ rpc_svc_t svc_to_rpc_svc (svc_t * svc)
     if (i_cnt > 0)
     {
         newRpc_svc.instances.instances_val =
-            s16mem_alloc (i_cnt * sizeof (rpc_svc_instance_t));
-        for (inst_list_iterator it = inst_list_begin (svc->instances);
-             it != NULL; inst_list_iterator_next (&it))
-        {
-            newRpc_svc.instances.instances_val[i_index++] =
-                svc_instance_to_rpc_svc_instance (it->val);
-        }
+            malloc (i_cnt * sizeof (rpc_svc_instance_t));
+        if (newRpc_svc.instances.instances_val)
+            for (inst_list_iterator it = inst_list_begin (svc->instances);
+                 it != NULL; inst_list_iterator_next (&it))
+            {
+                newRpc_svc.instances.instances_val[i_index++] =
+                    svc_instance_to_rpc_svc_instance (it->val);
+            }
     }
     else
         newRpc_svc.instances.instances_val = 0;
@@ -102,7 +106,9 @@ rpc_svc_t * svc_list_to_rpc_svc_array (svc_list box)
     if (List_count (box) == 0)
         return 0;
 
-    newRpc_svclist = s16mem_alloc (List_count (box) * sizeof (rpc_svc_t));
+    newRpc_svclist = malloc (List_count (box) * sizeof (rpc_svc_t));
+    if (!newRpc_svclist)
+        return 0;
 
     for (svc_list_iterator it = svc_list_begin (box); it != NULL;
          svc_list_iterator_next (&it))
