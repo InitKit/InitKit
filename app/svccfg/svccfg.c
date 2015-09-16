@@ -13,7 +13,7 @@ typedef enum
     IMPORT,
 } svccfg_mode;
 
-void eerror (const char * fmt, ...)
+void __attribute__ ((noreturn)) eerror (const char * fmt, ...)
 {
     va_list args;
     va_start (args, fmt);

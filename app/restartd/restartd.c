@@ -186,9 +186,10 @@ int main ()
             if (!unit)
                 unit = unit_find_by_pid (Manager.units, info->ppid);
 
-            /*if (!unit)
-                fprintf (stderr, "error: no unit associated with pid %d\n",
-                         info->pid);*/
+            if (!unit)
+                fprintf (stderr,
+                         ""); /*"error: no unit associated with pid %d\n",
+                  info->pid);*/
             else
                 unit_ptevent (unit, info);
 

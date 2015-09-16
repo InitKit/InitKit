@@ -91,7 +91,7 @@ void _object_set_property_string (prop_list box, const char * key,
     if ((!key) | (!box))
         return;
     DestroyPropIfExists (box, key);
-    svc_id_t rnum;
+    svc_id_t rnum = rand ();
     property_t * newProp = s16mem_calloc (1, sizeof (property_t));
 
     newProp->name = s16mem_strdup (key);
@@ -109,7 +109,7 @@ void _object_set_property_int (prop_list box, const char * key, long value)
     if ((!key) | (!box))
         return;
     DestroyPropIfExists (box, key);
-    svc_id_t rnum;
+    svc_id_t rnum = rand ();
     property_t * newProp = s16mem_calloc (1, sizeof (property_t));
 
     newProp->name = s16mem_strdup (key);

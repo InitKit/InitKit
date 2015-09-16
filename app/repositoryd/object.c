@@ -20,7 +20,7 @@
 
 svc_id_t insert_svc (char const * name)
 {
-    unsigned long rnum;
+    unsigned long rnum = rand ();
     DestroySvcIfExists (RD.services, name);
     svc_t * newSvc = s16_svc_new ();
 
@@ -36,7 +36,7 @@ svc_id_t insert_svc (char const * name)
 
 svc_id_t install_svc (svc_t * svc)
 {
-    unsigned long rnum;
+    unsigned long rnum = rand ();
     DestroySvcIfExists (RD.services, svc->name);
 
     while (svc_find_id (RD.services, rnum))

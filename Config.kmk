@@ -1,5 +1,10 @@
 WFLAGS = -Wall -Wno-unused-function -Wno-format -Wno-switch
 
+
+ifneq ($(origin CC), undefined)
+TOOL_GXX_CC = $(CC)
+endif
+
 TEMPLATE_CXX = C
 TEMPLATE_CXX_TOOL = GXX
 TEMPLATE_CXX_CXXFLAGS = -std=c++11 -ggdb $(WFLAGS)
