@@ -14,6 +14,8 @@
 #include "restartd_rpc.h"
 #include "config-subscriber_rpc.h"
 
+#define PORT 12280
+
 manager_t Manager;
 
 extern void s16_restartd_prog_1 (struct svc_req * rqstp,
@@ -100,9 +102,9 @@ int main ()
 
     Manager.ptrack = pt_new (Manager.kq);
     Manager.units = List_new ();
-    Manager.clnt_cfg = s16db_context_create ();
     Manager.msgs = List_new ();
     Manager.timers = List_new ();
+    Manager.clnt_cfg = s16db_context_create ();
 
     if (mtx_init (&Manager.lock, mtx_plain) != thrd_success)
         error_fatal ("mtx_init failed\n");
@@ -120,14 +122,14 @@ int main ()
         perror_fatal ("setsockopt failed\n");
 
     addr.sin_family = AF_INET;
-    addr.sin_port = htons (12280);
+    addr.sin_port = htons (PORT);
     addr.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
 
     if (bind (sock, (struct sockaddr *)&addr, sizeof addr) == -1)
         perror_fatal ("binding socket failed");
 
     if (!(transp = svctcp_create (sock, 0, 0)))
-        error_fatal ("failed to create RPC service on TCP port 12288\n");
+        error_fatal ("failed to create RPC service on TCP port 12280\n");
 
     if (!svc_register (transp, S16_RESTARTD_PROG, S16_RESTARTD_V1,
                        s16_restartd_prog_1, 0))
@@ -144,6 +146,11 @@ int main ()
     {
         install_configd_svc ();
         note_send (MSG_START, 1, 1, 0);
+    }
+    else
+    {
+        config_register_port_1 (PORT, Manager.clnt_cfg);
+        config_subscribe_services_1 (PORT, Manager.clnt_cfg);
     }
 
     /* The main loop.

@@ -4,6 +4,7 @@
 int * config_service_installed_1_svc (rpc_svc_t rsvc, struct svc_req * req)
 {
     static int result = 0;
+    printf ("Service installed\n");
     return &result;
 }
 

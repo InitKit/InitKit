@@ -1,5 +1,6 @@
 #include "internal.h"
 #include "config-subscriber_rpc.h"
+#include "s16db.h"
 
 subscriber_t * i_subscriber_find_by_port (int port)
 {
@@ -89,5 +90,18 @@ void notify_1 ()
             }
             it->val->clnt = clnt;
         }
+    }
+}
+
+void notify_svc (svc_t * svc)
+{
+    notify_1 ();
+    for (subscriber_list_iterator it = subscriber_list_begin (RD.subscribers);
+         it != 0; subscriber_list_iterator_next (&it))
+    {
+        if (!it->val->clnt)
+            break;
+
+        config_service_installed_1 (svc_to_rpc_svc (svc), it->val->clnt);
     }
 }
