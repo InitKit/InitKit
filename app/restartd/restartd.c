@@ -12,6 +12,7 @@
 
 #include "manager.h"
 #include "restartd_rpc.h"
+#include "config-subscriber_rpc.h"
 
 manager_t Manager;
 
@@ -130,7 +131,12 @@ int main ()
 
     if (!svc_register (transp, S16_RESTARTD_PROG, S16_RESTARTD_V1,
                        s16_restartd_prog_1, 0))
-        error_fatal ("unable to register service\n");
+        error_fatal ("unable to register service S16_RESTARTD_PROG\n");
+
+    if (!svc_register (transp, S16_CONFIG_SUBSCRIBER_PROG,
+                       S16_CONFIG_SUBSCRIBER_V1, s16_config_subscriber_prog_1,
+                       0))
+        error_fatal ("unable to register service S16_RESTARTD_PROG\n");
 
     thrd_create (&Manager.thrd_rpc, restartd_rpc_loop, 0);
 
