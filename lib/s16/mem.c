@@ -155,6 +155,13 @@ void * s16mem_calloc (size_t cnt, unsigned long nbytes)
     return memset (ptr, '\0', cnt * nbytes);
 }
 
+char * s16mem_strdup (const char * str)
+{
+    size_t len = strlen (str) + 1;
+    void * ptr = s16mem_alloc (len);
+    return (char *)memcpy (ptr, str, len);
+}
+
 // Scans the free list, starting at freep, looking the the place to insert the
 // free block. This is either between two existing blocks or at the end of the
 // list. In any case, if the block being freed is adjacent to either neighbor,

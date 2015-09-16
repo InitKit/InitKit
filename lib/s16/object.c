@@ -45,16 +45,17 @@ svc_t * s16_svc_new ()
 
 svc_id_t s16_inst_new (svc_t * svc, const char * name)
 {
-    char * fmri;
+    char * fmri = s16mem_alloc (
+        strlen (svc_object_get_property_string (svc, "S16.FMRI")) + 8);
     svc_instance_t * new_inst = s16mem_calloc (1, sizeof (svc_instance_t));
 
-    new_inst->name = strdup (name);
+    new_inst->name = s16mem_strdup (name);
     new_inst->properties = List_new ();
 
-    asprintf (&fmri, "%s:default",
-              svc_object_get_property_string (svc, "S16.FMRI"));
+    sprintf (fmri, "%s:default",
+             svc_object_get_property_string (svc, "S16.FMRI"));
     inst_object_set_property_string (new_inst, "S16.FMRI", fmri);
-    free (fmri);
+    s16mem_free (fmri);
 
     inst_list_add (svc->instances, new_inst);
 
@@ -93,12 +94,12 @@ void _object_set_property_string (prop_list box, const char * key,
     svc_id_t rnum;
     property_t * newProp = s16mem_calloc (1, sizeof (property_t));
 
-    newProp->name = strdup (key);
+    newProp->name = s16mem_strdup (key);
     while (prop_find_id (box, rnum))
         rnum = rand ();
     newProp->id = rnum;
     newProp->value.type = STRING;
-    newProp->value.pval_u.s = strdup (value);
+    newProp->value.pval_u.s = s16mem_strdup (value);
 
     prop_list_add (box, newProp);
 }
@@ -111,7 +112,7 @@ void _object_set_property_int (prop_list box, const char * key, long value)
     svc_id_t rnum;
     property_t * newProp = s16mem_calloc (1, sizeof (property_t));
 
-    newProp->name = strdup (key);
+    newProp->name = s16mem_strdup (key);
     while (prop_find_id (box, rnum))
         rnum = rand ();
     newProp->id = rnum;
@@ -168,7 +169,7 @@ void inst_object_set_property_int (svc_instance_t * inst, const char * key,
 void destroy_property (property_t * delProperty)
 {
     if (delProperty->value.type == STRING)
-        free (delProperty->value.pval_u.s);
+        s16mem_free (delProperty->value.pval_u.s);
     s16mem_free (delProperty);
 }
 
@@ -185,7 +186,7 @@ void destroy_properties_list (prop_list box)
 void destroy_instance (svc_instance_t * delInstance)
 {
     destroy_properties_list (delInstance->properties);
-    free (delInstance->name);
+    s16mem_free (delInstance->name);
     s16mem_free (delInstance);
 }
 
@@ -198,7 +199,7 @@ void destroy_svc (svc_t * delSvc)
     }
     List_destroy (delSvc->instances);
     destroy_properties_list (delSvc->properties);
-    free (delSvc->name);
+    s16mem_free (delSvc->name);
     s16mem_free (delSvc);
 }
 

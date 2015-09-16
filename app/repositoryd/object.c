@@ -24,7 +24,7 @@ svc_id_t insert_svc (char const * name)
     DestroySvcIfExists (RD.services, name);
     svc_t * newSvc = s16_svc_new ();
 
-    newSvc->name = strdup (name);
+    newSvc->name = s16mem_strdup (name);
     while (svc_find_id (RD.services, rnum))
         rnum = rand ();
     newSvc->id = rnum;

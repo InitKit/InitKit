@@ -119,10 +119,10 @@ property_t * rpc_property_to_property (rpc_property_t * rprop)
     property_t * newProp = s16mem_alloc (sizeof (property_t));
 
     newProp->id = rprop->id;
-    newProp->name = strdup (rprop->name);
+    newProp->name = s16mem_strdup (rprop->name);
     newProp->value.type = rprop->value.type;
     if (rprop->value.type == STRING)
-        newProp->value.pval_u.s = strdup (rprop->value.pval_u.s);
+        newProp->value.pval_u.s = s16mem_strdup (rprop->value.pval_u.s);
     else
         newProp->value.pval_u.i = rprop->value.pval_u.i;
 
@@ -153,7 +153,7 @@ svc_instance_t * rpc_svc_instance_to_svc_instance (rpc_svc_instance_t * rinst)
     svc_instance_t * newInst = s16mem_alloc (sizeof (svc_instance_t));
 
     newInst->id = rinst->id;
-    newInst->name = strdup (rinst->name);
+    newInst->name = s16mem_strdup (rinst->name);
     newInst->svc_id = rinst->svc_id;
     newInst->properties = rpc_property_array_to_property_list (
         rinst->properties.properties_val, rinst->properties.properties_len);
@@ -168,7 +168,7 @@ svc_t * rpc_svc_to_svc (rpc_svc_t * rsvc)
     svc_t * newSvc = s16_svc_new ();
 
     newSvc->id = rsvc->id;
-    newSvc->name = strdup (rsvc->name);
+    newSvc->name = s16mem_strdup (rsvc->name);
     newSvc->properties = rpc_property_array_to_property_list (
         rsvc->properties.properties_val, rsvc->properties.properties_len);
     newSvc->instances = 0;
