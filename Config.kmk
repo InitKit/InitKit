@@ -1,9 +1,10 @@
-WFLAGS = -Wall -Wno-unused-function -Wno-format -Wno-switch
-
-
 ifneq ($(origin CC), undefined)
 TOOL_GXX_CC = $(CC)
 endif
+
+WFLAGS = -Wall -Wno-unused-function -Wno-format -Wno-switch
+PKGCONF ?= pkg-config
+THREADS_H =/usr/include/threads.h
 
 TEMPLATE_CXX = C
 TEMPLATE_CXX_TOOL = GXX
@@ -12,13 +13,10 @@ TEMPLATE_CXX_CFLAGS = $(CFLAGS)  -std=c11 -ggdb -Wall $(WFLAGS)
 TEMPLATE_CXX_INCS = $(PATH_ROOT)/hdr hdr \
     $(PATH_ROOT)/external/ini/hdr .
 
-THREADS_H =/usr/include/threads.h
-
 ifeq ("$(wildcard $(THREADS_H))","")
     TEMPLATE_CXX_CFLAGS += -pthread
     TEMPLATE_CXX_INCS += $(PATH_ROOT)/external/c11thrd
     TEMPLATE_CXX_LIBS += pthread
-    PT_DRIVER = cnproc
 endif
 
 if "$(KBUILD_TARGET)" == "freebsd"
@@ -26,11 +24,10 @@ if "$(KBUILD_TARGET)" == "freebsd"
     PT_DRIVER = kevent
 endif
 
-PKGCONF ?= pkg-config
-
 if "$(KBUILD_TARGET)" == "linux"
     TEMPLATE_CXX_LIBS += procps kqueue 
     TEMPLATE_CXX_CFLAGS += $(shell $(PKGCONF) libkqueue --cflags) 
-    TEMPLATE_CXX_DEFS += _POSIX_C_SOURCE
+    TEMPLATE_CXX_DEFS += _POSIX_C_SOURCE PT_POSIX
     TEMPLATE_CXX_CXXFLAGS += $(shell $(PKGCONF) libkqueue --cflags)
+    PT_DRIVER = posix
 endif

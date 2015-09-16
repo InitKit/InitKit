@@ -83,10 +83,12 @@ int main ()
     if ((Manager.kq = kqueue ()) == -1)
         perror_fatal ("kqueue!");
 
+#ifndef PT_POSIX
     EV_SET (&sigfd, SIGCHLD, EVFILT_SIGNAL, EV_ADD, 0, 0, 0);
 
     if (kevent (Manager.kq, &sigfd, 1, 0, 0, 0) == -1)
         perror_fatal ("kqueue! (sigfd installation)");
+#endif
 
     EV_SET (&userev, NOTE_IDENT, EVFILT_USER, EV_ADD | EV_ONESHOT, NOTE_FFNOP,
             0, 0);
