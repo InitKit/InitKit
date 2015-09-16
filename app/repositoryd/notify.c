@@ -1,4 +1,5 @@
 #include "internal.h"
+#include "config-subscriber_rpc.h"
 
 subscriber_t * i_subscriber_find_by_port (int port)
 {
@@ -28,6 +29,13 @@ int i_config_register ()
     return randnum;
 }
 
+int i_config_register_port (int port)
+{
+    subscriber_t * new_sub = new_subscriber (port);
+    subscriber_list_add (RD.subscribers, new_sub);
+    return 0;
+}
+
 int i_config_subscribe_status (int p, svc_id_t id, svc_id_t i_id)
 {
     sub_config_sub_t * conf;
@@ -43,4 +51,43 @@ int i_config_subscribe_status (int p, svc_id_t id, svc_id_t i_id)
 
     config_sub_list_add (sub->config_subs, conf);
     return 0;
+}
+
+int i_config_subscribe_services (int p)
+{
+    subscriber_t * sub = i_subscriber_find_by_port (p);
+
+    if (!sub)
+        return 1;
+
+    sub->services_installed = 1;
+
+    return 0;
+}
+
+void notify_1 ()
+{
+    for (subscriber_list_iterator it = subscriber_list_begin (RD.subscribers);
+         it != 0; subscriber_list_iterator_next (&it))
+    {
+        if (!it->val->clnt)
+        {
+            struct sockaddr_in addr;
+            int sock = RPC_ANYSOCK;
+            CLIENT * clnt;
+
+            addr.sin_family = AF_INET;
+            addr.sin_port = htons (it->val->port);
+            addr.sin_addr.s_addr = htonl (INADDR_LOOPBACK);
+
+            clnt = clnttcp_create (&addr, S16_CONFIG_SUBSCRIBER_PROG,
+                                   S16_CONFIG_SUBSCRIBER_V1, &sock, 0, 0);
+            if (clnt == NULL)
+            {
+                clnt_pcreateerror ("localhost");
+                break;
+            }
+            it->val->clnt = clnt;
+        }
+    }
 }

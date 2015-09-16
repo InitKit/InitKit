@@ -90,11 +90,22 @@ program S16_REPOSITORYD_PROG
          * fail. */
          int config_register() = 13;
 
+        /* This is similar to the above, but is used if you have already set
+         * a suitable port.
+         * Make sure your port is acceptable.
+         * int => port */
+        void config_register_port(int) = 14;
+
         /* Subscribes to updates for an instances' status.
          * int => your subscription port (for identifying which sub you are)
          * svc_id_t => service ID
          * svc_id_t => instance ID
          * Returns 0 for success, or 1 for fail. */
-        int config_subscribe_status(int, svc_id_t, svc_id_t) = 14;
+        int config_subscribe_status(int, svc_id_t, svc_id_t) = 15;
+
+        /* Subscribes for delivery of newly-installed services.
+         * int => subscription port
+         * Returns 0 for success, or 1 for fail. */
+        int config_subscribe_services(int) = 16;
     } = 1;
 } = 0x261e712e;

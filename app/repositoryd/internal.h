@@ -20,7 +20,8 @@ typedef struct subscriber_s
                * later we might consider allowing remote subscriptions; but
                * but first, we'd need to secure things. */
     CLIENT * clnt;
-    int all_config_sub; /* subscription to all config events */
+    int all_config_sub, /* subscription to all config events */
+        services_installed;
     config_sub_list config_subs;
 } subscriber_t;
 
@@ -30,6 +31,8 @@ static inline subscriber_t * new_subscriber (int port)
     ret->port = port;
     ret->clnt = 0;
     ret->config_subs = List_new ();
+    ret->all_config_sub = 0;
+    ret->services_installed = 0;
     return ret;
 }
 
@@ -54,6 +57,8 @@ int set_svc_property_string (svc_id_t id, char const * name,
 
 subscriber_t * i_subscriber_find_by_port (int port);
 int i_config_register ();
+int i_config_register_port (int port);
 int i_config_subscribe_status (int port, svc_id_t id, svc_id_t i_id);
+int i_config_subscribe_services (int p);
 
 #endif
