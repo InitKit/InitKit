@@ -74,6 +74,7 @@ int main ()
                              0};
 
     subreap_acquire ();
+    s16mem_init ();
 
     if ((Manager.kq = kqueue ()) == -1)
     {
@@ -212,7 +213,7 @@ int main ()
             else
                 unit_ptevent (unit, info);
 
-            free (info);
+            s16mem_free (info);
         }
 
         switch (ev.filter)

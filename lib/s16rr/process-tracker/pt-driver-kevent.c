@@ -5,9 +5,13 @@
 #include <sys/types.h>
 #include <sys/event.h>
 #include "list.h"
+
 #include "s16rr.h"
 
 ListGenForNameType (pid, pid_t);
+
+void * s16mem_alloc (unsigned long);
+void s16mem_free (void *);
 
 typedef struct process_tracker_s
 {
@@ -17,14 +21,14 @@ typedef struct process_tracker_s
 
 static pid_t * pid_new_p (pid_t val)
 {
-    pid_t * res = malloc (sizeof (pid_t));
+    pid_t * res = s16mem_alloc (sizeof (pid_t));
     *res = val;
     return res;
 }
 
 process_tracker_t * pt_new (int kq)
 {
-    process_tracker_t * pt = malloc (sizeof (process_tracker_t));
+    process_tracker_t * pt = s16mem_alloc (sizeof (process_tracker_t));
     pt->kq = kq;
     pt->pids = List_new ();
     return pt;
@@ -110,7 +114,7 @@ pt_info_t * pt_investigate_kevent (process_tracker_t * pt, struct kevent * ke)
     else
         return 0;
 
-    result = malloc (sizeof (pt_info_t));
+    result = s16mem_alloc (sizeof (pt_info_t));
     *result = info;
 
     return result;
@@ -126,5 +130,5 @@ void pt_destroy (process_tracker_t * pt)
     }
 
     List_destroy (pt->pids);
-    free (pt);
+    s16mem_free (pt);
 }

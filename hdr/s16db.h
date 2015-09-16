@@ -1,5 +1,5 @@
-#ifndef S16_DB_H__
-#define S16_DB_H__
+#ifndef S16_DB_H_
+#define S16_DB_H_
 
 #include <string.h>
 #include "s16.h"

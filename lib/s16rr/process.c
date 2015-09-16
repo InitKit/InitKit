@@ -16,6 +16,11 @@
 
 #include "s16rr.h"
 
+/* It is forbidden to include s16.h in this file.
+ * Doing so leads to a FreeBSD-internal header conflict! */
+void * s16mem_alloc (unsigned long);
+void s16mem_free (void *);
+
 int subreap_acquire ()
 {
 #if defined(__FreeBSD__) || defined(__DragonFly__)
@@ -49,7 +54,7 @@ int subreap_status ()
 
 process_wait_t * process_fork_wait (const char * cmd_)
 {
-    process_wait_t * pwait = malloc (sizeof (process_wait_t));
+    process_wait_t * pwait = s16mem_alloc (sizeof (process_wait_t));
     int n_spaces = 0;
     char *cmd = strdup (cmd_), *tofree = cmd, **argv = NULL;
     pid_t newPid;
@@ -98,7 +103,7 @@ void process_fork_continue (process_wait_t * pwait)
 {
     write (pwait->fd[1], "0", 1);
     close (pwait->fd[1]);
-    free (pwait);
+    s16mem_free (pwait);
 }
 
 int exit_was_abnormal (int wstat)

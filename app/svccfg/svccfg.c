@@ -19,8 +19,8 @@ void eerror (const char * fmt, ...)
     va_start (args, fmt);
     fprintf (stderr, "svccfg: error: ");
     vfprintf (stderr, fmt, args);
-    exit (1);
     va_end (args);
+    exit (1);
 }
 
 int main (int argc, char * argv[])

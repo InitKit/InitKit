@@ -7,8 +7,8 @@ http://code.google.com/p/inih/
 
 */
 
-#ifndef INI__H___
-#define INI__H___
+#ifndef INI_H_
+#define INI_H_
 
 /* Make this header file easier to include in C++ code */
 #ifdef __cplusplus

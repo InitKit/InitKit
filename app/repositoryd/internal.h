@@ -1,5 +1,5 @@
-#ifndef INTERNAL__H__
-#define INTERNAL__H__
+#ifndef INTERNAL_H_
+#define INTERNAL_H_
 
 #include <stdlib.h>
 #include "s16.h"
@@ -26,7 +26,7 @@ typedef struct subscriber_s
 
 static inline subscriber_t * new_subscriber (int port)
 {
-    subscriber_t * ret = malloc (sizeof (subscriber_t));
+    subscriber_t * ret = s16mem_alloc (sizeof (subscriber_t));
     ret->port = port;
     ret->clnt = 0;
     ret->config_subs = List_new ();

@@ -125,7 +125,7 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
     {
         fprintf (stderr, "Unit <%s> lacks a known type\n", unitnew->name);
         List_destroy (unitnew->pids);
-        free (unitnew);
+        s16mem_free (unitnew);
         return 0;
     }
 

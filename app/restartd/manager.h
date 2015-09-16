@@ -1,5 +1,5 @@
-#ifndef MANAGER___H___
-#define MANAGER___H___
+#ifndef MANAGER_H_
+#define MANAGER_H_
 
 #include <stdio.h>
 #include <stdlib.h>

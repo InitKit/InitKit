@@ -36,7 +36,7 @@ int i_config_subscribe_status (int p, svc_id_t id, svc_id_t i_id)
     if (!sub)
         return 1;
 
-    conf = malloc (sizeof (sub_config_sub_t));
+    conf = s16mem_alloc (sizeof (sub_config_sub_t));
     conf->id = id;
     conf->i_id = i_id;
     conf->status_only = 1;
