@@ -20,6 +20,8 @@ manager_t Manager;
 
 extern void s16_restartd_prog_1 (struct svc_req * rqstp,
                                  register SVCXPRT * transp);
+extern void s16_config_subscriber_prog_1 (struct svc_req * rqstp,
+                                          register SVCXPRT * transp);
 void install_configd_svc ();
 
 static int restartd_rpc_loop (void * userData)
@@ -46,7 +48,7 @@ void note_send (enum msg_type_e type, svc_id_t id, svc_id_t i_id, void * misc)
      * add to the message queue our message. */
     mtx_lock (&Manager.lock);
     memset (&ev, 0, sizeof (ev));
-    EV_SET (&ev, NOTE_IDENT, EVFILT_USER, EV_ENABLE, NOTE_TRIGGER, 0, 0);
+    EV_SET (&ev, NOTE_IDENT, EVFILT_USER, 0, NOTE_TRIGGER, 0, 0);
     mtx_unlock (&Manager.lock);
 
     if (kevent (Manager.kq, &ev, 1, NULL, 0, 0) == -1)
@@ -63,7 +65,7 @@ void note_awake ()
     struct kevent ev;
     mtx_lock (&Manager.lock);
     memset (&ev, 0, sizeof (ev));
-    EV_SET (&ev, NOTE_AWAKE, EVFILT_USER, EV_ENABLE, NOTE_TRIGGER, 0, 0);
+    EV_SET (&ev, NOTE_AWAKE, EVFILT_USER, 0, NOTE_TRIGGER, 0, 0);
     mtx_unlock (&Manager.lock);
 }
 
@@ -169,8 +171,7 @@ int main ()
         i = kevent (Manager.kq, NULL, 0, &ev, 1, &tmout);
 
         mtx_lock (&Manager.lock);
-        EV_SET (&userev, NOTE_IDENT, EVFILT_USER, EV_DISABLE | EV_CLEAR,
-                NOTE_FFCOPY, 0, 0);
+        EV_SET (&userev, NOTE_IDENT, EVFILT_USER, EV_CLEAR, NOTE_FFCOPY, 0, 0);
 
         if (i == -1)
         {
