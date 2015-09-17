@@ -56,7 +56,7 @@ just run `kmk` in the source directory. You will find binaries under **out/**.
 ##### Licence
 System XVI is free software. You may use it and its source code under the terms
 of the Revised BSD licence; this is reproduced in full in
-[doc/CPYRIGHT.md](doc/CPYRIGHT.md).
+[doc/COPYRIGHT.md](doc/COPYRIGHT.md).
 
 ### FAQ
 A few frequently asked questions about S16:
