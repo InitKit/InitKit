@@ -110,7 +110,7 @@ these glowing endorsements of System XVI:
 > pretty much all shown during a discussion with the author on Rizon. [link to
 > the main S16 developer drunkenly arguing with someone about code style.]
 
-- /u/TheReverend403, reddit.
+ - /u/TheReverend403, reddit.
 
 > [...] the world doesn't like goto. First of all, it can cause all kinds of
 > memory leaks.
@@ -120,3 +120,12 @@ these glowing endorsements of System XVI:
 > As soon as a distro maintainer sees that goto, it'll be rejected.
 
  - vitimiti, 4chan-associated IRC channel #/g/technology
+
+> System XVI definitely is not it: It looks like a design-by-comitee 
+> architecture based on the buzzwords of 1980s (sunRPC, yeah), implemented
+> by an amateur. It is addressing the wrong problem (cross-platform) and the
+> whole design is targeted at that, preventing it from ever reaching feature
+> parity with systemd on Linux. At least it is consistently bad everywhere.
+> That is progress, we never had such a system before, ever.
+
+ - Phoronix commentor
