@@ -124,3 +124,37 @@ int exit_was_abnormal (int wstat)
 }
 
 void discard_signal (int no) { no = no; }
+
+/* Borrowed from Epoch: http://universe2.us/epoch.html */
+pid_t read_pid_file (const char * path)
+{
+    FILE * PIDFileDescriptor = fopen (path, "r");
+    char PIDBuf[200], *TW = NULL, *TW2 = NULL;
+    unsigned long Inc = 0;
+    pid_t InPID;
+
+    if (!PIDFileDescriptor)
+    {
+        return 0; // Zero for failure.
+    }
+
+    for (int TChar;
+         (TChar = getc (PIDFileDescriptor)) != EOF && Inc < (200 - 1); ++Inc)
+    {
+        *(unsigned char *)&PIDBuf[Inc] = (unsigned char)TChar;
+    }
+
+    PIDBuf[Inc] = '\0';
+    fclose (PIDFileDescriptor);
+
+    for (TW = PIDBuf; *TW == '\n' || *TW == '\t' || *TW == ' '; ++TW)
+        ;
+    for (TW2 = TW; *TW2 != '\0' && *TW2 != '\t' && *TW2 != '\n' &&
+                   *TW2 != '%' && *TW2 != ' ';
+         ++TW2)
+        ; // Delete any following the number.
+
+    *TW2 = '\0';
+    InPID = strtol (TW, 0, 10);
+    return InPID;
+}

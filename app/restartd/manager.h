@@ -12,6 +12,7 @@
 
 #include "unit.h"
 #include "timer.h"
+#include "dirwatch.h"
 
 typedef enum msg_type_e
 {
@@ -44,7 +45,9 @@ typedef struct manager_s
     msg_list msgs;
 
     unit_list units;
+
     timer_list timers;
+    dirwatch_list dirwatches;
 } manager_t;
 
 extern manager_t Manager;
