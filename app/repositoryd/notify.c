@@ -52,7 +52,11 @@ int i_config_subscribe_all_status (int p)
 int i_config_subscribe_status (int p, svc_id_t id, svc_id_t i_id)
 {
     sub_config_sub_t * conf;
-    subscriber_t * sub = i_subscriber_find_by_port (p);
+    subscriber_t * sub;
+    if (id == 0 && i_id == 0)
+        return i_config_subscribe_all_status (p);
+
+    sub = i_subscriber_find_by_port (p);
 
     if (!sub)
         return 1;

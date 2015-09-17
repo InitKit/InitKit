@@ -1,0 +1,14 @@
+SUB_DEPTH = ../..
+include $(KBUILD_PATH)/subheader.kmk
+include $(PATH_ROOT)/Config.kmk
+
+PROGRAMS += s16.svcorder
+
+s16.svcorder_TEMPLATE = CXX
+s16.svcorder_LIBS = $(libs16rr_1_TARGET) $(libs16db_1_TARGET) \
+    $(libs16_1_TARGET) $(librestartrpc_1_TARGET) $(libconfsubsvc_1_TARGET) \
+    $(libconfsubrpc_1_TARGET)
+s16.svcorder_SOURCES = svcorder.c confsub.c
+s16.svcorder_DEPS += $(PATH_ROOT)/hdr/restartd_rpc.h
+
+include $(FILE_KBUILD_SUB_FOOTER)
