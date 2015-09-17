@@ -13,8 +13,8 @@
     else                                                                       \
         return result;
 
-#define RETURN_IF_CLNT_ZERO()                                                  \
-    if (clnt == 0)                                                             \
+#define RETURN_IF_ZERO(val)                                                    \
+    if (val == 0)                                                              \
         return 0;
 
 CLIENT * s16db_context_create ()
@@ -41,31 +41,31 @@ void s16db_context_destroy (CLIENT * clnt) { clnt_destroy (clnt); }
 
 svc_id_t * s16db_svc_insert (CLIENT * clnt, char const * name)
 {
-    RETURN_IF_CLNT_ZERO ();
+    RETURN_IF_ZERO (clnt);
     RETURN_OR_FAIL (svc_id_t, svc_insert_1 ((char *)name, clnt));
 }
 
 svc_id_t * s16db_svc_install (CLIENT * clnt, svc_t * svc)
 {
-    RETURN_IF_CLNT_ZERO ();
+    RETURN_IF_ZERO (clnt);
     RETURN_OR_FAIL (svc_id_t, svc_install_1 (svc_to_rpc_svc (svc), clnt));
 }
 
 int * s16db_svc_delete (CLIENT * clnt, svc_id_t id)
 {
-    RETURN_IF_CLNT_ZERO ();
+    RETURN_IF_ZERO (clnt);
     RETURN_OR_FAIL (int, svc_delete_1 (id, clnt));
 }
 
 svc_t * s16db_svc_retrieve (CLIENT * clnt, svc_id_t id)
 {
-    RETURN_IF_CLNT_ZERO ();
+    RETURN_IF_ZERO (clnt);
     return rpc_svc_to_svc (svc_retrieve_1 (id, clnt));
 }
 
 svc_t * s16db_svc_retrieve_by_name (CLIENT * clnt, char * id)
 {
-    RETURN_IF_CLNT_ZERO ();
+    RETURN_IF_ZERO (clnt);
     return rpc_svc_to_svc (svc_retrieve_by_name_1 (id, clnt));
 }
 
@@ -74,7 +74,7 @@ svc_list s16db_svc_retrieve_all (CLIENT * clnt)
     rpc_svc_array_t * arr;
     svc_list box;
 
-    RETURN_IF_CLNT_ZERO ();
+    RETURN_IF_ZERO (clnt);
 
     arr = svc_retrieve_all_1 (clnt);
 
@@ -88,52 +88,52 @@ svc_list s16db_svc_retrieve_all (CLIENT * clnt)
 int * s16db_svc_set_property_int (CLIENT * clnt, svc_id_t id, char const * key,
                                   long value)
 {
-    RETURN_IF_CLNT_ZERO ();
+    RETURN_IF_ZERO (clnt);
     RETURN_OR_FAIL (int, svc_set_property_int_1 (id, (char *)key, value, clnt));
 }
 
 int * s16db_svc_set_property_string (CLIENT * clnt, svc_id_t id,
                                      char const * key, char const * value)
 {
-    RETURN_IF_CLNT_ZERO ();
+    RETURN_IF_ZERO (clnt);
     RETURN_OR_FAIL (
         int, svc_set_property_string_1 (id, (char *)key, (char *)value, clnt));
 }
 
 svc_id_t * s16db_instance_create (CLIENT * clnt, svc_id_t id, const char * name)
 {
-    RETURN_IF_CLNT_ZERO ();
+    RETURN_IF_ZERO (clnt);
     RETURN_OR_FAIL (svc_id_t, instance_create_1 (id, (char *)name, clnt));
 }
 
 int * s16db_instance_set_status (CLIENT * clnt, svc_id_t id, svc_id_t i_id,
                                  svc_state_e status)
 {
-    RETURN_IF_CLNT_ZERO ();
+    RETURN_IF_ZERO (clnt);
     RETURN_OR_FAIL (void, instance_set_status_1 (id, i_id, status, clnt));
 }
 
 int * s16db_config_register (CLIENT * clnt)
 {
-    RETURN_IF_CLNT_ZERO ();
+    RETURN_IF_ZERO (clnt);
     RETURN_OR_FAIL (int, config_register_1 (clnt));
 }
 
 void * s16db_config_register_port (CLIENT * clnt, int port)
 {
-    RETURN_IF_CLNT_ZERO ();
+    RETURN_IF_ZERO (clnt);
     RETURN_OR_FAIL (void, config_register_port_1 (port, clnt));
 }
 
 int * s16db_config_subscribe_status (CLIENT * clnt, int p, svc_id_t id,
                                      svc_id_t i_id)
 {
-    RETURN_IF_CLNT_ZERO ();
+    RETURN_IF_ZERO (clnt);
     RETURN_OR_FAIL (void, config_subscribe_status_1 (p, id, i_id, clnt));
 }
 
 int * s16db_config_subscribe_services (CLIENT * clnt, int p)
 {
-    RETURN_IF_CLNT_ZERO ();
+    RETURN_IF_ZERO (clnt);
     RETURN_OR_FAIL (void, config_subscribe_services_1 (p, clnt));
 }
