@@ -21,7 +21,7 @@ forking, and oneshot systemd units.
 
  * Interface-orientation: the system should be designed to fit a clean and
    stable interface. The interface should come before the implementation.
- * Seperation of concerns: individual components should not do much alone, but
+ * Separation of concerns: individual components should not do much alone, but
    work in concert to create a grand system.
  * Pluggable modularity: components should be easily replaceable and
    extensible.
