@@ -67,6 +67,11 @@ void note_awake ()
     memset (&ev, 0, sizeof (ev));
     EV_SET (&ev, NOTE_AWAKE, EVFILT_USER, 0, NOTE_TRIGGER, 0, 0);
     mtx_unlock (&Manager.lock);
+
+    if (kevent (Manager.kq, &ev, 1, NULL, 0, 0) == -1)
+    {
+        perror ("kevent! (trigger EVFILT_USER)");
+    }
 }
 
 int main ()
@@ -110,7 +115,7 @@ int main ()
     Manager.timers = List_new ();
     Manager.clnt_cfg = s16db_context_create ();
 
-    if (mtx_init (&Manager.lock, mtx_plain) != thrd_success)
+    if (mtx_init (&Manager.lock, mtx_plain | mtx_recursive) != thrd_success)
         error_fatal ("mtx_init failed\n");
 
     sa.sa_flags = 0;

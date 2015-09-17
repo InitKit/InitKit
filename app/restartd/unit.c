@@ -388,6 +388,8 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
         unit->main_pid = 0;
         if (unit->timer_id)
             timer_del (unit->timer_id);
+
+        printf ("Main PID exited\n");
         /* if exit was S16_FATAL, go to maintenance instead - add this later */
         if (exit_was_abnormal (info->flags))
         {
@@ -415,7 +417,12 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
                 break;
             case S_POSTSTART:
                 /* we won't bother purging any PIDs left over by poststart. */
-                unit_enter_online (unit);
+                if (unit->rtype == R_YES)
+                    unit->target = S_PRESTART;
+                else
+                    unit->target = S_OFFLINE;
+
+                unit_purge_and_target (unit);
                 break;
             case S_ONLINE:
                 if (unit->rtype == R_YES)
@@ -433,10 +440,13 @@ void unit_ptevent (unit_t * unit, pt_info_t * info)
     }
     else if (info->event == PT_EXIT && info->pid == unit->secondary_pid)
     {
-        if (unit->timer_id)
-            timer_del (unit->timer_id);
-        unit->secondary_pid = 0;
-        unit_enter_online (unit);
+        if (unit->state == S_POSTSTART)
+        {
+            if (unit->timer_id)
+                timer_del (unit->timer_id);
+            unit->secondary_pid = 0;
+            unit_enter_online (unit);
+        }
     }
 
     switch (unit->state)
