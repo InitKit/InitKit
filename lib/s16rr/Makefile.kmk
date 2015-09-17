@@ -5,6 +5,6 @@ include $(PATH_ROOT)/Config.kmk
 LIBRARIES += libs16rr
 
 libs16rr_TEMPLATE = CXX
-libs16rr_SOURCES = process.c process-tracker.c process-tracker/pt-driver-$(PT_DRIVER).c
+libs16rr_SOURCES = process.c process-tracker/pt-driver-$(PT_DRIVER).c
 
 include $(FILE_KBUILD_SUB_FOOTER)
