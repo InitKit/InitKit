@@ -144,6 +144,25 @@ int * instance_set_property_string_1_svc (svc_id_t id, svc_id_t i_id,
     return &result;
 }
 
+int * instance_set_status_1_svc (svc_id_t id, svc_id_t i_id, svc_state_e s,
+                                 struct svc_req * req)
+{
+    static int result;
+    svc_instance_t * inst;
+
+    if (!(inst = _find_instance (id, i_id)))
+    {
+        result = 1;
+        return &result;
+    }
+
+    inst_object_set_property_int (inst, "S16.Status", s);
+    notify_status (id, i_id, s);
+
+    result = 0;
+    return &result;
+}
+
 int * config_register_1_svc (struct svc_req * req)
 {
     static int result;

@@ -79,6 +79,13 @@ program S16_REPOSITORYD_PROG
          * Returns 0 for success, or 1 for fail. */
         int instance_set_property_string(svc_id_t, svc_id_t, string, string) = 12;
 
+        /* Sets the status for an instance.
+         * svc_id_t => service ID
+         * svc_id_t => instance ID
+         * svc_state_e => status
+        * Returns 0 for success, or 1 for fail. */
+        int instance_set_status(svc_id_t, svc_id_t, svc_state_e) = 13;
+
         /* Update-notification methods. */
 
         /* Registers interest for update-notification with repositoryd.
@@ -88,24 +95,25 @@ program S16_REPOSITORYD_PROG
          * (no notifications will be delivered until you subscribe to them
          * explicitly) and to identify yourself in further calls, or 0 for 
          * fail. */
-         int config_register() = 13;
+         int config_register() = 20;
 
         /* This is similar to the above, but is used if you have already set
          * a suitable port.
          * Make sure your port is acceptable.
          * int => port */
-        void config_register_port(int) = 14;
+        void config_register_port(int) = 21;
 
         /* Subscribes to updates for an instances' status.
          * int => your subscription port (for identifying which sub you are)
          * svc_id_t => service ID
          * svc_id_t => instance ID
+         * If the service ID is 0, updates for all services are delivered.
          * Returns 0 for success, or 1 for fail. */
-        int config_subscribe_status(int, svc_id_t, svc_id_t) = 15;
+        int config_subscribe_status(int, svc_id_t, svc_id_t) = 22;
 
         /* Subscribes for delivery of newly-installed services.
          * int => subscription port
          * Returns 0 for success, or 1 for fail. */
-        int config_subscribe_services(int) = 16;
+        int config_subscribe_services(int) = 23;
     } = 1;
 } = 0x261e712e;

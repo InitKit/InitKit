@@ -24,6 +24,17 @@ int * s16db_svc_set_property_int (CLIENT * clnt, svc_id_t id, char const * key,
 int * s16db_svc_set_property_string (CLIENT * clnt, svc_id_t id,
                                      char const * key, char const * value);
 
+svc_id_t * s16db_instance_create (CLIENT * clnt, svc_id_t id,
+                                  const char * name);
+int * s16db_instance_set_status (CLIENT * clnt, svc_id_t id, svc_id_t i_id,
+                                 svc_state_e status);
+int * s16db_config_register (CLIENT * clnt);
+void * s16db_config_register_port (CLIENT * clnt, int port);
+int * s16db_config_subscribe_status (CLIENT * clnt, int p, svc_id_t id,
+                                     svc_id_t i_id);
+int * s16db_config_subscribe_services (CLIENT * clnt, int p);
+
+/* marshalling routines */
 rpc_property_t property_to_rpc_property (property_t * prop);
 rpc_property_t * property_list_to_rpc_property_array (prop_list box);
 rpc_svc_instance_t svc_instance_to_rpc_svc_instance (svc_instance_t * inst);

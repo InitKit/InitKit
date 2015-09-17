@@ -101,6 +101,7 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
     unit_t * unitnew = s16mem_alloc (sizeof (unit_t));
 
     unitnew->name = inst_object_get_property_string (inst, "S16.FMRI");
+    unitnew->state = S_OFFLINE;
     unitnew->svc = svc;
     unitnew->inst = inst;
     unitnew->timer_id = 0;
@@ -139,6 +140,8 @@ unit_t * unit_new (svc_t * svc, svc_instance_t * inst)
         svc_object_get_property_string (svc, "Method.Stop");
 
     unitnew->timeout_secs = 12;
+
+    fprintf (stderr, "[%s] new unit formed\n", unitnew->name);
 
     return unitnew;
 }

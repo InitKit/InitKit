@@ -61,6 +61,7 @@ int i_config_register_port (int port);
 int i_config_subscribe_status (int port, svc_id_t id, svc_id_t i_id);
 int i_config_subscribe_services (int p);
 
-void notify_svc (svc_t * svc);
+void notify_service_installed (svc_t * svc);
+void notify_status (svc_id_t id, svc_id_t i_id, svc_state_e state);
 
 #endif

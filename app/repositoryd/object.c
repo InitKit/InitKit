@@ -44,8 +44,9 @@ svc_id_t install_svc (svc_t * svc)
     svc->id = rnum;
 
     svc_list_add (RD.services, svc);
-    notify_svc (svc); /* i'd rather this were enqueued, perhaps in a
-                             * seperate thread, to avoid delaying response. */
+    notify_service_installed (
+        svc); /* i'd rather this were enqueued, perhaps in a
+       * seperate thread, to avoid delaying response. */
     return rnum;
 }
 
