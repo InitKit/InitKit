@@ -21,18 +21,16 @@ typedef struct subscriber_s
                * but first, we'd need to secure things. */
     CLIENT * clnt;
     int all_config_sub, /* subscription to all config events */
+        all_status,     /* subscription to all instance status events */
         services_installed;
     config_sub_list config_subs;
 } subscriber_t;
 
 static inline subscriber_t * new_subscriber (int port)
 {
-    subscriber_t * ret = s16mem_alloc (sizeof (subscriber_t));
+    subscriber_t * ret = s16mem_calloc (1, sizeof (subscriber_t));
     ret->port = port;
-    ret->clnt = 0;
     ret->config_subs = List_new ();
-    ret->all_config_sub = 0;
-    ret->services_installed = 0;
     return ret;
 }
 

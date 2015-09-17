@@ -10,6 +10,8 @@ extern "C" {
 
 #define SVC_IS_NULL(svc) (!svc || !strncmp (svc->name, "NULL", 4))
 
+/* These routines return pointers.
+ * A null pointer indicates failure. */
 CLIENT * s16db_context_create ();
 void s16db_context_destroy (CLIENT * clnt);
 
@@ -28,6 +30,7 @@ svc_id_t * s16db_instance_create (CLIENT * clnt, svc_id_t id,
                                   const char * name);
 int * s16db_instance_set_status (CLIENT * clnt, svc_id_t id, svc_id_t i_id,
                                  svc_state_e status);
+
 int * s16db_config_register (CLIENT * clnt);
 void * s16db_config_register_port (CLIENT * clnt, int port);
 int * s16db_config_subscribe_status (CLIENT * clnt, int p, svc_id_t id,

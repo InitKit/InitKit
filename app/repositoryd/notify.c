@@ -37,6 +37,18 @@ int i_config_register_port (int port)
     return 0;
 }
 
+int i_config_subscribe_all_status (int p)
+{
+    subscriber_t * sub = i_subscriber_find_by_port (p);
+
+    if (!sub)
+        return 1;
+
+    sub->all_status = 1;
+
+    return 0;
+}
+
 int i_config_subscribe_status (int p, svc_id_t id, svc_id_t i_id)
 {
     sub_config_sub_t * conf;
